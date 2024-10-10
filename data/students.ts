@@ -25,5 +25,17 @@ export const CurrentStudents: Students[] = [
         location:'Ang Mo Kio',
         time:'12:00PM',
     },
+    {
+        name: 'Joseph Schooling',
+        date: '12 October',
+        location:'Ang Mo Kio',
+        time:'12:00PM',
+    },
+    {
+        name: 'Cristiano Ronaldo',
+        date: '13 October',
+        location:'Ang Mo Kio',
+        time:'12:00PM',
+    },
   ]
   
