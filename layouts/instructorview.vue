@@ -24,7 +24,7 @@
 
         <!-- Profile link flushed to the bottom -->
         <div class="mt-auto">
-          <NuxtLink to="/profile" class="text-gray-600 hover:text-primary">
+          <NuxtLink to="/Instructor/profile" class="text-gray-600 hover:text-primary">
             Profile
           </NuxtLink>
         </div>
