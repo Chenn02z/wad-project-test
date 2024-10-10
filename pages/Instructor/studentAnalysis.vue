@@ -10,6 +10,7 @@ const students = CurrentStudents;
 
 <template>
   <div>
+    <!-- i cant seem to get the scroll to be only for the container -->
     <h1 class="text-3xl font-bold mb-4">Current Students</h1>
     <div class="cards-container-wrapper">
       <div class="cards-container">
@@ -28,6 +29,12 @@ const students = CurrentStudents;
 </template>
 
 <style scoped>
+.cards-container-wrapper {
+  width: 100%;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  white-space: nowrap; /* Prevent line breaks so that the items stay in one row */
+  padding: 1rem;
+}
 
 .cards-container {
   display: inline-flex;
@@ -39,6 +46,6 @@ const students = CurrentStudents;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 0.5rem;
   padding: 1.5rem;
-  width: 16rem; /* Fixed width to control card size */
+  width: 16rem;
 }
 </style>
