@@ -36,6 +36,10 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  layout: 'studentview'
+});
+
 const lessons = [
   { instructor: "Lee Yi Kang", date: "Oct 10, 2024", time: "10:00 AM", duration: "1 hour", location: "Ang Mo Kio" },
   { instructor: "Lee Yi Kang", date: "Oct 12, 2024", time: "2:00 PM", duration: "1 hour", location: "Ang Mo Kio" },
