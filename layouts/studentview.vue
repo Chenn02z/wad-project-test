@@ -16,7 +16,7 @@
       <div class="flex flex-col h-full py-8 px-6">
         <!-- Project Title -->
         <div class="mb-10 flex justify-center">
-          <NuxtLink to="/Student/homePage" class="text-3xl font-bold text-white hover:text-primary">
+          <NuxtLink to="/" class="text-3xl font-bold text-white hover:text-primary">
             Edu²
           </NuxtLink>
         </div>
