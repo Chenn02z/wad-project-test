@@ -24,13 +24,17 @@
           <NuxtLink to="/Instructor/HomePage" class="nav-link">
             🏠 Home
           </NuxtLink>
-          <NuxtLink to="/Instructor/availability" class="nav-link">
+          <NuxtLink to="/Instructor/Availability" class="nav-link">
             📅 Availability
           </NuxtLink>
-          <NuxtLink to="/Instructor/studentAnalysis" class="nav-link">
+          <NuxtLink to="/Instructor/StudentAnalysis" class="nav-link">
             📝 Student Analysis
           </NuxtLink>
+          <NuxtLink to="/Instructor/HomePageTest" class="nav-link">
+            🏠 HomePage by YC
+          </NuxtLink>
         </div>
+
 
         <!-- Profile link flushed to the bottom -->
         <div class="mt-auto">
