@@ -13,7 +13,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Notifications from "~/components/dashboard/Notifications.vue";
+import Notifications from "@/components/dashboard/Notifications.vue";
+import { Badge } from "@/components/ui/badge";
 </script>
 
 <template>
@@ -26,8 +27,13 @@ import Notifications from "~/components/dashboard/Notifications.vue";
       <Tabs default-value="overview" class="space-y-4">
         <TabsList>
           <TabsTrigger value="overview"> Overview </TabsTrigger>
-          <TabsTrigger value="notifications"> Notifications </TabsTrigger>
+          <TabsTrigger value="notifications">
+            Notifications 
+            <Badge variant="destructive" class="rounded-full px-2 py-1"> 3 </Badge> 
+            <!-- need to change the number to a counter -->
+          </TabsTrigger>
         </TabsList>
+
         <TabsContent value="overview" class="space-y-4">
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <Card>
