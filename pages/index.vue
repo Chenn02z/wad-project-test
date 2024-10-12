@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import UserAuthForm from '@/components/ui/Auth.vue'
+import UserAuthForm from '~/pages/Login/Auth.vue'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 definePageMeta({
@@ -51,11 +51,8 @@ definePageMeta({
       <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
         <div class="flex flex-col space-y-2 text-center">
           <h1 class="text-2xl font-semibold tracking-tight">
-            Create an account
+            Login
           </h1>
-          <p class="text-sm text-muted-foreground">
-            Enter your email below to create your account
-          </p>
         </div>
         <UserAuthForm />
         <p class="px-8 text-center text-sm text-muted-foreground">
