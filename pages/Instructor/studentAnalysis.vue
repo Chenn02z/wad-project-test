@@ -11,7 +11,14 @@ const students = CurrentStudents;
 <template>
   <div>
     <!-- i cant seem to get the scroll to be only for the container -->
-    <h1 class="text-3xl font-bold mb-4">Current Students</h1>
+    <div class="space-y-0.5">
+      <h2 class="text-2xl font-bold tracking-tight">
+        Current Students
+      </h2>
+      <p class="text-muted-foreground">
+        See your students!
+      </p>
+    </div>
     <div class="cards-container-wrapper">
       <div class="cards-container">
         <div v-for="student in students" :key="student.name" class="p-6 bg-white shadow-md rounded-md student-card">
