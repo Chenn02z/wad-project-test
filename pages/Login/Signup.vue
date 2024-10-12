@@ -16,6 +16,10 @@
           <input type="password" v-model="formData.password" id="password" required />
         </div>
         <div class="form-group">
+          <label for="password">Confirm Password:</label>
+          <input type="password" v-model="formData.confirm_password" id="confirm_password" required />
+        </div>
+        <div class="form-group">
             <label for="radio">User Type</label>
             <div class="user-type">
             <input type="radio" name="User" v-model="inpVal" id="Student" value="Student"> Student
@@ -28,6 +32,7 @@
   </template>
   
   <script>
+  import axios from 'axios'
   export default {
     data() {
       return {
@@ -35,22 +40,36 @@
           name: '',
           email: '',
           password: '',
+          confirm_password:'',
           selected: ''
         }
       };
     },
     methods: {
-      submitForm() {
+      async submitForm() {
         // Perform sign-up logic here, like sending form data to a backend
-        console.log('Form submitted:', this.formData);
+        
         alert('Sign-up successful!');
-        this.$router.push('/Login/Auth');
-      }
+        
+
+        const response = await axios.post('http://localhost:3000/Login/Signup', {
+          name: this.formData.name,
+          email: this.formData.email,
+          password: this.formData.password,
+          confirm_password: this.formData.confirm_password,
+          selected: this.formData.selected
+        })
+
+        this.$router.push('/')
+        }
     }
   };
   </script>
   
   <style scoped>
+
+    
+
   .signup-container {
     max-width: 400px;
     margin: 0 auto;
@@ -58,6 +77,7 @@
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 10px;
+    
   }
   
   h1 {
@@ -73,7 +93,7 @@
     padding: 5px;
   }
   
-  #name, #email,#password {
+  #name, #email,#password, #confirm_password {
     width: 100%;
     padding: 8px;
     box-sizing: border-box;

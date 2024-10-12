@@ -1,66 +1,25 @@
-<script setup lang="ts">
-import { ref } from 'vue'
-
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-
-const isLoading = ref(false)
-async function onSubmit(event: Event) {
-  event.preventDefault()
-  isLoading.value = true
-
-  setTimeout(() => {
-    isLoading.value = false
-  }, 3000)
-}
-</script>
-
 <template>
   <div :class="cn('grid gap-6', $attrs.class ?? '')">
-    <form @submit="onSubmit">
+    <form @submit.prevent="handleSubmit">
       <div class="grid gap-2">
         <div class="grid gap-1">
-          <Label class="sr-only" for="email">
-            Email
-          </Label>
-          <Input
-            id="email"
-            placeholder="Email"
-            type="email"
-            auto-capitalize="none"
-            auto-complete="email"
-            auto-correct="off"
-            :disabled="isLoading"
-          />
-          <Input
-            id="password"
-            placeholder="Password"
-            type="password"
-            auto-capitalize="none"
-            auto-complete="password"
-            auto-correct="off"
-            :disabled="isLoading"
-          />
+          <Label class="sr-only" for="email">Email</Label>
+          <Input id="email" placeholder="Email" type="email" v-model="email"/>
+          <Input id="password" placeholder="Password" type="password" v-model="password" />
         </div>
-        <!-- <Button :disabled="isLoading">
-          <LucideSpinner v-if="isLoading" class="mr-2 h-4 w-4 animate-spin" />
-          Sign In
-        </Button> -->
         I am a
         <p></p>
       </div>
 
       <div class="flex flex-col md:flex-row gap-4"> 
       <NuxtLink to="/Instructor/homePage" class="w-full md:w-1/2">
-        <Button variant="outline" type="button" :disabled="isLoading" class="w-full">
+        <Button variant="outline" type="button" class="w-full">
           Instructor
         </Button>
       </NuxtLink>
 
       <NuxtLink to="/Student/homePage" class="w-full md:w-1/2">
-        <Button variant="outline" type="button" :disabled="isLoading" class="w-full">
+        <Button variant="outline" type="button" class="w-full">
           Student
         </Button>
       </NuxtLink>
@@ -78,9 +37,29 @@ async function onSubmit(event: Event) {
       </div> -->
     </div>
     <p>Not a member? Sign up <NuxtLink to="/Login/Signup" class="nav-link" style="text-decoration: underline; color: blue">here!</NuxtLink></p>
-
-    
-
     
   </div>
 </template>
+
+<script setup lang="ts">
+
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import axios from 'axios'
+import { ref } from 'vue'
+
+const email = ref('')
+const password = ref('')
+
+const handleSubmit = async () => {
+  const response = await axios.post('login', {
+    email: email.value,
+    password: password.value,
+  });
+
+  localStorage.setItem('token', response.data.token);
+}
+
+</script>
