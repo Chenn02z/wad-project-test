@@ -36,7 +36,7 @@ const salesData = [
 </script>
 
 <template>
-  <Card class="col-span-1">
+  <Card class="col-span-1 h-100">
     <CardHeader>
       <CardTitle>Recent Sales</CardTitle>
       <CardDescription> You made 265 sales this month. </CardDescription>

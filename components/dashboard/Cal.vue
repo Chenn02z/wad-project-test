@@ -57,7 +57,7 @@ const calData = [
   </CardHeader>
   <CardContent class="pl-2">
     <Calendar view="weekly" />
-    <ScrollArea class="h-40 mt-5">
+    <ScrollArea class="h-60 mt-5">
       <div v-for="(cal, index) in calData" :key="index" class="flex items-center my-3">
         <Avatar class="h-9 w-9">
           <AvatarImage src="" alt="Avatar" />

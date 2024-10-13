@@ -48,7 +48,7 @@ import Cal from "@/components/dashboard/Cal";
         <TabsContent value="overview" class="space-y-4">
           <Summary />
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
-            <Card class="px-20">
+            <Card class="px-20 h-100">
               <Carousel>
               <CarouselContent>
 
