@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-blue-100 to-indigo-200 p-8">
     <div class="max-w-4xl mx-auto">
-      <h1 class="text-4xl font-bold text-indigo-800 text-center mb-10">Your Driving Journey</h1>
+      <h1 class="text-4xl font-bold text-indigo-800 text-center mb-10">Your Scheduled Lessons</h1>
       
       <div class="relative">
         <TransitionGroup 
@@ -63,7 +63,7 @@ const lessons = ref([
 ])
 
 const currentPage = ref(1)
-const lessonsPerPage = 4
+const lessonsPerPage = 2
 
 const totalPages = computed(() => Math.ceil(lessons.value.length / lessonsPerPage))
 

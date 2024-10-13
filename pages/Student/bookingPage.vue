@@ -1,7 +1,10 @@
-<script setup lang='ts'>
+<script setup>
 definePageMeta({
   layout: 'studentview'
 });
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
+
 
 import {
   Card,
@@ -18,155 +21,137 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { ref } from 'vue'
 
-// Define types for Instructor and TimeSlot
-interface Instructor {
-  id: number;
-  name: string;
-}
+const instructors = ref([])
+const selectedInstructor = ref(null)
+const selectedDate = ref(null)
+const selectedSlot = ref(null)
+const isLoading = ref(true)
+const error = ref(null)
 
-interface TimeSlot {
-  time: string;
-  available: boolean;
-}
+const availableDates = computed(() => {
+  if (!selectedInstructor.value) return []
+  return selectedInstructor.value.availability.map(day => day.date)
+})
 
-// Reactive state variables
-const selectedInstructor = ref<string | null>(null);
-const selectedDate = ref<string | null>(null);
-const selectedSlot = ref<TimeSlot | null>(null);
+const availableSlots = computed(() => {
+  if (!selectedInstructor.value || !selectedDate.value) return []
+  const day = selectedInstructor.value.availability.find(day => day.date === selectedDate.value)
+  return day ? day.slots : []
+})
 
-// Sample instructors
-const instructors: Instructor[] = [
-  { id: 1, name: "John Doe" },
-  { id: 2, name: "Jane Smith" },
-];
-
-// Generate random time slots
-const timeSlots = ref<TimeSlot[]>(generateTimeSlots());
-
-// Date restrictions for booking
-const minDate = getFormattedDate(new Date()); // Today's date
-const maxDate = getFormattedDate(addDays(new Date(), 7)); // One week from today
-
-// Function to generate time slots
-function generateTimeSlots(): TimeSlot[] {
-  const slots: TimeSlot[] = [];
-  for (let hour = 9; hour <= 21; hour++) {
-    const time = hour < 12 ? `${hour}:00 AM` : `${hour === 12 ? hour : hour - 12}:00 PM`;
-    slots.push({ time, available: Math.random() > 0.3 }); // Random availability for now
+async function fetchInstructors() {
+  try {
+    isLoading.value = true
+    error.value = null
+    const response = await axios.get('/api/instructors.json')
+    instructors.value = response.data.instructors
+  } catch (err) {
+    error.value = 'Failed to load instructor data. Please try again later.'
+    console.error('Error fetching data:', err)
+  } finally {
+    isLoading.value = false
   }
-  return slots;
 }
 
-// Function to select a time slot
-function selectSlot(slot: TimeSlot): void {
+function selectSlot(slot) {
   if (slot.available) {
-    selectedSlot.value = slot;
+    selectedSlot.value = slot
   }
 }
 
-// Function to confirm booking
-function confirmBooking(): void {
+function confirmBooking() {
   if (selectedInstructor.value && selectedDate.value && selectedSlot.value) {
-    alert(`Booking confirmed with ${selectedInstructor.value} on ${selectedDate.value} at ${selectedSlot.value.time}`);
+    alert(`Booking confirmed with ${selectedInstructor.value.name} on ${selectedDate.value} at ${selectedSlot.value.time}`)
+    // Here you would typically make an API call to save the booking
+    // For now, we'll just reset the form
+    selectedInstructor.value = null
+    selectedDate.value = null
+    selectedSlot.value = null
   } else {
-    alert("Please complete all selections.");
+    alert('Please complete all selections before confirming.')
   }
 }
 
-// Helper function to add days to a date
-function addDays(date: Date, days: number): Date {
-  const result = new Date(date);
-  result.setDate(result.getDate() + days);
-  return result;
-}
-
-// Helper function to format date
-function getFormattedDate(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
+onMounted(fetchInstructors)
 </script>
 
 <template>
-  <div class="flex flex-col min-h-screen p-6">
-    <!-- Booking Card -->
-    <div class="flex justify-center items-center flex-grow">
-      <Card class="w-full max-w-[600px]">
-        <CardHeader>
-          <CardTitle>Book Your Next Lesson</CardTitle>
-          <CardDescription>Select your preferences below.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form @submit.prevent="confirmBooking" class="space-y-4">
-            <!-- Instructor Selection -->
-            <div class="flex flex-col space-y-1.5">
-              <Label for="instructor">Select Instructor:</Label>
-              <Select v-model="selectedInstructor" id="instructor">
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Instructor" />
-                </SelectTrigger>
-                <SelectContent position="popper">
-                  <SelectItem v-for="instructor in instructors" :key="instructor.id" :value="instructor.name">
-                    {{ instructor.name }}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+  <div class="container mx-auto p-4">
+    <Card class="w-full max-w-2xl mx-auto">
+      <CardHeader>
+        <CardTitle>Book Your Lesson</CardTitle>
+        <CardDescription>Choose your instructor, date, and time</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div v-if="isLoading" class="text-center py-8">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+          <p class="mt-4 text-gray-600">Loading instructor data...</p>
+        </div>
+        <div v-else-if="error" class="text-center py-8">
+          <p class="text-red-500">{{ error }}</p>
+          <Button @click="fetchInstructors" class="mt-4">Retry</Button>
+        </div>
+        <form v-else @submit.prevent="confirmBooking" class="space-y-4">
+          <div class="space-y-2">
+            <Label for="instructor">Select Instructor</Label>
+            <Select v-model="selectedInstructor">
+              <SelectTrigger>
+                <SelectValue placeholder="Choose an instructor" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem v-for="instructor in instructors" :key="instructor.id" :value="instructor">
+                  {{ instructor.name }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-            <!-- Date Selection -->
-            <div class="flex flex-col space-y-1.5">
-              <Label for="date">Select Date:</Label>
-              <Input
-                type="date"
-                id="date"
-                v-model="selectedDate"
-                :min="minDate"
-                :max="maxDate"
-                class="bg-gray-100"
-              />
-            </div>
+          <div v-if="selectedInstructor" class="space-y-2">
+            <Label for="date">Select Date</Label>
+            <Select v-model="selectedDate">
+              <SelectTrigger>
+                <SelectValue placeholder="Choose a date" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem v-for="date in availableDates" :key="date" :value="date">
+                  {{ new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-            <!-- Time Slot Selection -->
-            <div>
-              <Label>Select Time Slot:</Label>
-              <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
-                <Button
-                  v-for="slot in timeSlots"
-                  :key="slot.time"
-                  :disabled="!slot.available"
-                  @click.prevent="selectSlot(slot)"
-                  :class="[ 
-                    'p-3 rounded-md text-white', 
-                    slot.available ? 'bg-green-500' : 'bg-gray-400', 
-                    selectedSlot === slot ? 'ring-2 ring-blue-400' : '' 
-                  ]"
-                >
-                  {{ slot.time }}
-                </Button>
-              </div>
+          <div v-if="selectedDate" class="space-y-2">
+            <Label>Select Time Slot</Label>
+            <div class="grid grid-cols-3 gap-2">
+              <Button
+                v-for="slot in availableSlots"
+                :key="slot.time"
+                :disabled="!slot.available"
+                :class="[
+                  'p-2',
+                  slot.available ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-300',
+                  selectedSlot === slot ? 'ring-2 ring-blue-500' : ''
+                ]"
+                @click="selectSlot(slot)"
+              >
+                {{ slot.time }}
+              </Button>
             </div>
-          </form>
-        </CardContent>
-        <CardFooter class="flex justify-between px-6 pb-6">
-          <Button variant="outline" @click.prevent="selectedInstructor = null; selectedDate = null; selectedSlot = null">
-            Cancel
-          </Button>
-          <Button type="submit" @click.prevent="confirmBooking" :disabled="!selectedInstructor || !selectedDate || !selectedSlot">
-            Confirm Booking
-          </Button>
-        </CardFooter>
-      </Card>
-    </div>
+          </div>
+        </form>
+      </CardContent>
+      <CardFooter>
+        <Button 
+          class="w-full" 
+          @click="confirmBooking"
+          :disabled="!selectedInstructor || !selectedDate || !selectedSlot"
+        >
+          Confirm Booking
+        </Button>
+      </CardFooter>
+    </Card>
   </div>
 </template>
-
-<style scoped>
-/* Add any additional styles for your layout */
-</style>
