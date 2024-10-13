@@ -23,6 +23,7 @@
     "shadcn-nuxt": "^0.10.4",
     "tailwind-merge": "^2.5.3",
     "tailwindcss-animate": "^1.0.7",
+    "v-calendar": "^3.1.2",
     "vue": "latest",
     "vue-router": "latest"
   },
