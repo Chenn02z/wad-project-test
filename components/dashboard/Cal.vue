@@ -58,7 +58,7 @@ const calData = [
   <CardContent class="pl-2">
     <Calendar view="weekly" />
     <ScrollArea class="h-60 mt-5">
-      <div v-for="(cal, index) in calData" :key="index" class="flex items-center my-3">
+      <div v-for="(cal, index) in calData" :key="index" class="flex items-center my-2 pr-4">
         <Avatar class="h-9 w-9">
           <AvatarImage src="" alt="Avatar" />
           <AvatarFallback>{{ cal.fallback }}</AvatarFallback>
@@ -67,7 +67,11 @@ const calData = [
           <p class="text-sm font-medium leading-none">{{ cal.name }}</p>
           <p class="text-sm text-muted-foreground">{{ cal.phone }}</p>
         </div>
-        <div class="ml-auto font-medium">{{ cal.time }}</div>
+        <div class="ml-auto text-right">
+          <p class="text-sm font-medium leading-none">{{ cal.time }}</p>
+          <p class="text-sm text-muted-foreground">{{ cal.Location }}</p>
+        </div>
+
       </div>
     </ScrollArea>
   </CardContent>
