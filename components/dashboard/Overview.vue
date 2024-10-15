@@ -19,7 +19,7 @@ const data = [
 
 <template>
     <CardHeader>
-      <CardTitle>Overview</CardTitle>
+      <CardTitle class="">Overview</CardTitle>
     </CardHeader>
     <CardContent class="pl-2">
       <BarChart
