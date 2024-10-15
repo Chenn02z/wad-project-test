@@ -23,7 +23,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import Cal from "@/components/dashboard/Cal";
+import Cal from "@/components/dashboard/Cal.vue";
 </script>
 
 <template>
