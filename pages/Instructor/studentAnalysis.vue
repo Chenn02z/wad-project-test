@@ -28,7 +28,7 @@ const students = CurrentStudents;
           <div class="overflow-hidden rounded-md">
             <Card>
               <CardContent>
-                <img
+                <img class="rounded-md"
                   src="https://via.placeholder.com/150"
                   alt="Student Photo"
                 />
