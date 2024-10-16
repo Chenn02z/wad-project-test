@@ -30,9 +30,6 @@
           <NuxtLink to="/Instructor/StudentAnalysis" class="nav-link">
             📝 Student Analysis
           </NuxtLink>
-          <NuxtLink to="/Instructor/HomePageTest" class="nav-link">
-            🏠 HomePage by YC
-          </NuxtLink>
         </div>
 
 

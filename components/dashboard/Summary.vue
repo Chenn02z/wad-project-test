@@ -1,41 +1,14 @@
 <script setup lang="ts">
-definePageMeta({
-  layout: "instructorview",
-});
-
-import Overview from "@/components/dashboard/Overview.vue";
-import RecentSales from "~/components/dashboard/RecentSales.vue";
-import {
+    import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Notifications from "@/components/dashboard/Notifications.vue";
-import { Badge } from "@/components/ui/badge";
 </script>
 
 <template>
-  <div class="space-y-0.5">
-    <h2 class="text-2xl font-bold tracking-tight">Dashboard</h2>
-    <p class="text-muted-foreground">See your breakdown</p>
-  </div>
-  <div class="hidden flex-col md:flex">
-    <div class="flex-1 space-y-4 p- pt-6">
-      <Tabs default-value="overview" class="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview"> Overview </TabsTrigger>
-          <TabsTrigger value="notifications">
-            Notifications 
-            <Badge variant="destructive" class="rounded-full px-2 py-1"> 3 </Badge> 
-            <!-- need to change the number to a counter -->
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" class="space-y-4">
-          <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <Card>
               <CardHeader
                 class="flex flex-row items-center justify-between space-y-0 pb-2"
@@ -119,47 +92,4 @@ import { Badge } from "@/components/ui/badge";
               </CardContent>
             </Card>
           </div>
-          <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Card class="col-span-4">
-              <CardHeader>
-                <CardTitle>Overview</CardTitle>
-              </CardHeader>
-              <CardContent class="pl-2">
-                <Overview />
-              </CardContent>
-            </Card>
-            <Card class="col-span-3">
-              <CardHeader>
-                <CardTitle>Recent Sales</CardTitle>
-                <CardDescription>
-                  You made 265 sales this month.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <RecentSales />
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-        <TabsContent value="notifications">
-          <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <Card class="col-span-3">
-              <CardHeader>
-                <CardTitle>Review</CardTitle>
-                <CardDescription>
-                  Please complete the following reviews for students!
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Notifications />
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-      </Tabs>
-    </div>
-  </div>
 </template>
-<style scoped>
-/* Add any homepage-specific styling */
-</style>
