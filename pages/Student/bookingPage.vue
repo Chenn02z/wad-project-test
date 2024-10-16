@@ -1,172 +1,141 @@
-<script setup lang='ts'>
-definePageMeta({
-  layout: 'studentview'
-});
-
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
-import { ref } from 'vue'
-
-// Define types for Instructor and TimeSlot
-interface Instructor {
-  id: number;
-  name: string;
-}
-
-interface TimeSlot {
-  time: string;
-  available: boolean;
-}
-
-// Reactive state variables
-const selectedInstructor = ref<string | null>(null);
-const selectedDate = ref<string | null>(null);
-const selectedSlot = ref<TimeSlot | null>(null);
-
-// Sample instructors
-const instructors: Instructor[] = [
-  { id: 1, name: "John Doe" },
-  { id: 2, name: "Jane Smith" },
-];
-
-// Generate random time slots
-const timeSlots = ref<TimeSlot[]>(generateTimeSlots());
-
-// Date restrictions for booking
-const minDate = getFormattedDate(new Date()); // Today's date
-const maxDate = getFormattedDate(addDays(new Date(), 7)); // One week from today
-
-// Function to generate time slots
-function generateTimeSlots(): TimeSlot[] {
-  const slots: TimeSlot[] = [];
-  for (let hour = 9; hour <= 21; hour++) {
-    const time = hour < 12 ? `${hour}:00 AM` : `${hour === 12 ? hour : hour - 12}:00 PM`;
-    slots.push({ time, available: Math.random() > 0.3 }); // Random availability for now
-  }
-  return slots;
-}
-
-// Function to select a time slot
-function selectSlot(slot: TimeSlot): void {
-  if (slot.available) {
-    selectedSlot.value = slot;
-  }
-}
-
-// Function to confirm booking
-function confirmBooking(): void {
-  if (selectedInstructor.value && selectedDate.value && selectedSlot.value) {
-    alert(`Booking confirmed with ${selectedInstructor.value} on ${selectedDate.value} at ${selectedSlot.value.time}`);
-  } else {
-    alert("Please complete all selections.");
-  }
-}
-
-// Helper function to add days to a date
-function addDays(date: Date, days: number): Date {
-  const result = new Date(date);
-  result.setDate(result.getDate() + days);
-  return result;
-}
-
-// Helper function to format date
-function getFormattedDate(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-</script>
-
 <template>
-  <div class="flex flex-col min-h-screen p-6">
-    <!-- Booking Card -->
-    <div class="flex justify-center items-center flex-grow">
-      <Card class="w-full max-w-[600px]">
-        <CardHeader>
-          <CardTitle>Book Your Next Lesson</CardTitle>
-          <CardDescription>Select your preferences below.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form @submit.prevent="confirmBooking" class="space-y-4">
-            <!-- Instructor Selection -->
-            <div class="flex flex-col space-y-1.5">
-              <Label for="instructor">Select Instructor:</Label>
-              <Select v-model="selectedInstructor" id="instructor">
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Instructor" />
-                </SelectTrigger>
-                <SelectContent position="popper">
-                  <SelectItem v-for="instructor in instructors" :key="instructor.id" :value="instructor.name">
-                    {{ instructor.name }}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+  <div class="container mx-auto p-4">
+    <div class="space-y-0.5 mb-6">
+      <h2 class="text-2xl font-bold tracking-tight">
+        Availability
+      </h2>
+      <p class="text-muted-foreground">
+        Select the instructor, date, and timeslot
+      </p>
+    </div>
 
-            <!-- Date Selection -->
-            <div class="flex flex-col space-y-1.5">
-              <Label for="date">Select Date:</Label>
-              <Input
-                type="date"
-                id="date"
-                v-model="selectedDate"
-                :min="minDate"
-                :max="maxDate"
-                class="bg-gray-100"
-              />
-            </div>
+    <div class="p-6 max-w-md mx-auto bg-white rounded-lg shadow-md">
+      <div v-if="isLoading" class="text-center py-8">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+        <p class="mt-4 text-gray-600">Loading instructor data...</p>
+      </div>
+      <div v-else-if="error" class="text-center py-8">
+        <p class="text-red-500">{{ error }}</p>
+        <button @click="fetchInstructors" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Retry</button>
+      </div>
+      <form v-else @submit.prevent="confirmBooking" class="space-y-4">
+        <div class="space-y-2">
+          <label for="instructor" class="block text-sm font-medium text-gray-700">Select Instructor</label>
+          <select v-model="selectedInstructor" id="instructor" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+            <option value="">Choose an instructor</option>
+            <option v-for="instructor in instructors" :key="instructor.id" :value="instructor">
+              {{ instructor.name }}
+            </option>
+          </select>
+        </div>
 
-            <!-- Time Slot Selection -->
-            <div>
-              <Label>Select Time Slot:</Label>
-              <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
-                <Button
-                  v-for="slot in timeSlots"
-                  :key="slot.time"
-                  :disabled="!slot.available"
-                  @click.prevent="selectSlot(slot)"
-                  :class="[ 
-                    'p-3 rounded-md text-white', 
-                    slot.available ? 'bg-green-500' : 'bg-gray-400', 
-                    selectedSlot === slot ? 'ring-2 ring-blue-400' : '' 
-                  ]"
-                >
-                  {{ slot.time }}
-                </Button>
-              </div>
-            </div>
-          </form>
-        </CardContent>
-        <CardFooter class="flex justify-between px-6 pb-6">
-          <Button variant="outline" @click.prevent="selectedInstructor = null; selectedDate = null; selectedSlot = null">
-            Cancel
-          </Button>
-          <Button type="submit" @click.prevent="confirmBooking" :disabled="!selectedInstructor || !selectedDate || !selectedSlot">
-            Confirm Booking
-          </Button>
-        </CardFooter>
-      </Card>
+        <div v-if="selectedInstructor" class="space-y-2">
+          <label for="date" class="block text-sm font-medium text-gray-700">Select Date</label>
+          <select v-model="selectedDate" id="date" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+            <option value="">Choose a date</option>
+            <option v-for="date in availableDates" :key="date" :value="date">
+              {{ formatDate(date) }}
+            </option>
+          </select>
+        </div>
+
+        <div v-if="selectedDate" class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700">Select Time Slot</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button
+              v-for="slot in availableSlots"
+              :key="slot.time"
+              type="button"
+              :disabled="!slot.available"
+              :class="[
+                'p-2 text-sm font-medium rounded-md',
+                slot.available ? 'bg-purple-200 text-purple-700 hover:bg-purple-300' : 'bg-gray-200 text-gray-400 cursor-not-allowed',
+                selectedSlot === slot ? 'ring-2 ring-purple-500' : ''
+              ]"
+              @click="selectSlot(slot)"
+            >
+              {{ slot.time }}
+            </button>
+          </div>
+        </div>
+
+        <button 
+          type="submit" 
+          class="w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          :disabled="!selectedInstructor || !selectedDate || !selectedSlot"
+        >
+          Confirm Booking
+        </button>
+      </form>
     </div>
   </div>
 </template>
 
+<script setup>
+definePageMeta({
+  layout: 'studentview'
+});
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
+
+const instructors = ref([])
+const selectedInstructor = ref(null)
+const selectedDate = ref(null)
+const selectedSlot = ref(null)
+const isLoading = ref(true)
+const error = ref(null)
+
+const availableDates = computed(() => {
+  if (!selectedInstructor.value) return []
+  return selectedInstructor.value.availability.map(day => day.date)
+})
+
+const availableSlots = computed(() => {
+  if (!selectedInstructor.value || !selectedDate.value) return []
+  const day = selectedInstructor.value.availability.find(day => day.date === selectedDate.value)
+  return day ? day.slots : []
+})
+
+async function fetchInstructors() {
+  try {
+    isLoading.value = true
+    error.value = null
+    const response = await axios.get('/api/instructors.json')
+    instructors.value = response.data.instructors
+  } catch (err) {
+    error.value = 'Failed to load instructor data. Please try again later.'
+    console.error('Error fetching data:', err)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+function selectSlot(slot) {
+  if (slot.available) {
+    selectedSlot.value = slot
+  }
+}
+
+function confirmBooking() {
+  if (selectedInstructor.value && selectedDate.value && selectedSlot.value) {
+    alert(`Booking confirmed with ${selectedInstructor.value.name} on ${formatDate(selectedDate.value)} at ${selectedSlot.value.time}`)
+    // Here you would typically make an API call to save the booking
+    // For now, we'll just reset the form
+    selectedInstructor.value = null
+    selectedDate.value = null
+    selectedSlot.value = null
+  } else {
+    alert('Please complete all selections before confirming.')
+  }
+}
+
+function formatDate(dateString) {
+  return new Date(dateString).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+}
+
+onMounted(fetchInstructors)
+</script>
+
 <style scoped>
-/* Add any additional styles for your layout */
+/* Add any additional styles here */
 </style>
