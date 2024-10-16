@@ -5,7 +5,7 @@
         "name": "John Doe",
         "availability": [
           {
-            "date": "2023-06-12",
+            "date": "2024-11-11",
             "slots": [
               {"time": "09:00", "available": true},
               {"time": "10:00", "available": false},
@@ -23,7 +23,7 @@
             ]
           },
           {
-            "date": "2023-06-13",
+            "date": "2024-11-12",
             "slots": [
               {"time": "09:00", "available": false},
               {"time": "10:00", "available": true},
@@ -47,7 +47,7 @@
         "name": "Jane Smith",
         "availability": [
           {
-            "date": "2023-06-12",
+            "date": "2024-11-11",
             "slots": [
               {"time": "09:00", "available": true},
               {"time": "10:00", "available": true},
@@ -65,7 +65,7 @@
             ]
           },
           {
-            "date": "2023-06-13",
+            "date": "2024-11-12",
             "slots": [
               {"time": "09:00", "available": false},
               {"time": "10:00", "available": true},
@@ -89,7 +89,7 @@
         "name": "Mike Johnson",
         "availability": [
           {
-            "date": "2023-06-12",
+            "date": "2024-11-11",
             "slots": [
               {"time": "09:00", "available": false},
               {"time": "10:00", "available": true},
@@ -107,7 +107,7 @@
             ]
           },
           {
-            "date": "2023-06-13",
+            "date": "2024-11-12",
             "slots": [
               {"time": "09:00", "available": true},
               {"time": "10:00", "available": false},

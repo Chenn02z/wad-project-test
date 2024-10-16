@@ -1,51 +1,133 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-blue-100 to-indigo-200 p-8">
-    <div class="max-w-4xl mx-auto">
-      <h1 class="text-4xl font-bold text-indigo-800 text-center mb-10">Your Scheduled Lessons</h1>
-      
-      <div class="relative">
-        <TransitionGroup 
-          name="lesson-list" 
-          tag="div" 
-          class="grid grid-cols-1 md:grid-cols-2 gap-6"
-        >
-          <div 
-            v-for="lesson in visibleLessons" 
-            :key="lesson.id" 
-            class="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105"
-          >
-            <div class="bg-indigo-600 text-white p-4">
-              <h2 class="text-xl font-semibold">{{ formatDate(lesson.date) }}</h2>
+  <div class="container mx-auto p-4">
+    <div class="space-y-0.5 mb-6">
+      <h2 class="text-2xl font-bold tracking-tight">Student Dashboard</h2>
+      <p class="text-muted-foreground">Your learning journey at a glance</p>
+    </div>
+
+    <div class="hidden flex-col md:flex">
+      <div class="flex-1 space-y-4 pt-6">
+        <Tabs default-value="overview" class="space-y-4">
+          <TabsList>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="upcoming-lessons">
+              Upcoming Lessons
+              <Badge variant="destructive" class="ml-2 rounded-full px-2 py-1">{{ lessons.length }}</Badge>
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" class="space-y-4">
+            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <Card>
+                <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle class="text-sm font-medium">Total Lessons</CardTitle>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="h-4 w-4 text-muted-foreground">
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                  </svg>
+                </CardHeader>
+                <CardContent>
+                  <div class="text-2xl font-bold">{{ lessons.length }}</div>
+                  <p class="text-xs text-muted-foreground">+2 from last week</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle class="text-sm font-medium">Hours Learned</CardTitle>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="h-4 w-4 text-muted-foreground">
+                    <rect width="20" height="14" x="2" y="5" rx="2" />
+                    <path d="M2 10h20" />
+                  </svg>
+                </CardHeader>
+                <CardContent>
+                  <div class="text-2xl font-bold">{{ lessons.length }}</div>
+                  <p class="text-xs text-muted-foreground">+1 from last week</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle class="text-sm font-medium">Next Lesson</CardTitle>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="h-4 w-4 text-muted-foreground">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                  </svg>
+                </CardHeader>
+                <CardContent>
+                  <div class="text-2xl font-bold">{{ formatDate(lessons[0].date) }}</div>
+                  <p class="text-xs text-muted-foreground">{{ lessons[0].time }}</p>
+                </CardContent>
+              </Card>
             </div>
-            <div class="p-6">
-              <p class="text-gray-600 mb-2"><span class="font-semibold">Time:</span> {{ lesson.time }}</p>
-              <p class="text-gray-600 mb-2"><span class="font-semibold">Duration:</span> {{ lesson.duration }}</p>
-              <p class="text-gray-600 mb-2"><span class="font-semibold">Location:</span> {{ lesson.location }}</p>
-              <p class="text-gray-600 mb-2"><span class="font-semibold">Instructor:</span> {{ lesson.instructor }}</p>
+            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+              <Card class="col-span-4">
+                <CardHeader>
+                  <CardTitle>Learning Progress</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <!-- Placeholder for a progress chart -->
+                  <div class="h-[200px] bg-gray-100 rounded-md flex items-center justify-center">
+                    Progress Chart Placeholder
+                  </div>
+                </CardContent>
+              </Card>
+              <Card class="col-span-3">
+                <CardHeader>
+                  <CardTitle>Recent Lessons</CardTitle>
+                  <CardDescription>
+                    You've completed {{ lessons.length }} lessons.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div class="space-y-8">
+                    <div v-for="lesson in lessons.slice(0, 5)" :key="lesson.id" class="flex items-center">
+                      <Avatar :class="'h-9 w-9'">
+                        <AvatarImage :src="`https://avatar.vercel.sh/${lesson.instructor.replace(' ', '-')}.png`" alt="Avatar" />
+                        <AvatarFallback>{{ lesson.instructor.split(' ').map(n => n[0]).join('') }}</AvatarFallback>
+                      </Avatar>
+                      <div class="ml-4 space-y-1">
+                        <p class="text-sm font-medium leading-none">{{ lesson.instructor }}</p>
+                        <p class="text-sm text-muted-foreground">
+                          {{ formatDate(lesson.date) }} at {{ lesson.time }}
+                        </p>
+                      </div>
+                      <div class="ml-auto font-medium">{{ lesson.location }}</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-          </div>
-        </TransitionGroup>
-        
-        <div class="flex justify-between mt-6">
-          <button 
-            @click="prevPage" 
-            class="bg-indigo-600 text-white px-4 py-2 rounded-full shadow transition duration-300 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
-            :disabled="currentPage === 1"
-          >
-            Previous
-          </button>
-          <button 
-            @click="nextPage" 
-            class="bg-indigo-600 text-white px-4 py-2 rounded-full shadow transition duration-300 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
-            :disabled="currentPage === totalPages"
-          >
-            Next
-          </button>
-        </div>
+          </TabsContent>
+          <TabsContent value="upcoming-lessons" class="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Upcoming Lessons</CardTitle>
+                <CardDescription>
+                  Your scheduled lessons for the next few weeks
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div class="space-y-8">
+                  <div v-for="lesson in lessons" :key="lesson.id" class="flex items-center">
+                    <Avatar :class="'h-9 w-9'">
+                      <AvatarImage :src="`https://avatar.vercel.sh/${lesson.instructor.replace(' ', '-')}.png`" alt="Avatar" />
+                      <AvatarFallback>{{ lesson.instructor.split(' ').map(n => n[0]).join('') }}</AvatarFallback>
+                    </Avatar>
+                    <div class="ml-4 space-y-1">
+                      <p class="text-sm font-medium leading-none">{{ lesson.instructor }}</p>
+                      <p class="text-sm text-muted-foreground">
+                        {{ formatDate(lesson.date) }} at {{ lesson.time }}
+                      </p>
+                    </div>
+                    <div class="ml-auto font-medium">{{ lesson.location }}</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs> <!-- Add the missing end tag here -->
       </div>
     </div>
   </div>
 </template>
+
 
 <script setup>
 definePageMeta({
