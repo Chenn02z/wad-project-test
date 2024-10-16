@@ -27,33 +27,33 @@
     <!-- Sidebar Navigation using ShadCN Button component for nav links -->
     <nav
       :class="menuOpen ? 'translate-x-0' : '-translate-x-full'"
-      class="side-navbar fixed top-0 left-0 h-full w-50  z-40 md:translate-x-0 transition-transform duration-300 ease-in-out text-slate-700 shadow-lg border border-solid"
+      class="side-navbar fixed top-0 left-0 h-full w-60 z-40 md:translate-x-0 transition-transform duration-300 ease-in-out border border-solid text-white bg-black"
     >
-      <div class="flex flex-col h-full py-8 px-8">
+      <div class="flex flex-col h-full py-8 px-6">
         <!-- Project Title -->
         <div class="mb-10 flex justify-center">
-          <NuxtLink to="/" class="text-3xl font-bold text-slate-700 hover:text-[var(--primary)]">
+          <NuxtLink to="/" class="text-3xl font-bold tracking-tight">
             Edu²
           </NuxtLink>
         </div>
 
         <div class="flex-grow flex flex-col space-y-4">
           <NuxtLink to="/Instructor/HomePage" class="nav-link">
-            <Button variant="ghost" class="w-full justify-start"> 🏠 Home </Button>
+            <Button variant="ghost" class="w-full justify-start">🏠 Home </Button>
           </NuxtLink>
           <NuxtLink to="/Instructor/Availability" class="nav-link w-full">
-            <Button variant="ghost" class="w-full justify-start"> 📅 Availability </Button>
+            <Button variant="ghost" class="w-full justify-start">📅 Availability </Button>
           </NuxtLink>
           <NuxtLink to="/Instructor/StudentAnalysis" class="nav-link w-full">
-            <Button variant="ghost" class="w-full justify-start"> 📝 Student Analysis </Button>
+            <Button variant="ghost" class="w-full justify-start">📝 Student Analysis </Button>
           </NuxtLink>
         </div>
 
         <!-- Profile link flushed to the bottom -->
-        <div class="mt-auto">
-          <Button>
+        <div class="flex justify-center mt-auto">
+          <Button variant="ghost">
             <NuxtLink to="/Instructor/profile" class="nav-link">
-              Profile
+              👤 Profile
             </NuxtLink>
           </Button>
         </div>
@@ -80,3 +80,7 @@ const toggleMenu = () => {
   menuOpen.value = !menuOpen.value;
 };
 </script>
+
+<style>
+
+</style>
