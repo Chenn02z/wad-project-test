@@ -32,7 +32,7 @@ import Cal from "@/components/dashboard/Cal.vue";
     <p class="text-muted-foreground">See your breakdown</p>
   </div>
   <div class="hidden flex-col md:flex">
-    <div class="flex-1 space-y-4 p- pt-6">
+    <div class="flex-1 space-y-4 pt-6">
       <Tabs default-value="overview" class="space-y-4">
         <TabsList>
           <TabsTrigger value="overview"> Overview </TabsTrigger>

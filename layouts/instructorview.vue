@@ -33,7 +33,7 @@
         <!-- Project Title -->
         <div class="mb-10 flex justify-center">
           <NuxtLink to="/" class="text-3xl font-bold tracking-tight">
-            Edu²
+            Learn2Drive
           </NuxtLink>
         </div>
 
@@ -52,7 +52,7 @@
         <!-- Profile link flushed to the bottom -->
         <div class="flex justify-center mt-auto">
           <Button variant="ghost">
-            <NuxtLink to="/Instructor/profile" class="nav-link">
+            <NuxtLink to="/Instructor/ProfileTest" class="nav-link">
               👤 Profile
             </NuxtLink>
           </Button>
