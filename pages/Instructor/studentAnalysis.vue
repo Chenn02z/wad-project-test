@@ -4,8 +4,6 @@ definePageMeta({
 });
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
-import { CurrentStudents } from "@/data/students";
-
 import {
   Card,
   CardContent,
