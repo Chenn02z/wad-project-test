@@ -11,7 +11,6 @@ import {
   CardContent,
 } from "@/components/ui/card";
 
-const students = CurrentStudents;
 import { ref, onMounted } from 'vue';
 const client = useSupabaseClient()
 
