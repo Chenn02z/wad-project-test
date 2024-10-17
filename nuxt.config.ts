@@ -1,21 +1,51 @@
-import Icons from 'unplugin-icons/vite'
+import Icons from 'unplugin-icons/vite';
 
 export default defineNuxtConfig({
-  modules: ['@nuxtjs/tailwindcss', 'shadcn-nuxt'],
+  modules: ['@nuxtjs/tailwindcss', 'shadcn-nuxt', '@nuxtjs/supabase'],
 
-  shadcn: {
-    prefix: '',
-    componentDir: './components/ui'
+  // Runtime Configurations for Environment Variables
+  runtimeConfig: {
+    public: {
+      supabaseUrl: process.env.SUPABASE_URL || '',
+      supabaseKey: process.env.SUPABASE_KEY || '',
+    },
   },
 
+  // Supabase Module Configuration
+  supabase: {
+    redirectOptions: {
+      login: '/',
+      callback: '/confirm',
+      include: undefined,
+      exclude: ['/*'],
+      cookieRedirect: false,
+    },
+
+    // redirectOptions: {
+    //   login: '/',
+    //   callback: '/Instructor/homePage',
+    //   include: undefined,
+    //   exclude: [],
+    //   cookieRedirect: false,
+    // }
+  },
+
+  // shadcn-nuxt Module Configuration
+  shadcn: {
+    prefix: '',
+    componentDir: './components/ui',
+  },
+
+  // Vite Configuration for Icons Plugin
   vite: {
     plugins: [
       Icons({
-        autoInstall: true,  // Automatically installs missing icons
-        compiler: 'vue3'    // Ensure Vue 3 compatibility
-      })
-    ]
+        autoInstall: true, // Automatically installs missing icons
+        compiler: 'vue3', // Ensure Vue 3 compatibility
+      }),
+    ],
   },
 
-  compatibilityDate: '2024-10-10'
-})
+  // Compatibility Settings
+  compatibilityDate: '2024-10-10',
+});

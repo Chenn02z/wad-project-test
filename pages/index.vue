@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import UserAuthForm from '~/pages/Login/Auth.vue'
-import { cn } from '@/lib/utils'
-import { buttonVariants } from '@/components/ui/button'
 definePageMeta({
   layout: false,
 })
