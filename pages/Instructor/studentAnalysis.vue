@@ -12,6 +12,23 @@ import {
 } from "@/components/ui/card";
 
 const students = CurrentStudents;
+import { ref, onMounted } from 'vue';
+const client = useSupabaseClient()
+
+interface Student {
+  id: number;
+  name: string;
+  location: string;
+  time: string;
+  date: string;
+}
+
+const studentview = ref<Student[]>([]);
+onMounted(async () => {
+  const { data } = await client.from('studentview').select();
+  studentview.value = data ?? [];
+});;
+
 </script>
 
 <template>
@@ -23,7 +40,7 @@ const students = CurrentStudents;
 
   <ScrollArea class="w-full max-w-6xl whitespace-nowrap">
     <div class="flex p-4 space-x-4 w-max">
-      <div v-for="student in students" :key="student.name">
+      <div v-for="student in studentview" :key="student.id">
         <figure class="shrink-0">
           <div class="overflow-hidden rounded-md">
             <Card>
