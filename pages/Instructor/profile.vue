@@ -1,65 +1,40 @@
 <script setup lang="ts">
 
 definePageMeta({
-  layout: 'instructorview'
-})
+  layout: "instructorview",
+});
 
-import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button'
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { toast } from '@/components/ui/toast/use-toast'
+import Container from '@/components/profile/Container.vue'
+import EditAccount from '@/components/profile/EditAccount.vue'
+import Notifications from '@/components/profile/Notifications.vue'
+import Security from '@/components/profile/Security.vue'
 
-import { toTypedSchema } from '@vee-validate/zod'
-import { useForm } from 'vee-validate'
-import { h } from 'vue'
-import * as z from 'zod'
-
-const formSchema = toTypedSchema(z.object({
-  username: z.string().min(2).max(50),
-}))
-
-const { isFieldDirty, handleSubmit } = useForm({
-  validationSchema: formSchema,
-})
-
-const onSubmit = handleSubmit((values) => {
-  toast({
-    title: 'You submitted the following values:',
-    description: h('pre', { class: 'mt-2 w-[340px] rounded-md bg-slate-950 p-4' }, h('code', { class: 'text-white' }, JSON.stringify(values, null, 2))),
-  })
-})
 </script>
 
 <template>
-  <div class="space-y-0.5">
-    <h2 class="text-2xl font-bold tracking-tight">Settings</h2>
-    <p class="text-muted-foreground">Manage your account</p>
-  </div>
-  <Separator class="my-4" />
 
-  <form class="w-2/3 space-y-6" @submit="onSubmit">
-    <FormField v-slot="{ componentField }" name="username" :validate-on-blur="!isFieldDirty">
-      <FormItem>
-        <FormLabel>Username</FormLabel>
-        <FormControl>
-          <Input type="text" placeholder="username" v-bind="componentField" />
-        </FormControl>
-        <FormDescription>
-          This is your public display name.
-        </FormDescription>
-        <FormMessage />
-      </FormItem>
-    </FormField>
-    <Button type="submit">
-      Submit
-    </Button>
-  </form>
+    <div class="space-y-0.5">
+    <h2 class="text-2xl font-bold tracking-tight">Profile</h2>
+    <p class="text-muted-foreground">Manage your settings</p>
+  </div>
+
+  <div class=" items-start justify-center gap-6 rounded-lg p-8 md:grid lg:grid-cols-2 xl:grid-cols-4">
+    <div class="col-span-2 grid items-start gap-6 lg:col-span-3">
+      <Container>
+        <EditAccount />
+      </Container>
+    </div>
+    <div class="grid items-start gap-6 lg:col-span-2">
+      <div class="col-span-2">
+        <Container>
+        <Security />
+      </Container>
+      </div>
+    </div>
+    <div class="col-span-2 grid items-start gap-6 lg:col-span-1">
+      <Container>
+        <Notifications />
+      </Container>
+    </div>
+  </div>
 </template>

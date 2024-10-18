@@ -52,7 +52,7 @@
         <!-- Profile link flushed to the bottom -->
         <div class="flex justify-center mt-auto">
           <Button variant="ghost">
-            <NuxtLink to="/Instructor/ProfileTest" class="nav-link">
+            <NuxtLink to="/Instructor/Profile" class="nav-link">
               👤 Profile
             </NuxtLink>
           </Button>
