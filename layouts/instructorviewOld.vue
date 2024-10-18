@@ -35,7 +35,7 @@
 
         <!-- Profile link flushed to the bottom -->
         <div class="mt-auto">
-          <NuxtLink to="/Instructor/profile" class="nav-link">
+          <NuxtLink to="/Instructor/Profile" class="nav-link">
             Profile
           </NuxtLink>
         </div>
