@@ -7,7 +7,7 @@
 
         <div class="flex-col md:flex">
             <div class="flex-1 space-y-4 pt-6">
-                <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
                     <!-- Total Lessons Completed Card -->
                     <Card>
                         <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -132,7 +132,12 @@ const lessonsThisWeek = computed(() => {
 // Finding the next upcoming lesson
 const nextLesson = computed(() => {
     if (lessons.value.length === 0) return null; // Return null if there are no lessons
-    return lessons.value.find(lesson => new Date(lesson.date) > today) || null; // Return null if no upcoming lesson found
+
+    // Sort lessons by date in ascending order
+    const sortedLessons = lessons.value.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    // Find the first lesson that is after today
+    return sortedLessons.find(lesson => new Date(lesson.date) > today) || null; // Return null if no upcoming lesson found
 });
 
 // Filtering lessons for next week (within 7 days from today)
