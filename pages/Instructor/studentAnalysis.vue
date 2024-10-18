@@ -3,13 +3,8 @@ definePageMeta({
   layout: "instructorview",
 });
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Card, CardContent } from "@/components/ui/card";
 
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
-
-import { ref, onMounted } from 'vue';
 import {
   Dialog,
   DialogContent,
@@ -20,12 +15,17 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 
+import { ref, onMounted } from 'vue';
+
+const client = useSupabaseClient();
+
 interface Student {
   id: number;
   name: string;
   location: string;
   time: string;
   date: string;
+  contact: string; 
   upcomingLessonTopic: string; 
 }
 
@@ -35,14 +35,7 @@ onMounted(async () => {
   studentview.value = data ?? [];
 });
 
-// Function stubs for rescheduling and canceling lessons
-const rescheduleLesson = (studentId: number) => {
-  console.log(`Rescheduling lesson for student ID: ${studentId}`);
-};
 
-const cancelLesson = (studentId: number) => {
-  console.log(`Canceling lesson for student ID: ${studentId}`);
-};
 </script>
 
 <template>
@@ -60,7 +53,7 @@ const cancelLesson = (studentId: number) => {
       >
         <figure class="shrink-0">
           <div class="overflow-hidden rounded-md">
-            <Card>
+            <Card class="h-full overflow-hidden">
               <CardContent>
                 <img class="rounded-md"
                   src="https://via.placeholder.com/150"
@@ -74,68 +67,57 @@ const cancelLesson = (studentId: number) => {
                 <p>Upcoming Lesson: {{ student.upcomingLessonTopic }}</p>
               </CardContent>
               <div class="mt-4 flex justify-between px-4 pb-4">
-              <Dialog>
-              <DialogTrigger as-child>
-                <button
-                  class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-                  @click="rescheduleLesson(student.id)"
-                >
-                  Reschedule
-                </button>
-              </DialogTrigger>
-              <DialogContent class="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Reschedule Lesson</DialogTitle>
-                  <DialogDescription>
-                    Current lesson: {{student.date}}, {{student.time}}, {{student.location}}
-                  </DialogDescription>
-                </DialogHeader>
-                <div class="grid gap-4 py-4">
-                  <div class="grid grid-cols-4 items-center gap-4">
-                    <Label for="time" class="text-right">
-                      Time of rescheduled class
-                    </Label>
-                    <Input id="time" class="col-span-3" />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button type="submit">
-                    Save changes
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-              </Dialog>
-              <Dialog>
-              <DialogTrigger as-child>
-                <button
-                  class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-                  @click="cancelLesson(student.id)"
-                >
-                  Cancel
-                </button>
-                </DialogTrigger>
-                <DialogContent class="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Reschedule Lesson</DialogTitle>
-                  <DialogDescription>
-                    Current lesson: {{student.date}}, {{student.time}}, {{student.location}}
-                  </DialogDescription>
-                </DialogHeader>
-                <div class="grid gap-4 py-4">
-                  <div class="grid grid-cols-4 items-center gap-4">
-                    <Label for="time" class="text-right">
-                      Time of rescheduled class
-                    </Label>
-                    <Input id="time" class="col-span-3" />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button type="submit">
-                    Save changes
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-              </Dialog>
+                <!-- Reschedule Dialog -->
+                <Dialog>
+                  <DialogTrigger as-child>
+                    <button
+                      class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                    >
+                      Reschedule
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent class="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Reschedule Lesson</DialogTitle>
+                      <DialogDescription>
+                        Current lesson: {{student.date}}, {{student.time}}, {{student.location}}
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div class="grid gap-4 py-4">
+                      <div class="grid grid-cols-4 items-center gap-4">
+                        <label for="time" class="text-right">
+                          Time of rescheduled class
+                        </label>
+                        <input id="time" type="text" class="col-span-3 input" />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <button class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition">Save changes</button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+
+                <!-- Cancel Dialog -->
+                <Dialog>
+                  <DialogTrigger as-child>
+                    <button
+                      class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent class="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Cancel Lesson</DialogTitle>
+                      <DialogDescription>
+                        Are you sure you want to cancel the lesson scheduled for {{student.date}}?
+                      </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                      <button class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition">Yes, Cancel</button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
             </Card>
           </div>
@@ -148,14 +130,19 @@ const cancelLesson = (studentId: number) => {
 
 <style scoped>
 .student-card {
-  width: 220px; /* Default width */
+  width: 220px;
   cursor: pointer;
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  overflow: hidden;
 }
 
 .student-card:hover {
-  transform: scale(1.1); /* Slightly increase size on hover */
+  transform: scale(1.1);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  z-index: 10; /* Make sure the card appears above others when hovered */
+  z-index: 10;
+}
+
+.dialog {
+  overflow: visible;
 }
 </style>
