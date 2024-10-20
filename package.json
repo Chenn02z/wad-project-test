@@ -11,9 +11,10 @@
   },
   "dependencies": {
     "@formkit/auto-animate": "^0.8.2",
+    "@heroicons/vue": "^2.1.5",
     "@nuxtjs/supabase": "^1.4.1",
     "@radix-icons/vue": "^1.0.0",
-    "@supabase/supabase-js": "^2.45.4",
+    "@supabase/supabase-js": "^2.45.6",
     "@unovis/ts": "^1.4.3-beta.0",
     "@unovis/vue": "^1.4.3-beta.0",
     "@vee-validate/zod": "^4.13.2",
