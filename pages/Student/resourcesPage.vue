@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 
 <template>
   <div class="flex flex-col">
-    <h1 class="font-bold text-2xl">Resources</h1>
+    <h1 class="text-3xl font-bold tracking-tight">Resources</h1>
     <br>
   
     <div class="grid grid-cols-2 gap-4">
