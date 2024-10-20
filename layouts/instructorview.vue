@@ -50,6 +50,7 @@
           </NuxtLink>
           <NuxtLink to="/Instructor/StudentAnalysis" class="nav-link w-full">
             <Button variant="ghost" class="w-full justify-start">
+
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
