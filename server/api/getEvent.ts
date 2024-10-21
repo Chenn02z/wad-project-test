@@ -1,6 +1,5 @@
 import { google } from "googleapis";
-import { promises as fs } from "fs";
-import { resolve } from "path";
+import { getGoogleServiceAccountCredentials } from '../config/googleServiceAccount';
 import { CALENDAR_ID } from "../config/calendar";
 import type { calendar_v3 } from "googleapis";
 
@@ -16,8 +15,7 @@ export default defineEventHandler(async (event) => {
       typeof timeMax === "string" ? new Date(timeMax).toISOString() : undefined;
 
     // Service account credentials
-    const credentialsPath = resolve("server/config/service_account_key.json");
-    const credentials = JSON.parse(await fs.readFile(credentialsPath, "utf-8"));
+    const credentials = getGoogleServiceAccountCredentials();
 
     // Authenticate the service account
     const auth = new google.auth.GoogleAuth({

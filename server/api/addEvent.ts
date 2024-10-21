@@ -1,6 +1,5 @@
 import { google } from 'googleapis';
-import { promises as fs } from 'fs';
-import { resolve } from 'path';
+import { getGoogleServiceAccountCredentials } from '../config/googleServiceAccount';
 import { CALENDAR_ID } from '../config/calendar';
 
 export default defineEventHandler(async (event) => {
@@ -29,8 +28,7 @@ export default defineEventHandler(async (event) => {
       throw new Error('Student ID is required.');
     }
 
-    const credentialsPath = resolve('server/config/service_account_key.json');
-    const credentials = JSON.parse(await fs.readFile(credentialsPath, 'utf-8'));
+    const credentials = getGoogleServiceAccountCredentials();
 
     const auth = new google.auth.GoogleAuth({
       credentials,

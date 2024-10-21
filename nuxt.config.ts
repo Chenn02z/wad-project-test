@@ -5,6 +5,14 @@ export default defineNuxtConfig({
 
   // Runtime Configurations for Environment Variables
   runtimeConfig: {
+
+    googleProjectId: process.env.GOOGLE_PROJECT_ID,
+    googlePrivateKeyId: process.env.GOOGLE_PRIVATE_KEY_ID,
+    googlePrivateKey: process.env.GOOGLE_PRIVATE_KEY,
+    googleClientEmail: process.env.GOOGLE_CLIENT_EMAIL,
+    googleClientId: process.env.GOOGLE_CLIENT_ID,
+    googleClientX509CertUrl: process.env.GOOGLE_CLIENT_X509_CERT_URL,
+    
     public: {
       supabaseUrl: process.env.SUPABASE_URL || '',
       supabaseKey: process.env.SUPABASE_KEY || '',
