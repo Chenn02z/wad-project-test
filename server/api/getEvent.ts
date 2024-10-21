@@ -38,20 +38,11 @@ export default defineEventHandler(async (event) => {
     const response = await calendar.events.list(options);
 
     // Preset student ID (replace with session-based ID once auth is set up)
-    const presetStudentId = ""; // When empty, include all students
-
-    // Filter events by instructor or student ID
     const events = (response.data.items || []).filter(
       (event: calendar_v3.Schema$Event) => {
-        const instructorMatch = instructorId
+        return instructorId
           ? event.extendedProperties?.private?.instructor_id === instructorId
           : true;
-
-        const studentMatch = presetStudentId
-          ? event.extendedProperties?.private?.student_id === presetStudentId
-          : true; // If presetStudentId is empty, skip filtering by student
-
-        return instructorMatch && studentMatch;
       }
     );
 
