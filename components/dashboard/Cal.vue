@@ -27,11 +27,11 @@ const groupedEvents = ref<Record<string, CalendarEvent[]>>({}); // Grouped event
 const isLoading = ref(false); // Loading state
 
 // Function to fetch weekly events
-const fetchWeeklyEvents = async (startDate: string) => {
+const fetchWeeklyEvents = async (startDate: string, instructorId: string) => {
   isLoading.value = true;
   try {
     const { data, error } = await useFetch<{ success: boolean; data?: CalendarEvent[] }>("/api/getEvent", {
-      params: { timeMin: startDate },
+      params: { timeMin: startDate, instructorId },
     });
 
     if (error.value) {
@@ -54,7 +54,6 @@ const fetchWeeklyEvents = async (startDate: string) => {
   }
 };
 
-// Function to group events by date
 const groupEventsByDate = () => {
   groupedEvents.value = weeklyEvents.value.reduce((acc, event) => {
     const eventDate = event.start?.dateTime?.split("T")[0] || event.start?.date || "Unknown";
@@ -66,12 +65,12 @@ const groupEventsByDate = () => {
   }, {} as Record<string, CalendarEvent[]>);
 };
 
-// Fetch the events when the component mounts
 onMounted(() => {
   const startOfWeek = new Date();
-  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1); // Start from Monday
-  const startDate = startOfWeek.toISOString().split("T")[0]; // ISO format YYYY-MM-DD
-  fetchWeeklyEvents(startDate); // Fetch events for the current week
+  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1);
+  const startDate = startOfWeek.toISOString().split("T")[0];
+  const instructorId = "Instructor 2"; // hardcoded - replace with session ID
+  fetchWeeklyEvents(startDate, instructorId);
 });
 
 // Helper function to format time
@@ -86,13 +85,11 @@ const formatTime = (dateTime: string | undefined): string => {
   return `${hours}:${minutesStr} ${ampm}`;
 };
 
-// Helper function to check if the date is today
 const isToday = (date: string): boolean => {
   const today = new Date().toISOString().split("T")[0];
   return date === today;
 };
 
-// Helper function to format date
 const formatDate = (dateTime: string | undefined): string => {
   if (!dateTime) return "N/A";
   const date = new Date(dateTime);
@@ -110,7 +107,6 @@ const formatDate = (dateTime: string | undefined): string => {
         <p>Loading events...</p>
       </div>
 
-      <!-- Loop through grouped events -->
       <div v-if="!isLoading && Object.keys(groupedEvents).length">
         <div v-for="(events, date) in groupedEvents" :key="date" class="inline-block w-1/4 mr-4">
           <Card class="mb-4">
@@ -129,6 +125,7 @@ const formatDate = (dateTime: string | undefined): string => {
                   </Avatar>
                   <div class="ml-4 space-y-1">
                     <p class="text-sm font-medium leading-none">{{ event.extendedProperties?.private?.student_id || "N/A" }}</p>
+                    <p class="text-sm font-medium leading-none">{{ event.extendedProperties?.private?.instructor_id || "N/A" }}</p>
                   </div>
                 </div>
                 <div class="text-right">
