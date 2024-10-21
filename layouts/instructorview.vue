@@ -68,6 +68,11 @@
               Student Analysis
             </Button>
           </NuxtLink>
+          <NuxtLink to="/Instructor/addEvents" class="nav-link w-full">
+            <Button variant="ghost" class="w-full justify-start"
+              >add
+            </Button>
+          </NuxtLink>
         </div>
 
         <!-- Profile link flushed to the bottom -->

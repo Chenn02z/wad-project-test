@@ -19,6 +19,12 @@ import { ref, onMounted } from 'vue';
 
 const client = useSupabaseClient();
 
+const studentview = ref<Student[]>([]);
+onMounted(async () => {
+  const { data } = await client.from('studentview').select();
+  studentview.value = data ?? [];
+})
+
 interface Student {
   id: number;
   name: string;
@@ -28,12 +34,7 @@ interface Student {
   contact: string; 
   upcomingLessonTopic: string; 
 }
-
-const studentview = ref<Student[]>([]);
-onMounted(async () => {
-  const { data } = await client.from('studentview').select();
-  studentview.value = data ?? [];
-});
+;
 
 
 </script>
