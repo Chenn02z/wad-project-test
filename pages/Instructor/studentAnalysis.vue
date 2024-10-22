@@ -17,7 +17,7 @@ const students = CurrentStudents;
   <ScrollArea class="w-full max-w-6xl whitespace-nowrap">
     <div class="flex p-4 space-x-4 w-max">
       <div
-        v-for="student in studentview"
+        v-for="student in students"
         :key="student.id"
         class="student-card"
       >
