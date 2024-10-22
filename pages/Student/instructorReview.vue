@@ -1,30 +1,58 @@
 <template>
-    <div class="flex flex-col p-6">
-      <h1 class="text-3xl font-bold mb-4">Instructor Reviews</h1>
-      <div class="bg-white rounded-lg shadow-lg p-4">
-        <ul>
-          <li class="py-2 border-b">
-            <h2 class="text-xl font-semibold">John Doe</h2>
-            <p class="text-gray-600">Rating: ⭐⭐⭐⭐⭐</p>
-            <p>John is very patient and explains concepts clearly.</p>
-          </li>
-          <li class="py-2 border-b">
-            <h2 class="text-xl font-semibold">Jane Smith</h2>
-            <p class="text-gray-600">Rating: ⭐⭐⭐⭐</p>
-            <p>Jane provides excellent feedback and is very encouraging.</p>
-          </li>
-          <li class="py-2 border-b">
-            <h2 class="text-xl font-semibold">Mark Johnson</h2>
-            <p class="text-gray-600">Rating: ⭐⭐⭐</p>
-            <p>Mark was good, but could improve on pacing the lessons.</p>
-          </li>
-        </ul>
-      </div>
+    <div class="flex flex-col">
+      <h1 class="text-3xl font-bold tracking-tight">Reviews</h1>
+      <br>
+      <Card class="relative flex items-center justify-between p-4 overflow-hidden">
+  <!-- Image on the leftmost side -->
+  <div class="flex-shrink-0 mr-4">
+    <img 
+      height="100px" 
+      width="100px" 
+      src="https://scontent.fsin14-2.fna.fbcdn.net/v/t39.30808-6/311131601_159346513392988_2524761502451219904_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=Yf2seX74QjAQ7kNvgGEyEPO&_nc_zt=23&_nc_ht=scontent.fsin14-2.fna&_nc_gid=ACoU4KLZNSN1hrATqPggZVl&oh=00_AYAGmkRREWT30r0IH5zV7H4j1V9ttYA_n_dfuHrxkrEf0Q&oe=671D81C1" 
+      alt="Instructor Uncle" 
+      class="rounded-full"
+    />
+  </div>
+  
+  <!-- Name and rating in the center -->
+  <div class="flex-grow">
+    <h1 class="text-xl font-bold">Instructor Uncle</h1>
+    <div class="inline-flex items-center">
+      <h2 class="text-lg">4.1</h2>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="gold" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 ml-1" style="color: gold;">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" />
+      </svg>
     </div>
+  </div>
+  
+  <!-- Total reviews on the rightmost side -->
+  <div class="flex-shrink-0 ml-4 text-center">
+    <h2 class="text-lg">Total reviews:<br>10</h2>
+  </div>
+</Card>
+
+    </div>
+
   </template>
 
 <script setup lang="ts">
 definePageMeta({
   layout: 'studentview'
-})
+});
+
+import {Card, CardContent, CardDescription} from '@/components/ui/card';
+
+// import { ref, onMounted } from 'vue';
+// import { supabase } from '~/supabase';
+
+// const instructor = ref([]);
+
+// // Fetch teacher data on component mount
+// onMounted(async () => {
+//   const { data: instructorData } = await supabase
+//     .from('instructor_overall_reviews')
+//     .select('*');
+//   instructor.value = instructorData;
+// });
+
 </script>
