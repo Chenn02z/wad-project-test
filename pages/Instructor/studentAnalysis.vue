@@ -3,9 +3,26 @@ definePageMeta({
   layout: "instructorview",
 });
 
-import { CurrentStudents } from '@/data/students';
+// import { CurrentStudents } from '@/data/students';
 
-const students = CurrentStudents;
+// const students = CurrentStudents;
+
+const client = useSupabaseClient();
+
+interface Student {
+  id: number;
+  name: string;
+  location: string;
+  time: string;
+  date: string;
+  contact: string;
+  upcomingLessonTopic: string;
+}
+
+const { data: studentview } = await useAsyncData<Student[]>('studentview', async () => {
+  const { data } = await client.from('studentview').select();
+  return data ?? [];
+});
 </script>
 
 <template>
@@ -17,7 +34,7 @@ const students = CurrentStudents;
   <ScrollArea class="w-full max-w-6xl whitespace-nowrap">
     <div class="flex p-4 space-x-4 w-max">
       <div
-        v-for="student in students"
+        v-for="student in studentview"
         :key="student.id"
         class="student-card"
       >
