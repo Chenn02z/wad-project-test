@@ -38,15 +38,32 @@
         </div>
 
         <div class="flex-grow flex flex-col space-y-4">
-          <NuxtLink to="/Instructor/HomePage" class="nav-link">
-            🏠 Home
-          </NuxtLink>
-          <NuxtLink to="/Instructor/Availability" class="nav-link">
-            📅 Availability
-          </NuxtLink>
-          <NuxtLink to="/Instructor/StudentAnalysis" class="nav-link">
-            📝 Student Analysis
-          </NuxtLink>
+          <Button variant="ghost" class="w-full">
+            <NuxtLink
+              to="/Instructor/HomePage"
+              class="nav-link text-left w-full"
+            >
+              🏠 Home
+            </NuxtLink>
+          </Button>
+          <Button variant="ghost" class="w-full">
+            <NuxtLink
+              to="/Instructor/Availability"
+              class="nav-link text-left w-full"
+            >
+              📅 Availability
+            </NuxtLink>
+          </Button>
+          <Button variant="ghost" class="w-full">
+            <NuxtLink
+              to="/Instructor/StudentAnalysis"
+              class="nav-link text-left w-full"
+            >
+              📝 Student Analysis
+            </NuxtLink>
+          </Button>
+
+          <NuxtLink to="/Instructor/addEvents" class="nav-link"> add </NuxtLink>
         </div>
 
         <!-- Profile link flushed to the bottom -->
