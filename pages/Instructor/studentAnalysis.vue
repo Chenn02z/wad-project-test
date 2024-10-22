@@ -2,40 +2,10 @@
 definePageMeta({
   layout: "instructorview",
 });
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Card, CardContent } from "@/components/ui/card";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
+import { CurrentStudents } from '@/data/students';
 
-import { ref, onMounted } from 'vue';
-
-const client = useSupabaseClient();
-
-interface Student {
-  id: number;
-  name: string;
-  location: string;
-  time: string;
-  date: string;
-  contact: string; 
-  upcomingLessonTopic: string; 
-}
-
-const studentview = ref<Student[]>([]);
-onMounted(async () => {
-  const { data } = await client.from('studentview').select();
-  studentview.value = data ?? [];
-});
-
-
+const students = CurrentStudents;
 </script>
 
 <template>
