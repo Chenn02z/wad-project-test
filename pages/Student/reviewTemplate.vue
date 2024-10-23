@@ -1,10 +1,73 @@
+<script setup lang="ts">
+
+definePageMeta({
+  layout: "studentview",
+});
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
+import { Button } from "@/components/ui/button";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+import { ref } from 'vue';
+type Checked = DropdownMenuCheckboxItemProps['checked']
+
+const showNewest = ref<Checked>(true)
+const showHighest = ref<Checked>(false)
+const showLowest = ref<Checked>(false)
+</script>
+
 <template>
-    <div class="flex flex-col">
-      <h1 class="text-3xl font-bold tracking-tight">Reviews</h1>
-      <br>
-      <NuxtLink to="reviewTemplate">
-      <Card class="card">
-        <div class="flex-shrink-0 mr-16">
+  <div class="flex flex-col">
+  <h1 class="text-3xl font-bold tracking-tight">Instructor Uncle's Reviews</h1>
+  <br>
+  <span>
+    <DropdownMenu>
+    <DropdownMenuTrigger as-child>
+      <Button variant="outline">
+        Sort reviews
+      </Button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent class="w-56">
+      <DropdownMenuCheckboxItem
+        v-model:checked="showNewest"
+      >
+        Newest
+      </DropdownMenuCheckboxItem>
+      <DropdownMenuCheckboxItem
+        v-model:checked="showHighest"
+        disabled
+      >
+        Highest
+      </DropdownMenuCheckboxItem>
+      <DropdownMenuCheckboxItem
+        v-model:checked="showLowest"
+      >
+        Lowest
+      </DropdownMenuCheckboxItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+</span>
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight">Review Summary</h1>
+    </div>
+    <Card class="card">
+      <div class="flex-shrink-0 mr-16">
           <img 
             height="100px" 
             width="100px" 
@@ -30,11 +93,8 @@
           <h2 class="text-lg"><b>Total reviews:</b><br>10</h2>
         </div>
       </Card>
-    </NuxtLink>
     </div>
-
-  </template>
-
+</template>
 
 <style>
   .card {
@@ -51,24 +111,3 @@
     background-color: #bfc2c5;
   }
 </style>
-<script setup lang="ts">
-definePageMeta({
-  layout: 'studentview'
-});
-
-import {Card, CardContent, CardDescription} from '@/components/ui/card';
-
-// import { ref, onMounted } from 'vue';
-// import { supabase } from '~/supabase';
-
-// const instructor = ref([]);
-
-// // Fetch teacher data on component mount
-// onMounted(async () => {
-//   const { data: instructorData } = await supabase
-//     .from('instructor_overall_reviews')
-//     .select('*');
-//   instructor.value = instructorData;
-// });
-
-</script>
