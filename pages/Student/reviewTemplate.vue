@@ -34,35 +34,29 @@ const showLowest = ref<Checked>(false)
 
 <template>
   <div class="flex flex-col">
-  <h1 class="text-3xl font-bold tracking-tight">Instructor Uncle's Reviews</h1>
-  <br>
-  <span>
-    <DropdownMenu>
-    <DropdownMenuTrigger as-child>
-      <Button variant="outline">
-        Sort reviews
-      </Button>
-    </DropdownMenuTrigger>
-    <DropdownMenuContent class="w-56">
-      <DropdownMenuCheckboxItem
-        v-model:checked="showNewest"
-      >
-        Newest
-      </DropdownMenuCheckboxItem>
-      <DropdownMenuCheckboxItem
-        v-model:checked="showHighest"
-        disabled
-      >
-        Highest
-      </DropdownMenuCheckboxItem>
-      <DropdownMenuCheckboxItem
-        v-model:checked="showLowest"
-      >
-        Lowest
-      </DropdownMenuCheckboxItem>
-    </DropdownMenuContent>
-  </DropdownMenu>
-</span>
+    <div class="inline-flex"><h1 class="text-3xl font-bold tracking-tight">Instructor Uncle's Reviews</h1>
+    <br>
+    <div>
+      <DropdownMenu>
+        <DropdownMenuTrigger as-child>
+          <Button variant="outline">
+            Sort reviews
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent class="w-56">
+          <DropdownMenuCheckboxItem v-model:checked="showNewest">
+            Newest
+          </DropdownMenuCheckboxItem>
+          <DropdownMenuCheckboxItem v-model:checked="showHighest" disabled>
+            Highest
+          </DropdownMenuCheckboxItem>
+          <DropdownMenuCheckboxItem v-model:checked="showLowest">
+            Lowest
+          </DropdownMenuCheckboxItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div></div>
+
     <div>
       <h1 class="text-2xl font-bold tracking-tight">Review Summary</h1>
     </div>
@@ -93,7 +87,7 @@ const showLowest = ref<Checked>(false)
           <h2 class="text-lg"><b>Total reviews:</b><br>10</h2>
         </div>
       </Card>
-    </div>
+    </div>  
 </template>
 
 <style>
