@@ -52,16 +52,16 @@
                     </CardHeader>
                     <CardContent>
                         <div class="space-y-8">
-                            <div v-for="lesson in nextWeekLessons" :key="lesson.id" class="flex items-center">
+                            <div v-for="lesson in nextWeekLessons" class="flex items-center">
                                 <Avatar :class="'h-9 w-9'">
                                     <AvatarImage
-                                        :src="`https://avatar.vercel.sh/${lesson.instructor.replace(' ', '-')}.png`"
+                                        :src="`https://avatar.vercel.sh/${lesson.instructor_name.replace(' ', '-')}.png`"
                                         alt="Avatar" />
-                                    <AvatarFallback>{{ lesson.instructor.split(' ').map(n => n[0]).join('') }}
+                                    <AvatarFallback>{{ lesson.instructor_name.split(' ').map(n => n[0]).join('') }}
                                     </AvatarFallback>
                                 </Avatar>
                                 <div class="ml-4 space-y-1">
-                                    <p class="text-sm font-medium leading-none">{{ lesson.instructor }}</p>
+                                    <p class="text-sm font-medium leading-none">{{ lesson.instructor_name}}</p>
                                     <p class="text-sm text-muted-foreground">{{ formatDate(lesson.date) }} at {{
                                         lesson.time }}</p>
                                 </div>
@@ -89,9 +89,9 @@ import { onMounted } from 'vue';
 const client = useSupabaseClient()
 
 interface Lesson {
-    id: number;
+    instructor_id: number;
     student_id: number;
-    instructor: string;
+    instructor_name: string;
     date: string;
     time: string;
     location: string;
@@ -131,22 +131,38 @@ const lessonsThisWeek = computed(() => {
 
 // Finding the next upcoming lesson
 const nextLesson = computed(() => {
-    if (lessons.value.length === 0) return null; // Return null if there are no lessons
+    if (lessons.value.length === 0) return null; // Return null if no lessons are available
 
-    // Sort lessons by date in ascending order
-    const sortedLessons = lessons.value.sort((a, b) => new Date(a.date) - new Date(b.date));
+    const now = new Date(); // Current date and time
 
-    // Find the first lesson that is after today
-    return sortedLessons.find(lesson => new Date(lesson.date) > today) || null; // Return null if no upcoming lesson found
+    // Filter and sort lessons that are after the current time
+    const upcomingLessons = lessons.value
+        .filter(lesson => new Date(lesson.date + 'T' + lesson.time) > now) // Compare both date and time
+        .sort((a, b) => new Date(a.date + 'T' + a.time) - new Date(b.date + 'T' + b.time)); // Sort by date and time
+
+    // Return the first lesson in the sorted upcoming lessons
+    return upcomingLessons.length > 0 ? upcomingLessons[0] : null;
 });
 
 // Filtering lessons for next week (within 7 days from today)
+// Filtering lessons for next week (within 7 days from today) and sorting by time
 const nextWeekLessons = computed(() => {
-    const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0); // Reset time to 00:00:00 today
+    const nextWeek = new Date(todayStart.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days from now
+
     return lessons.value
-        .filter(lesson => new Date(lesson.date) > today && new Date(lesson.date) <= nextWeek)
-        .sort((a, b) => new Date(a.date) - new Date(b.date)); // Sort by date
+        .filter(lesson => {
+            const lessonDate = new Date(lesson.date);
+            return lessonDate >= todayStart && lessonDate < nextWeek;
+        })
+        .sort((a, b) => {
+            const aDateTime = new Date(`${a.date}T${a.time}`);
+            const bDateTime = new Date(`${b.date}T${b.time}`);
+            return aDateTime - bDateTime; // Sort by date and then by time
+        }); // Sort by date and time
 });
+
 
 
 // Date formatter for display
