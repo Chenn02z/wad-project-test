@@ -63,7 +63,8 @@
             </NuxtLink>
           </Button>
 
-          <NuxtLink to="/Instructor/addEvents" class="nav-link"> add </NuxtLink>
+          <NuxtLink to="/Instructor/archives/add" class="nav-link"> add </NuxtLink>
+          <NuxtLink to="/Instructor/archives/get" class="nav-link"> get </NuxtLink>
         </div>
 
         <!-- Profile link flushed to the bottom -->

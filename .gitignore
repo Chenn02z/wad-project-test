@@ -23,4 +23,6 @@ logs
 .env.*
 !.env.example
 
-server/config/service_account_key.json
+# Ignore generated API credentials
+server/config/key.json
+

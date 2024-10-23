@@ -22,40 +22,50 @@ interface CalendarEvent {
 }
 
 // State variables
-const weeklyEvents = ref<CalendarEvent[]>([]); // Events for the current week
+const eventsFromToday = ref<CalendarEvent[]>([]); // Events from today onward
 const groupedEvents = ref<Record<string, CalendarEvent[]>>({}); // Grouped events by date
 const isLoading = ref(false); // Loading state
+const errorMessage = ref(""); // Error message for debugging
 
-// Function to fetch weekly events
-const fetchWeeklyEvents = async (startDate: string, instructorId: string) => {
+// Function to fetch events from today onwards
+const fetchEventsFromToday = async (instructorId: string) => {
   isLoading.value = true;
+  errorMessage.value = ""; // Clear previous error message
   try {
-    const { data, error } = await useFetch<{ success: boolean; data?: CalendarEvent[] }>("/api/getEvent", {
-      params: { timeMin: startDate, instructorId },
+    // Fetch the data from the API with timeMin set to the current date/time (today onward)
+    const { data, error } = await useFetch<{ success: boolean; data?: CalendarEvent[] }>("/api/getEvents", {
+      params: { timeMin: new Date().toISOString(), instructorId }, // timeMin is now from today onwards
     });
+
+    // Log the response data for debugging purposes
+    console.log("API Response:", data.value);
 
     if (error.value) {
       throw new Error(error.value.message || "Failed to fetch events");
     }
 
+    // Check if the API returned success and events
     if (data.value?.success && data.value.data) {
-      weeklyEvents.value = data.value.data;
+      eventsFromToday.value = data.value.data;
       groupEventsByDate();
     } else {
-      weeklyEvents.value = [];
+      eventsFromToday.value = [];
       groupedEvents.value = {};
+      errorMessage.value = "No events found or API request failed.";
     }
   } catch (err) {
-    console.error(err);
-    weeklyEvents.value = [];
+    console.error("Error fetching events:", err);
+    errorMessage.value = err instanceof Error ? err.message : String(err);
+    eventsFromToday.value = [];
     groupedEvents.value = {};
   } finally {
     isLoading.value = false;
   }
 };
 
+// Function to group events by date
 const groupEventsByDate = () => {
-  groupedEvents.value = weeklyEvents.value.reduce((acc, event) => {
+  groupedEvents.value = eventsFromToday.value.reduce((acc, event) => {
     const eventDate = event.start?.dateTime?.split("T")[0] || event.start?.date || "Unknown";
     if (!acc[eventDate]) {
       acc[eventDate] = [];
@@ -65,12 +75,10 @@ const groupEventsByDate = () => {
   }, {} as Record<string, CalendarEvent[]>);
 };
 
+// On mounted, fetch events starting from today
 onMounted(() => {
-  const startOfWeek = new Date();
-  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1);
-  const startDate = startOfWeek.toISOString().split("T")[0];
-  const instructorId = "Instructor 2"; // hardcoded - replace with session ID
-  fetchWeeklyEvents(startDate, instructorId);
+  const instructorId = "Instructor 1"; // hardcoded - replace with session ID
+  fetchEventsFromToday(instructorId);
 });
 
 // Helper function to format time
@@ -85,11 +93,13 @@ const formatTime = (dateTime: string | undefined): string => {
   return `${hours}:${minutesStr} ${ampm}`;
 };
 
+// Helper function to check if the date is today
 const isToday = (date: string): boolean => {
   const today = new Date().toISOString().split("T")[0];
   return date === today;
 };
 
+// Helper function to format the date
 const formatDate = (dateTime: string | undefined): string => {
   if (!dateTime) return "N/A";
   const date = new Date(dateTime);
@@ -99,18 +109,26 @@ const formatDate = (dateTime: string | undefined): string => {
 
 <template>
   <CardHeader>
-    <CardTitle>Weekly Lessons</CardTitle>
+    <CardTitle>Upcoming Lessons</CardTitle>
   </CardHeader>
   <CardContent class="pl-2">
     <ScrollArea class="w-100% whitespace-nowrap">
+      <!-- Loading State -->
       <div v-if="isLoading">
         <p>Loading events...</p>
       </div>
 
+      <!-- Error Message -->
+      <div v-if="!isLoading && errorMessage">
+        <p class="text-red-500">{{ errorMessage }}</p>
+      </div>
+
+      <!-- Display Events -->
       <div v-if="!isLoading && Object.keys(groupedEvents).length">
         <div v-for="(events, date) in groupedEvents" :key="date" class="inline-block w-1/4 mr-4">
           <Card class="mb-4">
             <CardHeader>
+              <!-- Highlight today's events in red and display 'Today' -->
               <CardTitle :class="isToday(date) ? 'text-red-500' : ''">
                 {{ isToday(date) ? 'Today' : formatDate(date) }}
               </CardTitle>
@@ -118,36 +136,33 @@ const formatDate = (dateTime: string | undefined): string => {
             <CardContent>
               <ScrollArea class="h-72 w-100%">
                 <div v-for="event in events" :key="event.id" class="mb-4">
-                <div class="flex items-center">
-                  <Avatar class="h-9 w-9">
-                    <AvatarImage src="" alt="Avatar" />
-                    <AvatarFallback>{{ event.extendedProperties?.private?.student_id?.slice(0, 2).toUpperCase() || "N/A" }}</AvatarFallback>
-                  </Avatar>
-                  <div class="ml-4 space-y-1">
-                    <p class="text-sm font-medium leading-none">{{ event.extendedProperties?.private?.student_id || "N/A" }}</p>
-                    <p class="text-sm font-medium leading-none">{{ event.extendedProperties?.private?.instructor_id || "N/A" }}</p>
+                  <div class="flex items-center">
+                    <Avatar class="h-9 w-9">
+                      <AvatarImage src="" alt="Avatar" />
+                      <AvatarFallback>{{ event.extendedProperties?.private?.student_id?.slice(0, 2).toUpperCase() || "N/A" }}</AvatarFallback>
+                    </Avatar>
+                    <div class="ml-4 space-y-1">
+                      <p class="text-sm font-medium leading-none">{{ event.extendedProperties?.private?.student_id || "N/A" }}</p>
+                    </div>
                   </div>
+                  <div class="text-right">
+                    <p class="text-sm font-medium leading-none">{{ formatTime(event.start?.dateTime) }}</p>
+                    <p class="text-sm text-muted-foreground">phone number</p>
+                  </div>
+                  <Separator class="my-2" />
                 </div>
-                <div class="text-right">
-                  <p class="text-sm font-medium leading-none">{{ formatTime(event.start?.dateTime) }}</p>
-                  <p class="text-sm text-muted-foreground">phone number</p>
-                </div>
-                <Separator class="my-2" />
-              </div>
               </ScrollArea>
             </CardContent>
           </Card>
         </div>
       </div>
 
-      <div v-if="!isLoading && !Object.keys(groupedEvents).length">
+      <!-- No Events Fallback -->
+      <div v-if="!isLoading && !Object.keys(groupedEvents).length && !errorMessage">
         <p>No upcoming lessons</p>
       </div>
+      
     <ScrollBar orientation="horizontal" />
     </ScrollArea>
   </CardContent>
 </template>
-
-
-
-
