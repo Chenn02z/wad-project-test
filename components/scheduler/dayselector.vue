@@ -19,10 +19,10 @@
         v-for="(slot, index) in slots"
         :key="index"
         class="border p-3 rounded-lg hover:bg-purple-100 focus:outline-none"
-        :class="{ 'bg-purple-200': selectedSlots.includes(slot) }"
+        :class="{ 'bg-purple-200': selectedSlots.includes(slot.start) }"
         @click="toggleSlot(slot)"
       >
-        {{ slot }}
+        {{ slot.label }}
       </button>
     </div>
 
@@ -35,12 +35,23 @@
         Submit Availability
       </button>
     </div>
+
+    <!-- Display upcoming availability -->
+    <div class="mt-8">
+      <h3 class="text-2xl font-bold">Upcoming Availability</h3>
+      <ul v-if="upcomingAvailability.length > 0" class="mt-4">
+        <li v-for="(item, index) in upcomingAvailability" :key="index" class="bg-gray-100 p-3 rounded-md mb-2">
+          <span class="font-bold">{{ item.date }}:</span> {{ item.slot }}
+        </li>
+      </ul>
+      <p v-else class="mt-4 text-gray-500">No upcoming availability set.</p>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import dayjs from 'dayjs'; // Make sure to install dayjs via npm
+import { ref, onMounted } from 'vue';
+import dayjs from 'dayjs';
 
 // Configure Supabase client
 const client = useSupabaseClient()
@@ -62,15 +73,26 @@ const generateNext7Days = () => {
 
 const days = ref(generateNext7Days());
 
-// Define slots
+// Define 2-hour slots
 const slots = ref([
-  '8:00 AM', '9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
-  '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM',
-  '6:00 PM', '7:00 PM', '8:00 PM', '9:00 PM',
+  { label: '8:00 AM - 10:00 AM', start: '08:00:00' },
+  { label: '10:00 AM - 12:00 PM', start: '10:00:00' },
+  { label: '12:00 PM - 2:00 PM', start: '12:00:00' },
+  { label: '2:00 PM - 4:00 PM', start: '14:00:00' },
+  { label: '4:00 PM - 6:00 PM', start: '16:00:00' },
+  { label: '6:00 PM - 8:00 PM', start: '18:00:00' },
+  { label: '8:00 PM - 10:00 PM', start: '20:00:00' },
 ]);
 
+// Create a mapping of start time to slot label
+const slotMap = slots.value.reduce((map, slot) => {
+  map[slot.start] = slot.label;
+  return map;
+}, {});
+
 const selectedDay = ref(null); // Track the selected day
-const selectedSlots = ref([]); // Track the selected slots
+const selectedSlots = ref([]); // Track the start time of selected slots
+const upcomingAvailability = ref([]); // Track upcoming availability
 
 // Handle selecting a day
 const selectDay = (day) => {
@@ -84,11 +106,11 @@ const selectDay = (day) => {
 
 // Handle toggling slot selection
 const toggleSlot = (slot) => {
-  const index = selectedSlots.value.indexOf(slot);
+  const index = selectedSlots.value.indexOf(slot.start);
   if (index !== -1) {
     selectedSlots.value.splice(index, 1); // Deselect slot
   } else {
-    selectedSlots.value.push(slot); // Select slot
+    selectedSlots.value.push(slot.start); // Select slot
   }
 };
 
@@ -97,10 +119,10 @@ const submitAvailability = async () => {
   if (!selectedDay.value || selectedSlots.value.length === 0) return;
 
   // Prepare the data to insert into the Supabase table
-  const availabilityData = selectedSlots.value.map((slot) => ({
+  const availabilityData = selectedSlots.value.map((start) => ({
     instructor_id: 1, // Replace with the actual instructor ID
     date: selectedDay.value.fullDate, // Use the full date string
-    time: slot,
+    time: start, // Only send the start time of the selected slot
     available: true, // Ensure the slot is marked as available
   }));
 
@@ -117,11 +139,47 @@ const submitAvailability = async () => {
     }
 
     alert('Availability updated successfully!');
+    fetchUpcomingAvailability(); // Refresh upcoming availability after adding new ones
   } catch (err) {
     console.error('Unexpected error:', err);
     alert('An unexpected error occurred.');
   }
 };
+
+// Fetch upcoming availability
+const fetchUpcomingAvailability = async () => {
+  try {
+    const today = dayjs().format('YYYY-MM-DD');
+    const { data, error } = await client
+      .from('availability') // Replace with your actual table name
+      .select('date, time')
+      .gte('date', today) // Get only future dates including today
+      .order('date', { ascending: true })
+      .order('time', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching upcoming availability:', error);
+      return;
+    }
+
+    // Update the upcoming availability with slot labels
+    upcomingAvailability.value = data.map(item => {
+      const formattedTime = item.time; // Ensure the time is correctly formatted
+      console.log(`Mapping time: ${formattedTime}`); // Debugging line
+      return {
+        date: dayjs(item.date).format('dddd, MMMM D'), // e.g., "Monday, October 11"
+        slot: slotMap[formattedTime] || `${formattedTime} (Unmapped)` // Convert start time to slot label, fallback to start time if unmapped
+      };
+    });
+  } catch (err) {
+    console.error('Unexpected error fetching upcoming availability:', err);
+  }
+};
+
+// Fetch upcoming availability on component mount
+onMounted(() => {
+  fetchUpcomingAvailability();
+});
 </script>
 
 <style scoped>
