@@ -3,10 +3,6 @@ definePageMeta({
   layout: "instructorview",
 });
 
-// import { CurrentStudents } from '@/data/students';
-
-// const students = CurrentStudents;
-
 const client = useSupabaseClient();
 
 interface Student {
@@ -31,8 +27,8 @@ const { data: studentview } = await useAsyncData<Student[]>('studentview', async
     <p class="text-muted-foreground">See your students!</p>
   </div>
 
-  <ScrollArea class="w-full max-w-6xl whitespace-nowrap">
-    <div class="flex p-4 space-x-4 w-max">
+  <ScrollArea class="w-full max-w-6xl overflow-x-auto">
+    <div class="flex p-4 gap-6">
       <div
         v-for="student in studentview"
         :key="student.id"
@@ -43,7 +39,7 @@ const { data: studentview } = await useAsyncData<Student[]>('studentview', async
             <Card class="h-full overflow-hidden">
               <CardContent>
                 <img class="rounded-md"
-                  src="https://via.placeholder.com/150"
+                  src="https://via.placeholder.com/250x150"
                   alt="Student Photo"
                 />
                 <h2 class="text-xl font-semibold">{{ student.name }}</h2>
@@ -64,16 +60,25 @@ const { data: studentview } = await useAsyncData<Student[]>('studentview', async
 
 <style scoped>
 .student-card {
-  width: 220px;
+  width: 300px; /* Increased width for larger card */
+  height: 350px; /* Added height to accommodate more content */
   cursor: pointer;
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out; /* Keep transform transition for smooth scaling */
   overflow: hidden;
+  flex: 0 0 auto; /* Ensures cards stay the same size and don't shrink */
 }
 
 .student-card:hover {
-  transform: scale(1.1);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  z-index: 10;
+  transform: scale(1.05); /* Subtle scaling effect */
+  box-shadow: none; /* No shadow effect */
+  z-index: 10; /* Ensure the card is on top when hovered */
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
 }
 
 .dialog {
