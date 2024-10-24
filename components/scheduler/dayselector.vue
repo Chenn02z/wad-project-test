@@ -40,20 +40,27 @@
 
 <script setup>
 import { ref } from 'vue';
+import dayjs from 'dayjs'; // Make sure to install dayjs via npm
 
 // Configure Supabase client
 const client = useSupabaseClient()
 
-// Define the days with initial unavailable status
-const days = ref([
-  { label: 'Mon', date: '11', isAvailable: false },
-  { label: 'Tue', date: '12', isAvailable: false },
-  { label: 'Wed', date: '13', isAvailable: false },
-  { label: 'Thu', date: '14', isAvailable: false },
-  { label: 'Fri', date: '15', isAvailable: false },
-  { label: 'Sat', date: '16', isAvailable: false },
-  { label: 'Sun', date: '17', isAvailable: false },
-]);
+// Define the next 7 days from tomorrow
+const generateNext7Days = () => {
+  const daysArray = [];
+  for (let i = 1; i <= 7; i++) {
+    const date = dayjs().add(i, 'day');
+    daysArray.push({
+      label: date.format('ddd'), // e.g., "Mon"
+      date: date.format('DD'),   // e.g., "11"
+      fullDate: date.format('YYYY-MM-DD'), // Full date for later use
+      isAvailable: false
+    });
+  }
+  return daysArray;
+};
+
+const days = ref(generateNext7Days());
 
 // Define slots
 const slots = ref([
@@ -71,7 +78,6 @@ const selectDay = (day) => {
     selectedDay.value = null; // Deselect if clicked again
   } else {
     selectedDay.value = day;
-    day.isAvailable = true; // Mark the day as available
     selectedSlots.value = []; // Clear previous selections
   }
 };
@@ -93,7 +99,7 @@ const submitAvailability = async () => {
   // Prepare the data to insert into the Supabase table
   const availabilityData = selectedSlots.value.map((slot) => ({
     instructor_id: 1, // Replace with the actual instructor ID
-    date: `2024-10-${selectedDay.value.date}`, // Construct the full date string
+    date: selectedDay.value.fullDate, // Use the full date string
     time: slot,
     available: true, // Ensure the slot is marked as available
   }));
