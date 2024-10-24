@@ -6,11 +6,13 @@
     <!-- Display events if available -->
     <ul v-if="events.length">
       <li v-for="event in events" :key="event.id">
-        <strong>{{ event.summary }}</strong><br />
-        Date: {{ formatDate(event.start?.dateTime || event.start?.date) }}<br />
-        Time: {{ formatTime(event.start?.dateTime) }}<br />
-        Description: {{ event.description || 'No description' }}
-      </li>
+  <strong>{{ event.summary }}</strong><br />
+  Date: {{ formatDate(event.start?.dateTime || event.start?.date) }}<br />
+  Time: {{ formatTime(event.start?.dateTime) }}<br />
+  Description: {{ event.description || 'No description' }}<br />
+  Location: {{ event.extendedProperties?.private?.location_detail || "No Location" }}
+</li>
+
     </ul>
 
     <!-- Error message if events can't be retrieved -->
@@ -34,18 +36,24 @@ interface CalendarEvent {
     dateTime?: string;
     date?: string;
   };
+  extendedProperties?: {
+    private?: {
+      location_detail?: string; // Location is stored here
+      instructor_id?: string;
+      student_id?: string;
+    };
+  };
 }
 
 // Interface for the fetch response
 interface FetchResponse {
   success: boolean;
-  data?: CalendarEvent[]; // Note: Using `data` to match your API response
+  data?: CalendarEvent[];
   message?: string;
 }
 
 export default defineComponent({
   setup() {
-    // Define reactive properties
     const events = ref<CalendarEvent[]>([]);
     const errorMessage = ref('');
 
@@ -56,10 +64,10 @@ export default defineComponent({
         if (response.success && response.data) {
           events.value = response.data; // Handle the events returned from the API
         } else {
-          errorMessage.value = response.message || 'Failed to retrieve events'; // Handle any error messages
+          errorMessage.value = response.message || 'Failed to retrieve events';
         }
       } catch (error) {
-        errorMessage.value = 'API call failed: ' + (error instanceof Error ? error.message : String(error)); // Display any API call errors
+        errorMessage.value = 'API call failed: ' + (error instanceof Error ? error.message : String(error));
       }
     };
 
@@ -94,5 +102,6 @@ export default defineComponent({
   },
 });
 </script>
+
 
   

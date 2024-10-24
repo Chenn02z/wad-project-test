@@ -5,7 +5,7 @@ import { resolve } from 'path';
 export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event); // Read dynamic input from the request body
-    const { startDateTime, instructorId, studentId } = body;
+    const { startDateTime, instructorId, studentId,location } = body;
 
     // Calculate end time (1 hour after start time)
     const startTime = new Date(startDateTime);
@@ -44,6 +44,7 @@ export default defineEventHandler(async (event) => {
           private: {
             instructor_id: instructorId,
             student_id: studentId,
+            location_detail: location,
           },
         },
       },
