@@ -53,59 +53,6 @@ const { data: studentview } = await useAsyncData<Student[]>('studentview', async
                 <p>Contact: {{ student.contact }}</p>
                 <p>Upcoming Lesson: {{ student.upcomingLessonTopic }}</p>
               </CardContent>
-              <div class="mt-4 flex justify-between px-4 pb-4">
-                <!-- Reschedule Dialog -->
-                <Dialog>
-                  <DialogTrigger as-child>
-                    <button
-                      class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-                    >
-                      Reschedule
-                    </button>
-                  </DialogTrigger>
-                  <DialogContent class="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>Reschedule Lesson</DialogTitle>
-                      <DialogDescription>
-                        Current lesson: {{student.date}}, {{student.time}}, {{student.location}}
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div class="grid gap-4 py-4">
-                      <div class="grid grid-cols-4 items-center gap-4">
-                        <label for="time" class="text-right">
-                          Time of rescheduled class
-                        </label>
-                        <input id="time" type="text" class="col-span-3 input" />
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <button class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition">Save changes</button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-
-                <!-- Cancel Dialog -->
-                <Dialog>
-                  <DialogTrigger as-child>
-                    <button
-                      class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-                    >
-                      Cancel
-                    </button>
-                  </DialogTrigger>
-                  <DialogContent class="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>Cancel Lesson</DialogTitle>
-                      <DialogDescription>
-                        Are you sure you want to cancel the lesson scheduled for {{student.date}}?
-                      </DialogDescription>
-                    </DialogHeader>
-                    <DialogFooter>
-                      <button class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition">Yes, Cancel</button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </div>
             </Card>
           </div>
         </figure>
