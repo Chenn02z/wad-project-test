@@ -26,7 +26,7 @@
         </div>
         
         <!-- Total reviews on the rightmost side -->
-        <div class="flex-shrink-0 mr-6 text-center">
+        <div class="flex p-3 text-center">
           <h2 class="text-lg"><b>Total reviews:</b><br>10</h2>
         </div>
       </Card>
