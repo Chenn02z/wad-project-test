@@ -9,8 +9,6 @@
         >
           <div class="text-gray-500">{{ day.label }}</div>
           <div class="text-lg font-bold">{{ day.date }}</div>
-          <div v-if="day.isAvailable" class="text-green-500">Available</div>
-          <div v-else class="text-red-500">Unavailable</div>
         </div>
       </div>
     </div>
@@ -108,7 +106,7 @@ const submitAvailability = async () => {
 
     if (insertError) {
       console.error('Error inserting data:', insertError);
-      alert('Failed to update availability.');
+      alert('Duplicate availability selected.');
       return;
     }
 
