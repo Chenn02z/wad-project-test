@@ -82,8 +82,10 @@ definePageMeta({
 });
 import { ref, computed, onMounted } from 'vue'
 
+
 // Initialize Supabase client
 const client = useSupabaseClient()
+
 
 // Reactive references for data
 const locations = ref([])
@@ -133,6 +135,10 @@ async function fetchInstructors() {
 }
 
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 async function populateAvailableDates() {
     availableDates.value = [];
@@ -194,6 +200,43 @@ async function confirmBooking() {
             location: selectedLocation.value,
             student_id: 101 // Replace with dynamic student ID as needed
         };
+
+        const timeZone = 'Asia/Singapore';
+        const formattedDate = dayjs.tz(`${selectedDate.value}T${selectedSlot.value.time}`, timeZone).format();
+
+        const eventData = {
+            startDateTime: formattedDate,
+            instructorId: selectedInstructor.value.id,
+            studentId: 101,
+            location:selectedLocation.value,
+        }
+
+        const eventId = ref(''); 
+
+        const addEvent = async () => {
+      try {
+        // Send POST request to API endpoint with form inputs
+        const response = await $fetch<{ success: boolean; eventId?: string }>('/api/addEvents', {
+          method: 'POST',
+          body: eventData
+
+        });
+
+
+        if (response.success) {
+                    eventId.value = response.eventId || '';
+                    console.log('Event added to Google Calendar with ID:', eventId.value);
+                } else {
+                    throw new Error('Failed to create event in Google Calendar.');
+                }
+            } catch (error) {
+                console.error('Error adding event to Google Calendar:', error);
+                throw error;
+            }
+        };
+
+        await addEvent();
+
 
         // Insert the booking into the database
         const { error: insertError } = await client
