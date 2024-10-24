@@ -141,7 +141,16 @@ async function fetchAvailableSlots() {
             .eq('date', selectedDate.value);
         
         if (error) throw error;
-        availableSlots.value = data ?? [];
+        
+        // Sort the available slots by the time field
+        availableSlots.value = data ? data.sort((a, b) => {
+            // Assuming time is in 'HH:mm' format
+            const timeA = a.time.split(':');
+            const timeB = b.time.split(':');
+
+            // Compare hours and minutes
+            return timeA[0] - timeB[0] || timeA[1] - timeB[1]; 
+        }) : [];
     } catch (err) {
         error.value = `Error fetching available slots: ${err.message}`;
         console.error('Error fetching available slots:', err);
@@ -149,6 +158,7 @@ async function fetchAvailableSlots() {
         isLoading.value = false;
     }
 }
+
 
 // Function to handle slot selection
 function selectSlot(slot) {
@@ -161,7 +171,8 @@ async function confirmBooking() {
     try {
         // Prepare booking data
         const bookingData = {
-            instructor: selectedInstructor.value.name, // Ensure this contains the correct instructor ID
+            instructor_id: selectedInstructor.value.id,
+            instructor_name: selectedInstructor.value.name, // Ensure this contains the correct instructor ID
             date: selectedDate.value,
             time: selectedSlot.value.time,
             location: selectedLocation.value, // Ensure this is accessed correctly
