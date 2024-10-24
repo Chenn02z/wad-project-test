@@ -285,29 +285,74 @@ const checkReviewExists = async (studentId: number, instructorId: number): Promi
     return data ? true : false; // Return true if review exists, else false
 };
 
+import Swal from 'sweetalert2';
+
 // Function to create a new review
 const createReview = async (studentId: number, instructorId: number, comment: string, rating: number) => {
-    const { error } = await client
-        .from('instructor_reviews')
-        .insert({ instructor_id: instructorId, student_id: studentId, comment, rating }); // Insert with instructor_id
+    // Ask user for confirmation
+    Swal.fire({
+        title: "Do you want to submit your review?",
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: "Submit",
+        denyButtonText: `Don't submit`
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            const { error } = await client
+                .from('instructor_reviews')
+                .insert({ instructor_id: instructorId, student_id: studentId, comment, rating });
 
-    if (error) {
-        console.error('Error creating review:', error);
-    }
+            if (error) {
+                console.error('Error creating review:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Submission Failed',
+                    text: 'There was an issue submitting your review. Please try again later.',
+                    confirmButtonText: 'Retry'
+                });
+            } else {
+                Swal.fire('Submitted!', 'Your review has been submitted successfully.', 'success');
+            }
+        } else if (result.isDenied) {
+            Swal.fire("Review not submitted", "", "info");
+        }
+    });
 };
 
 // Function to update an existing review
 const updateReview = async (studentId: number, instructorId: number, comment: string, rating: number) => {
-    const { error } = await client
-        .from('instructor_reviews')
-        .update({ comment, rating }) // Update both comment and rating
-        .eq('student_id', studentId) // Use actual student ID
-        .eq('instructor_id', instructorId); // Use instructor ID for updating
+    // Ask user for confirmation
+    Swal.fire({
+        title: "Do you want to save the changes?",
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: "Save",
+        denyButtonText: `Don't save`
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            const { error } = await client
+                .from('instructor_reviews')
+                .update({ comment, rating })
+                .eq('student_id', studentId)
+                .eq('instructor_id', instructorId);
 
-    if (error) {
-        console.error('Error updating review:', error);
-    }
+            if (error) {
+                console.error('Error updating review:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Update Failed',
+                    text: 'There was a problem updating your review. Please try again later.',
+                    confirmButtonText: 'Retry'
+                });
+            } else {
+                Swal.fire('Saved!', 'Your review has been updated successfully.', 'success');
+            }
+        } else if (result.isDenied) {
+            Swal.fire("Changes are not saved", "", "info");
+        }
+    });
 };
+
 
 
 
