@@ -1,7 +1,7 @@
 <template>
     <div class="container mx-auto p-6 min-h-screen">
         <div class="space-y-2 mb-10">
-            <h2 class="text-3xl font-bold tracking-tight">Availability</h2>
+            <h2 class="text-3xl font-bold tracking-tight">Booking</h2>
             <p class="text-lg text-gray-500">Select the instructor, location, date, and timeslot</p>
         </div>
 
@@ -12,30 +12,37 @@
             </div>
             <div v-else-if="error" class="text-center py-8">
                 <p class="text-red-500">{{ error }}</p>
-                <button @click="fetchInstructors" class="mt-4 px-6 py-3 bg-blue-500 text-white rounded hover:bg-blue-600">
+                <button @click="fetchInstructors"
+                    class="mt-4 px-6 py-3 bg-blue-500 text-white rounded hover:bg-blue-600">
                     Retry
                 </button>
             </div>
             <form v-else @submit.prevent="confirmBooking" class="space-y-6">
                 <div class="space-y-2">
                     <label for="location" class="block text-lg font-medium text-gray-700">Select Location</label>
-                    <select v-model="selectedLocation" id="location" class="mt-1 block w-full pl-4 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md">
+                    <select v-model="selectedLocation" id="location"
+                        class="mt-1 block w-full pl-4 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md">
                         <option value="">Choose a location</option>
-                        <option v-for="location in locations" :key="location.id" :value="location.location">{{ location.location }}</option>
+                        <option v-for="location in locations" :key="location.id" :value="location.location">{{
+                            location.location }}</option>
                     </select>
                 </div>
 
                 <div v-if="selectedLocation" class="space-y-2">
                     <label for="instructor" class="block text-lg font-medium text-gray-700">Select Instructor</label>
-                    <select v-model="selectedInstructor" id="instructor" class="mt-1 block w-full pl-4 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md">
+                    <select v-model="selectedInstructor" id="instructor"
+                        class="mt-1 block w-full pl-4 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md">
                         <option value="">Choose an instructor</option>
-                        <option v-for="instructor in filteredInstructors" :key="instructor.id" :value="instructor">{{ instructor.name }}</option>
+                        <option v-for="instructor in filteredInstructors" :key="instructor.id" :value="instructor">{{
+                            instructor.name }}</option>
                     </select>
                 </div>
 
                 <div v-if="selectedInstructor" class="space-y-2">
                     <label for="date" class="block text-lg font-medium text-gray-700">Select Date</label>
-                    <select v-model="selectedDate" id="date" class="mt-1 block w-full pl-4 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md" @change="fetchAvailableSlots">
+                    <select v-model="selectedDate" id="date"
+                        class="mt-1 block w-full pl-4 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md"
+                        @change="fetchAvailableSlots">
                         <option value="">Choose a date</option>
                         <option v-for="date in availableDates" :key="date" :value="date">{{ date }}</option>
                     </select>
@@ -51,9 +58,15 @@
                             {{ slot.time }}
                         </button>
                     </div>
+
+                    <!-- Added div to inform users of the 2-hour slot duration -->
+                    <div class="mt-2 text-sm text-gray-500">
+                        Note: All slots are 2-hour sessions.
+                    </div>
                 </div>
 
-                <button type="submit" class="w-full px-6 py-3 text-base font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                <button type="submit"
+                    class="w-full px-6 py-3 text-base font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     :disabled="!selectedInstructor || !selectedDate || !selectedSlot">
                     Confirm Booking
                 </button>
@@ -61,6 +74,7 @@
         </div>
     </div>
 </template>
+
 
 <script setup lang="ts">
 definePageMeta({
@@ -139,9 +153,9 @@ async function fetchAvailableSlots() {
             .select('*')
             .eq('instructor_id', selectedInstructor.value.id)
             .eq('date', selectedDate.value);
-        
+
         if (error) throw error;
-        
+
         // Sort the available slots by the time field
         availableSlots.value = data ? data.sort((a, b) => {
             // Assuming time is in 'HH:mm' format
@@ -149,7 +163,7 @@ async function fetchAvailableSlots() {
             const timeB = b.time.split(':');
 
             // Compare hours and minutes
-            return timeA[0] - timeB[0] || timeA[1] - timeB[1]; 
+            return timeA[0] - timeB[0] || timeA[1] - timeB[1];
         }) : [];
     } catch (err) {
         error.value = `Error fetching available slots: ${err.message}`;
@@ -165,6 +179,8 @@ function selectSlot(slot) {
     selectedSlot.value = slot;
 }
 
+import Swal from 'sweetalert2';
+
 async function confirmBooking() {
     if (!selectedSlot.value) return;  // Early return if no slot is selected
 
@@ -172,10 +188,10 @@ async function confirmBooking() {
         // Prepare booking data
         const bookingData = {
             instructor_id: selectedInstructor.value.id,
-            instructor_name: selectedInstructor.value.name, // Ensure this contains the correct instructor ID
+            instructor_name: selectedInstructor.value.name,
             date: selectedDate.value,
             time: selectedSlot.value.time,
-            location: selectedLocation.value, // Ensure this is accessed correctly
+            location: selectedLocation.value,
             student_id: 101 // Replace with dynamic student ID as needed
         };
 
@@ -190,28 +206,45 @@ async function confirmBooking() {
         // Update the availability of the selected time slot
         const { error: updateError } = await client
             .from('availability')
-            .update({ available: false }) // Set availability to FALSE
-            .eq('instructor_id', selectedInstructor.value.id) // Assuming your instructor object has an id
+            .update({ available: false })
+            .eq('instructor_id', selectedInstructor.value.id)
             .eq('date', selectedDate.value)
-            .eq('time', selectedSlot.value.time); // Match the time slot being booked
+            .eq('time', selectedSlot.value.time);
 
         // Handle any errors from the update operation
         if (updateError) throw updateError;
 
+        // Refresh available slots
         fetchAvailableSlots();
 
-        // Notify the user of success
-        alert('Booking confirmed!');
-
-
+        // Display a custom notification for successful booking
+        Swal.fire({
+            title: 'Booking Confirmed!',
+            text: `Your booking with ${selectedInstructor.value.name} on ${selectedDate.value} at ${selectedSlot.value.time} has been confirmed.`,
+            icon: 'success',
+            confirmButtonText: 'Great!',
+            confirmButtonColor: '#3085d6',
+            background: '#f9f9f9',
+            backdrop: `rgba(0,0,0,0.5)`,
+            timer: 5000, // Optional: auto-close after 5 seconds
+            timerProgressBar: true
+        });
 
     } catch (err) {
-        // Log and display the error
+        // Log and display the error with a nicer alert
         console.error('Error confirming booking:', err);
-        error.value = 'Error confirming booking: ' + err.message; // Display specific error message
+
+        Swal.fire({
+            title: 'Error',
+            text: `Could not confirm the booking: ${err.message}`,
+            icon: 'error',
+            confirmButtonText: 'Try Again',
+            confirmButtonColor: '#d33',
+            background: '#f9f9f9',
+            backdrop: `rgba(0,0,0,0.5)`
+        });
     }
 }
-
 
 
 // On mounted lifecycle hook to fetch data
