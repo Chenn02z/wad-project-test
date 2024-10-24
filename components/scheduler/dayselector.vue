@@ -39,11 +39,16 @@
     <!-- Display upcoming availability -->
     <div class="mt-8">
       <h3 class="text-2xl font-bold">Upcoming Availability</h3>
-      <ul v-if="upcomingAvailability.length > 0" class="mt-4">
-        <li v-for="(item, index) in upcomingAvailability" :key="index" class="bg-gray-100 p-3 rounded-md mb-2">
-          <span class="font-bold">{{ item.date }}:</span> {{ item.slot }}
-        </li>
-      </ul>
+      <div v-if="groupedAvailability && Object.keys(groupedAvailability).length > 0" class="mt-4 space-y-6">
+        <div v-for="(slots, date) in groupedAvailability" :key="date">
+          <h4 class="text-lg font-bold">{{ date }}</h4>
+          <ul class="ml-4 mt-2">
+            <li v-for="(slot, index) in slots" :key="index" class="bg-gray-100 p-3 rounded-md mb-2">
+              {{ slot }}
+            </li>
+          </ul>
+        </div>
+      </div>
       <p v-else class="mt-4 text-gray-500">No upcoming availability set.</p>
     </div>
   </div>
@@ -92,7 +97,7 @@ const slotMap = slots.value.reduce((map, slot) => {
 
 const selectedDay = ref(null); // Track the selected day
 const selectedSlots = ref([]); // Track the start time of selected slots
-const upcomingAvailability = ref([]); // Track upcoming availability
+const groupedAvailability = ref({}); // Track upcoming availability by date
 
 // Handle selecting a day
 const selectDay = (day) => {
@@ -162,15 +167,19 @@ const fetchUpcomingAvailability = async () => {
       return;
     }
 
-    // Update the upcoming availability with slot labels
-    upcomingAvailability.value = data.map(item => {
-      const formattedTime = item.time; // Ensure the time is correctly formatted
-      console.log(`Mapping time: ${formattedTime}`); // Debugging line
-      return {
-        date: dayjs(item.date).format('dddd, MMMM D'), // e.g., "Monday, October 11"
-        slot: slotMap[formattedTime] || `${formattedTime} (Unmapped)` // Convert start time to slot label, fallback to start time if unmapped
-      };
+    // Group availability by date
+    const grouped = {};
+    data.forEach(item => {
+      const formattedDate = dayjs(item.date).format('dddd, MMMM D');
+      const slotLabel = slotMap[item.time] || `${item.time} (Unmapped)`;
+
+      if (!grouped[formattedDate]) {
+        grouped[formattedDate] = [];
+      }
+      grouped[formattedDate].push(slotLabel);
     });
+
+    groupedAvailability.value = grouped;
   } catch (err) {
     console.error('Unexpected error fetching upcoming availability:', err);
   }
