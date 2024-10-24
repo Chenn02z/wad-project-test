@@ -5,9 +5,6 @@ definePageMeta({
 
 import { Button } from "@/components/ui/button";
 
-import PersonalDetails from "@/components/studentprogress/PersonalDetails.vue";
-import CompletedModules from "@/components/studentprogress/CompletedModules.vue";
-import TestRouteCompletion from "@/components/studentprogress/TestRouteCompletion.vue";
 
 import {
   Tooltip,
@@ -147,7 +144,7 @@ function getStudentTestRoutes(studentId: number) {
                           d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
                         />
                       </svg>
-                      View
+                      View Progress
                     </Button>
                   </DrawerTrigger>
                   <DrawerContent>
@@ -453,7 +450,6 @@ function getStudentTestRoutes(studentId: number) {
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
   overflow: hidden;
 }
-
 .student-card:hover {
   transform: scale(1.05);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);

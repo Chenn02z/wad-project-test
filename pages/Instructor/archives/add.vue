@@ -2,27 +2,30 @@
   <div>
     <h2>Add Driving Lesson Event</h2>
     <form @submit.prevent="addEvent">
+      <!-- Input for Start Time -->
       <div>
         <label>Start Time:</label>
         <input v-model="startDateTime" type="datetime-local" required />
       </div>
 
+      <!-- Input for Instructor ID -->
       <div>
         <label>Instructor ID:</label>
         <input v-model="instructorId" type="text" placeholder="Instructor ID" required />
       </div>
 
+      <!-- Input for Student ID -->
       <div>
         <label>Student ID:</label>
         <input v-model="studentId" type="text" placeholder="Student ID" required />
       </div>
 
+      <!-- Submit Button -->
       <button type="submit">Add Event</button>
     </form>
 
-    <!-- Show success or error messages -->
+    <!-- Success message, shows the event ID after creation -->
     <p v-if="eventId">Event Created with ID: {{ eventId }}</p>
-    <p v-if="errorMessage">{{ errorMessage }}</p>
   </div>
 </template>
 
@@ -37,41 +40,45 @@ import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
   setup() {
-    const startDateTime = ref('');
-    const instructorId = ref('');
-    const studentId = ref('');
-    const eventId = ref('');
-    const errorMessage = ref('');
+    // Data input from the form
+    const startDateTime = ref(''); // Start Time input from user
+    const instructorId = ref('');  // Instructor ID input from user
+    const studentId = ref('');     // Student ID input from user
 
+    // Holds the event ID after API response
+    const eventId = ref('');       
+
+    // Function to handle adding a new event
     const addEvent = async () => {
       try {
-        const response = await $fetch<{ success: boolean; eventId?: string; message?: string }>('/api/addEvents', {
+        // Send POST request to API endpoint with form inputs
+        const response = await $fetch<{ success: boolean; eventId?: string }>('/api/addEvents', {
           method: 'POST',
           body: {
+            // Start time converted to ISO string format
             startDateTime: new Date(startDateTime.value).toISOString(),
+            // Instructor and student IDs
             instructorId: instructorId.value,
             studentId: studentId.value,
           },
         });
 
+        // If successful, store the returned event ID
         if (response.success) {
           eventId.value = response.eventId || '';
-          errorMessage.value = ''; // Clear error message if successful
-        } else {
-          errorMessage.value = response.message || 'Failed to add event';
         }
       } catch (error) {
-        errorMessage.value = 'API call failed: ' + (error instanceof Error ? error.message : String(error));
+        // Log errors in case API call fails
+        console.error('API call failed:', error);
       }
     };
 
     return {
-      startDateTime,
-      instructorId,
-      studentId,
-      eventId,
-      errorMessage,
-      addEvent,
+      startDateTime,  // Binds to start time input field
+      instructorId,   // Binds to instructor ID input field
+      studentId,      // Binds to student ID input field
+      eventId,        // Displays event ID after event creation
+      addEvent,       // Function to handle form submission
     };
   },
 });
