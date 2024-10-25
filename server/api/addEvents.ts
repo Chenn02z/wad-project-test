@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
 
     // Calculate end time (1 hour after start time)
     const startTime = new Date(startDateTime);
-    const endTime = new Date(startTime.getTime() + 60 * 60 * 1000); // Add 1 hour
+    const endTime = new Date(startTime.getTime() + 60 * 60 * 1000 * 2); // Add 2 hour
 
     // Load the service account credentials
     const credentialsPath = resolve('server/config/key.json');
