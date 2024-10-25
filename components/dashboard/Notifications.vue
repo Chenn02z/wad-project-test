@@ -65,12 +65,14 @@ export default defineComponent({
     const loading = ref(true);
     const dialogOpen = ref(false);
     const client = useSupabaseClient();
+    const checkedModules = ref([]);
 
     const getEvents = async () => {
       try {
         const response = await $fetch<FetchResponse>("/api/getEventsBefore");
         if (response.success && response.data) events.value = response.data;
-        else errorMessage.value = response.message || "Failed to retrieve events";
+        else
+          errorMessage.value = response.message || "Failed to retrieve events";
       } catch (error) {
         errorMessage.value = "API call failed: " + (error as Error).message;
       }
@@ -87,13 +89,17 @@ export default defineComponent({
     };
 
     function getStudentName(studentId: number): string {
-      const student = students.value.find((student) => student.id === studentId);
+      const student = students.value.find(
+        (student) => student.id === studentId
+      );
       return student ? student.name : "Unknown Student";
     }
 
     const getProgress = async () => {
       try {
-        const { data, error } = await client.from("student_driving_progress").select();
+        const { data, error } = await client
+          .from("student_driving_progress")
+          .select();
         if (error) throw error;
         if (data) studentProgress.value = data;
       } catch (error) {
@@ -107,34 +113,36 @@ export default defineComponent({
       );
     }
 
-    const updateProgress = async () => {
+    const updateDatabase = async (studentId: number) => {
+      console.log("Update database function called");
+      console.log("Checked modules:", checkedModules.value); // Logs the selected modules
+
       try {
-        const updatedProgressItems = studentProgress.value.filter((progress) => progress.done !== false);
+        for (const moduleId of checkedModules.value) {
+          const progressItem = studentProgress.value.find(
+            (progress) => progress.modulesn === moduleId
+          );
 
-        for (const progress of updatedProgressItems) {
-          const { error } = await client
-            .from("student_driving_progress")
-            .update({ done: progress.done })
-            .eq("modulesn", progress.modulesn);
+          if (progressItem) {
+            const { error } = await client
+              .from("student_driving_progress")
+              .update({ done: true }) // Update the `done` status to true
+              .eq("modulesn", moduleId)
+              .eq("id", studentId); // Use ID to ensure correct item is updated
 
-          if (error) throw error;
+            if (error) throw error;
+          }
         }
-        console.log("Progress updated successfully.");
+        console.log("Database updated successfully with checked modules");
+
+        checkedModules.value = [];
+        await nextTick();
+        await getProgress();
       } catch (error) {
+        console.error("Failed to update database:", error);
         errorMessage.value = "Failed to save progress.";
       }
     };
-
-    const handleSubmit = async () => {
-      try {
-        await updateProgress();
-        dialogOpen.value = false; // Close dialog after successful submission
-      } catch (error) {
-        console.error("Error in handleSubmit:", error);
-        errorMessage.value = "Submission failed.";
-      }
-    };
-
     onMounted(async () => {
       loading.value = true;
       await Promise.all([getEvents(), getStudents(), getProgress()]);
@@ -146,9 +154,9 @@ export default defineComponent({
       errorMessage,
       getStudentName,
       getProgressByStudent,
-      handleSubmit,
-      dialogOpen,
       loading,
+      checkedModules,
+      updateDatabase,
     };
   },
 });
@@ -172,51 +180,59 @@ export default defineComponent({
       </div>
 
       <div v-else-if="events.length" class="space-y-3">
-        <div v-for="event in events" :key="event.id" class="flex items-center gap-4">
+        <div
+          v-for="event in events"
+          :key="event.id"
+          class="flex items-center gap-4"
+        >
           <Avatar class="h-9 w-9">
             <AvatarImage src="" alt="Avatar" />
             <AvatarFallback>OM</AvatarFallback>
           </Avatar>
           <div class="ml-4 space-y-1">
             <p class="text-sm font-medium leading-none">
-              {{ getStudentName(Number(event.extendedProperties?.private?.student_id)) }}
+              {{
+                getStudentName(
+                  Number(event.extendedProperties?.private?.student_id)
+                )
+              }}
             </p>
             <p class="text-sm text-muted-foreground">
-              {{ event.start.date ? event.start.date : (event.start.dateTime ? new Date(event.start.dateTime).toLocaleDateString() : 'No Date') }}
+              {{
+                event.start.date
+                  ? event.start.date
+                  : event.start.dateTime
+                  ? new Date(event.start.dateTime).toLocaleDateString()
+                  : "No Date"
+              }}
             </p>
           </div>
 
           <div class="ml-auto font-medium">
-            <Dialog v-model="dialogOpen">
+            <Dialog>
               <DialogTrigger as-child>
-                <Button variant="outline" @click="dialogOpen = true"> Review </Button>
+                <Button variant="outline">Review</Button>
               </DialogTrigger>
               <DialogContent class="sm:max-w-[425px]">
-                <form @submit.prevent="handleSubmit">
-                  <DialogHeader>
-                    <DialogTitle>Review</DialogTitle>
-                    <DialogDescription>
-                      <div
-                        v-for="progress in getProgressByStudent(
-                          Number(event.extendedProperties?.private?.student_id)
-                        )"
-                        :key="progress.modulesn"
-                      >
-                        <div class="flex items-center space-x-2 space-y-1">
-                          <Checkbox :id="progress.modulesn" v-model="progress.done" />
-                          <label
-                            :for="progress.modulesn"
-                            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                          >
-                            {{ progress.module }}
-                          </label>
-                        </div>
-                      </div>
-                    </DialogDescription>
-                  </DialogHeader>
-                  <DialogFooter>
-                    <Button type="submit"> Save changes </Button>
-                  </DialogFooter>
+                <p>Uncompleted Modules</p>
+                <form @submit.prevent="updateDatabase(Number(event.extendedProperties?.private?.student_id))">
+                  <div
+                    v-for="progress in getProgressByStudent(
+                      Number(event.extendedProperties?.private?.student_id)
+                    )"
+                    :key="progress.modulesn"
+                  >
+                    <input
+                      type="checkbox"
+                      :id="progress.modulesn"
+                      :value="progress.modulesn"
+                      v-model="checkedModules"
+                    />
+                    <label :for="progress.modulesn">{{
+                      progress.module
+                    }}</label>
+                  </div>
+                  <button type="submit">submit</button>
                 </form>
               </DialogContent>
             </Dialog>
@@ -228,5 +244,3 @@ export default defineComponent({
     </CardContent>
   </Card>
 </template>
-
-
