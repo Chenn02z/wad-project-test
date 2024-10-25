@@ -5,11 +5,11 @@ import { resolve } from 'path';
 export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event); // Read dynamic input from the request body
-    const { startDateTime, instructorId, studentId } = body;
+    const { startDateTime, instructorId, studentId,location } = body;
 
     // Calculate end time (1 hour after start time)
     const startTime = new Date(startDateTime);
-    const endTime = new Date(startTime.getTime() + 60 * 60 * 1000); // Add 1 hour
+    const endTime = new Date(startTime.getTime() + 60 * 60 * 1000 * 2); // Add 2 hour
 
     // Load the service account credentials
     const credentialsPath = resolve('server/config/key.json');
@@ -44,6 +44,7 @@ export default defineEventHandler(async (event) => {
           private: {
             instructor_id: instructorId,
             student_id: studentId,
+            location_detail: location,
           },
         },
       },

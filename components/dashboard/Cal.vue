@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { ref, onMounted } from "vue";
+import { Skeleton } from '@/components/ui/skeleton'
 import { useFetch } from "#app";
 
 interface CalendarEvent {
@@ -33,7 +34,10 @@ const fetchEventsFromToday = async (instructorId: string) => {
   errorMessage.value = ""; // Clear previous error message
   try {
     // Fetch the data from the API with timeMin set to the current date/time (today onward)
-    const { data, error } = await useFetch<{ success: boolean; data?: CalendarEvent[] }>("/api/getEvents", {
+    const { data, error } = await useFetch<{
+      success: boolean;
+      data?: CalendarEvent[];
+    }>("/api/getEventsAfter", {
       params: { timeMin: new Date().toISOString(), instructorId }, // timeMin is now from today onwards
     });
 
@@ -66,7 +70,8 @@ const fetchEventsFromToday = async (instructorId: string) => {
 // Function to group events by date
 const groupEventsByDate = () => {
   groupedEvents.value = eventsFromToday.value.reduce((acc, event) => {
-    const eventDate = event.start?.dateTime?.split("T")[0] || event.start?.date || "Unknown";
+    const eventDate =
+      event.start?.dateTime?.split("T")[0] || event.start?.date || "Unknown";
     if (!acc[eventDate]) {
       acc[eventDate] = [];
     }
@@ -103,7 +108,7 @@ const isToday = (date: string): boolean => {
 const formatDate = (dateTime: string | undefined): string => {
   if (!dateTime) return "N/A";
   const date = new Date(dateTime);
-  return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  return date.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
 };
 </script>
 
@@ -115,7 +120,9 @@ const formatDate = (dateTime: string | undefined): string => {
     <ScrollArea class="w-100% whitespace-nowrap">
       <!-- Loading State -->
       <div v-if="isLoading">
-        <p>Loading events...</p>
+        <div class="flex flex-col space-y-3">
+          <Skeleton class="h-[378px] w-1/4 rounded-xl" />
+        </div>
       </div>
 
       <!-- Error Message -->
@@ -125,12 +132,15 @@ const formatDate = (dateTime: string | undefined): string => {
 
       <!-- Display Events -->
       <div v-if="!isLoading && Object.keys(groupedEvents).length">
-        <div v-for="(events, date) in groupedEvents" :key="date" class="inline-block w-1/4 mr-4">
+        <div
+          v-for="(events, date) in groupedEvents"
+          :key="date"
+          class="inline-block w-1/4 mr-4"
+        >
           <Card class="mb-4">
             <CardHeader>
-              <!-- Highlight today's events in red and display 'Today' -->
               <CardTitle :class="isToday(date) ? 'text-red-500' : ''">
-                {{ isToday(date) ? 'Today' : formatDate(date) }}
+                {{ isToday(date) ? "Today" : formatDate(date) }}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -139,14 +149,24 @@ const formatDate = (dateTime: string | undefined): string => {
                   <div class="flex items-center">
                     <Avatar class="h-9 w-9">
                       <AvatarImage src="" alt="Avatar" />
-                      <AvatarFallback>{{ event.extendedProperties?.private?.student_id?.slice(0, 2).toUpperCase() || "N/A" }}</AvatarFallback>
+                      <AvatarFallback>{{
+                        event.extendedProperties?.private?.student_id
+                          ?.slice(0, 2)
+                          .toUpperCase() || "N/A"
+                      }}</AvatarFallback>
                     </Avatar>
                     <div class="ml-4 space-y-1">
-                      <p class="text-sm font-medium leading-none">{{ event.extendedProperties?.private?.student_id || "N/A" }}</p>
+                      <p class="text-sm font-medium leading-none">
+                        {{
+                          event.extendedProperties?.private?.student_id || "N/A"
+                        }}
+                      </p>
                     </div>
                   </div>
                   <div class="text-right">
-                    <p class="text-sm font-medium leading-none">{{ formatTime(event.start?.dateTime) }}</p>
+                    <p class="text-sm font-medium leading-none">
+                      {{ formatTime(event.start?.dateTime) }}
+                    </p>
                     <p class="text-sm text-muted-foreground">phone number</p>
                   </div>
                   <Separator class="my-2" />
@@ -158,11 +178,13 @@ const formatDate = (dateTime: string | undefined): string => {
       </div>
 
       <!-- No Events Fallback -->
-      <div v-if="!isLoading && !Object.keys(groupedEvents).length && !errorMessage">
+      <div
+        v-if="!isLoading && !Object.keys(groupedEvents).length && !errorMessage"
+      >
         <p>No upcoming lessons</p>
       </div>
-      
-    <ScrollBar orientation="horizontal" />
+
+      <ScrollBar orientation="horizontal" />
     </ScrollArea>
   </CardContent>
 </template>

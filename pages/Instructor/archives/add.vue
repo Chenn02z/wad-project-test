@@ -20,6 +20,11 @@
         <input v-model="studentId" type="text" placeholder="Student ID" required />
       </div>
 
+      <div>
+        <label>Location:</label>
+        <input v-model="location" type="text" placeholder="Location" required />
+      </div>
+
       <!-- Submit Button -->
       <button type="submit">Add Event</button>
     </form>
@@ -44,6 +49,7 @@ export default defineComponent({
     const startDateTime = ref(''); // Start Time input from user
     const instructorId = ref('');  // Instructor ID input from user
     const studentId = ref('');     // Student ID input from user
+    const location = ref('');     // Student ID input from user
 
     // Holds the event ID after API response
     const eventId = ref('');       
@@ -60,6 +66,7 @@ export default defineComponent({
             // Instructor and student IDs
             instructorId: instructorId.value,
             studentId: studentId.value,
+            location: location.value,
           },
         });
 
@@ -77,6 +84,7 @@ export default defineComponent({
       startDateTime,  // Binds to start time input field
       instructorId,   // Binds to instructor ID input field
       studentId,      // Binds to student ID input field
+      location,
       eventId,        // Displays event ID after event creation
       addEvent,       // Function to handle form submission
     };
