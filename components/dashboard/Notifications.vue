@@ -1,8 +1,7 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from "vue";
-
 import { Skeleton } from "@/components/ui/skeleton";
-
+import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Dialog,
@@ -15,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-// Interface to define the structure of an event
+// Interface definitions
 interface CalendarEvent {
   id: string;
   summary: string;
@@ -26,14 +25,13 @@ interface CalendarEvent {
   };
   extendedProperties?: {
     private?: {
-      location_detail?: string; // Location is stored here
+      location_detail?: string;
       instructor_id?: string;
       student_id?: string;
     };
   };
 }
 
-// Interface for the fetch response
 interface FetchResponse {
   success: boolean;
   data?: CalendarEvent[];
@@ -55,6 +53,7 @@ interface StudentDrivingProgress {
   sn: number;
   module: string;
   done: boolean;
+  modulesn: string;
 }
 
 export default defineComponent({
@@ -63,81 +62,92 @@ export default defineComponent({
     const errorMessage = ref("");
     const students = ref<Student[]>([]);
     const studentProgress = ref<StudentDrivingProgress[]>([]);
-    const loading = ref(true); // Loading state
+    const loading = ref(true);
+    const dialogOpen = ref(false);
+    const client = useSupabaseClient();
 
-    // Fetch events from the API
     const getEvents = async () => {
       try {
-        const response = await $fetch<FetchResponse>("/api/getEventsBefore"); // Adjust the API path if needed
-        if (response.success && response.data) {
-          events.value = response.data; // Handle the events returned from the API
-        } else {
-          errorMessage.value = response.message || "Failed to retrieve events";
-        }
+        const response = await $fetch<FetchResponse>("/api/getEventsBefore");
+        if (response.success && response.data) events.value = response.data;
+        else errorMessage.value = response.message || "Failed to retrieve events";
       } catch (error) {
-        errorMessage.value =
-          "API call failed: " +
-          (error instanceof Error ? error.message : String(error));
+        errorMessage.value = "API call failed: " + (error as Error).message;
       }
     };
 
-    const client = useSupabaseClient();
-
     const getStudents = async () => {
       try {
-        const { data, error } = await client.from("studentview").select(); // Adjust 'studentview' to your table name
+        const { data, error } = await client.from("studentview").select();
         if (error) throw error;
-        if (data) {
-          students.value = data; // Store the student data
-          console.log("Fetched students:", data);
-        }
+        if (data) students.value = data;
       } catch (error) {
-        console.error("Error fetching student data:", (error as Error).message);
         errorMessage.value = "Failed to retrieve student data.";
       }
     };
 
     function getStudentName(studentId: number): string {
-      const student = students.value.find(
-        (student) => student.id === studentId
-      );
-      return student ? student.name : "Unknown Student"; // Return name or placeholder
+      const student = students.value.find((student) => student.id === studentId);
+      return student ? student.name : "Unknown Student";
     }
 
     const getProgress = async () => {
       try {
-        const { data, error } = await client
-          .from("student_driving_progress")
-          .select();
+        const { data, error } = await client.from("student_driving_progress").select();
         if (error) throw error;
-        if (data) {
-          studentProgress.value = data;
-          console.log("Fetched student progress:", data);
-        }
+        if (data) studentProgress.value = data;
       } catch (error) {
-        console.error("Error fetching student progress:", (error as Error).message);
         errorMessage.value = "Failed to retrieve student progress.";
       }
     };
 
     function getProgressByStudent(studentId: number) {
       return studentProgress.value.filter(
-        (progress) => progress.id === studentId
+        (progress) => progress.id === studentId && progress.done === false
       );
     }
 
-    // Trigger getEvents when the component is mounted
+    const updateProgress = async () => {
+      try {
+        const updatedProgressItems = studentProgress.value.filter((progress) => progress.done !== false);
+
+        for (const progress of updatedProgressItems) {
+          const { error } = await client
+            .from("student_driving_progress")
+            .update({ done: progress.done })
+            .eq("modulesn", progress.modulesn);
+
+          if (error) throw error;
+        }
+        console.log("Progress updated successfully.");
+      } catch (error) {
+        errorMessage.value = "Failed to save progress.";
+      }
+    };
+
+    const handleSubmit = async () => {
+      try {
+        await updateProgress();
+        dialogOpen.value = false; // Close dialog after successful submission
+      } catch (error) {
+        console.error("Error in handleSubmit:", error);
+        errorMessage.value = "Submission failed.";
+      }
+    };
+
     onMounted(async () => {
       loading.value = true;
       await Promise.all([getEvents(), getStudents(), getProgress()]);
-      loading.value = false; // Set loading to false once data is fetched
+      loading.value = false;
     });
 
     return {
-      events, // The events list
-      errorMessage, // Error message if any
-      getEvents, // Fetch events function
+      events,
+      errorMessage,
       getStudentName,
+      getProgressByStudent,
+      handleSubmit,
+      dialogOpen,
       loading,
     };
   },
@@ -153,7 +163,6 @@ export default defineComponent({
       </CardDescription>
     </CardHeader>
     <CardContent>
-      <!-- Loading indicator -->
       <div v-if="loading" class="flex items-center space-x-4">
         <Skeleton class="h-9 w-9 rounded-full" />
         <div class="flex flex-col space-y-2">
@@ -162,53 +171,62 @@ export default defineComponent({
         </div>
       </div>
 
-      <!-- If events exist, show them -->
       <div v-else-if="events.length" class="space-y-3">
-        <div
-          v-for="event in events"
-          :key="event.id"
-          class="flex items-center gap-4"
-        >
+        <div v-for="event in events" :key="event.id" class="flex items-center gap-4">
           <Avatar class="h-9 w-9">
             <AvatarImage src="" alt="Avatar" />
             <AvatarFallback>OM</AvatarFallback>
           </Avatar>
           <div class="ml-4 space-y-1">
             <p class="text-sm font-medium leading-none">
-              {{
-                getStudentName(
-                  Number(event.extendedProperties?.private?.student_id)
-                )
-              }}
+              {{ getStudentName(Number(event.extendedProperties?.private?.student_id)) }}
             </p>
             <p class="text-sm text-muted-foreground">
-              {{ event.extendedProperties?.private?.student_id }}
+              {{ event.start.date ? event.start.date : (event.start.dateTime ? new Date(event.start.dateTime).toLocaleDateString() : 'No Date') }}
             </p>
           </div>
 
           <div class="ml-auto font-medium">
-            <Dialog>
+            <Dialog v-model="dialogOpen">
               <DialogTrigger as-child>
-                <Button variant="outline"> Review </Button>
+                <Button variant="outline" @click="dialogOpen = true"> Review </Button>
               </DialogTrigger>
               <DialogContent class="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Review</DialogTitle>
-                  <DialogDescription>
-                    Update student's progress here. Click save when you're done.
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                  <Button type="submit"> Save changes </Button>
-                </DialogFooter>
+                <form @submit.prevent="handleSubmit">
+                  <DialogHeader>
+                    <DialogTitle>Review</DialogTitle>
+                    <DialogDescription>
+                      <div
+                        v-for="progress in getProgressByStudent(
+                          Number(event.extendedProperties?.private?.student_id)
+                        )"
+                        :key="progress.modulesn"
+                      >
+                        <div class="flex items-center space-x-2 space-y-1">
+                          <Checkbox :id="progress.modulesn" v-model="progress.done" />
+                          <label
+                            :for="progress.modulesn"
+                            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            {{ progress.module }}
+                          </label>
+                        </div>
+                      </div>
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <Button type="submit"> Save changes </Button>
+                  </DialogFooter>
+                </form>
               </DialogContent>
             </Dialog>
           </div>
         </div>
       </div>
 
-      <!-- No events message -->
       <div v-else>No events to review.</div>
     </CardContent>
   </Card>
 </template>
+
+
