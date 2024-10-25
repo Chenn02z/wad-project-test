@@ -11,8 +11,12 @@
           <TabsTrigger value="calendar"> Calendar </TabsTrigger>
           <TabsTrigger value="notifications">
             Notifications
-            <Badge variant="destructive" class="rounded-full px-2 py-1">
-              3
+            <Badge
+              v-if="eventCount > 0"
+              variant="destructive"
+              class="rounded-full px-2 py-1"
+            >
+              {{ eventCount }}
             </Badge>
           </TabsTrigger>
         </TabsList>
@@ -43,11 +47,9 @@
       </Tabs>
     </div>
   </div>
-
 </template>
 
 <script setup lang="ts">
-
 definePageMeta({
   layout: "instructorview",
 });
@@ -67,9 +69,15 @@ import Summary from "@/components/dashboard/Summary.vue";
 import { Badge } from "@/components/ui/badge";
 import Cal from "@/components/dashboard/Cal.vue";
 
+const eventCount = ref(0);
+
+const updateEventCount = (count: number) => {
+  eventCount.value = count;
+};
+
 definePageMeta({
-  layout: 'instructorview'
-})
+  layout: "instructorview",
+});
 
 import { ref } from "vue";
 import { useFetch } from "#app";
@@ -94,8 +102,30 @@ const events = ref<CalendarEvent[]>([]); // Properly type events as CalendarEven
 const isLoading = ref(false); // Loading state
 const startDate = ref(new Date().toISOString().split("T")[0]); // Default to today's date
 const instructorId = ref("");
+const errorMessage = ref("");
 
-// Fetch events function
+interface FetchResponse {
+  success: boolean;
+  data?: CalendarEvent[];
+  message?: string;
+}
+
+const getPastEvents = async () => {
+  try {
+    const response = await $fetch<FetchResponse>("/api/getEventsBefore");
+    if (response.success && response.data) {
+      events.value = response.data;
+      eventCount.value = events.value.length; // Update eventCount with the number of past events
+    } else {
+      errorMessage.value = response.message || "Failed to retrieve events";
+      eventCount.value = 0; // Reset count if there’s an error
+    }
+  } catch (error) {
+    errorMessage.value = "API call failed: " + (error as Error).message;
+    eventCount.value = 0; // Reset count in case of failure
+  }
+};
+
 const getEvents = async () => {
   isLoading.value = true;
 
@@ -144,5 +174,8 @@ const formatTime = (dateTime: string | undefined): string => {
   const minutesStr = minutes < 10 ? "0" + minutes : minutes;
   return `${hours}:${minutesStr} ${ampm}`;
 };
-</script>
 
+onMounted(async () => {
+  await getPastEvents(); // Fetch past events and update event count
+});
+</script>
