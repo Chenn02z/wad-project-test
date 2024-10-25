@@ -9,6 +9,7 @@ Make sure to install the dependencies:
 ```bash
 # npm
 npm install
+npm install dayjs
 
 # pnpm
 pnpm install
