@@ -37,17 +37,7 @@
 
         <TabsContent value="notifications" class="space-y-4">
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <Card class="col-span-3">
-              <CardHeader>
-                <CardTitle>Review</CardTitle>
-                <CardDescription>
-                  Please complete the following reviews for students!
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Notifications />
-              </CardContent>
-            </Card>
+            <Notifications />
           </div>
         </TabsContent>
       </Tabs>
