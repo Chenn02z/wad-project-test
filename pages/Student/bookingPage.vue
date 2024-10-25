@@ -194,7 +194,7 @@ async function confirmBooking() {
         // Prepare booking data
         const bookingData = {
             instructor_id: selectedInstructor.value.id,
-            instructor_name: selectedInstructor.value.name,
+            instructor_name_name: selectedInstructor.value.name,
             date: selectedDate.value,
             time: selectedSlot.value.time,
             location: selectedLocation.value,
