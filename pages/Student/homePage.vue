@@ -213,7 +213,7 @@ const setHoverRating = (rating) => {
 // Open review modal and fetch existing review
 const goToReviewForm = async (instructorId: number) => {
     selectedInstructorId.value = instructorId; // Store the selected instructor ID
-    existingReview.value = await fetchExistingReview(1, instructorId); // Fetch existing review using student ID and instructor ID
+    existingReview.value = await fetchExistingReview(101, instructorId); // Fetch existing review using student ID and instructor ID
 
     if (existingReview.value) {
         reviewText.value = existingReview.value.comment; // Pre-fill comment if exists
@@ -236,15 +236,15 @@ const closeModal = () => {
 
 // Submit review logic
 const submitReview = async () => {
-    const reviewExists = await checkReviewExists(1, selectedInstructorId.value); // Use the selected instructor ID
+    const reviewExists = await checkReviewExists(101, selectedInstructorId.value); // Use the selected instructor ID
 
     if (reviewExists) {
         // Logic to update the existing review
-        await updateReview(1, selectedInstructorId.value, reviewText.value, reviewRating.value);
+        await updateReview(101, selectedInstructorId.value, reviewText.value, reviewRating.value);
         console.log('Updating review for instructor ID', selectedInstructorId.value, ':', reviewText.value, 'with rating:', reviewRating.value);
     } else {
         // Logic to submit a new review
-        await createReview(1, selectedInstructorId.value, reviewText.value, reviewRating.value);
+        await createReview(101, selectedInstructorId.value, reviewText.value, reviewRating.value);
         console.log('Submitting review for instructor ID', selectedInstructorId.value, ':', reviewText.value, 'with rating:', reviewRating.value);
     }
 
