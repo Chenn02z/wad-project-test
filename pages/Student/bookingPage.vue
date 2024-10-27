@@ -1,7 +1,7 @@
 <template>
     <div class="container mx-auto p-6 min-h-screen">
         <div class="space-y-2 mb-10">
-            <h2 class="text-3xl font-bold tracking-tight">Booking</h2>
+            <h1 class="text-3xl font-bold tracking-tight">Booking</h1>
             <p class="text-lg text-gray-500">Select the instructor, location, date, and timeslot</p>
         </div>
 

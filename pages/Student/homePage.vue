@@ -1,7 +1,7 @@
 <template>
     <div class="container mx-auto">
         <div class="space-y-0.5 mb-6">
-            <h2 class="text-2xl font-bold tracking-tight">Student Dashboard</h2>
+            <h1 class="text-3xl font-bold tracking-tight">Student Dashboard</h1>
             <p class="text-muted-foreground">Your learning journey at a glance</p>
         </div>
 

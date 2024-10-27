@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 <template>
   <div class="flex flex-col">
     <h1 class="text-3xl font-bold tracking-tight">Resources</h1>
+    <p class="text-muted-foreground">Everything you need to pass</p>
     <br>
   
     <div class="grid grid-cols-2 gap-4">
