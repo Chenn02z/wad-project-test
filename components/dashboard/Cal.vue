@@ -22,11 +22,23 @@ interface CalendarEvent {
   };
 }
 
+interface Student {
+  id: number;
+  name: string;
+  location: string;
+  time: string;
+  date: string;
+  contact: string;
+  upcomingLessonTopic: string;
+}
+
 // State variables
 const eventsFromToday = ref<CalendarEvent[]>([]); // Events from today onward
 const groupedEvents = ref<Record<string, CalendarEvent[]>>({}); // Grouped events by date
 const isLoading = ref(false); // Loading state
 const errorMessage = ref(""); // Error message for debugging
+const client = useSupabaseClient();
+const students = ref<Student[]>([]);
 
 // Function to fetch events from today onwards
 const fetchEventsFromToday = async (instructorId: string) => {
@@ -80,10 +92,34 @@ const groupEventsByDate = () => {
   }, {} as Record<string, CalendarEvent[]>);
 };
 
-// On mounted, fetch events starting from today
+const getStudents = async () => {
+      try {
+        const { data, error } = await client.from("studentview").select();
+        if (error) throw error;
+        if (data) students.value = data;
+      } catch (error) {
+        errorMessage.value = "Failed to retrieve student data.";
+      }
+    };
+
+    function getStudentName(studentId: number): string {
+      const student = students.value.find(
+        (student) => student.id === studentId
+      );
+      return student ? student.name : "Unknown Student";
+    }
+
+    function getStudentNumber(studentId: number): string {
+      const student = students.value.find(
+        (student) => student.id === studentId
+      );
+      return student ? student.contact : "NA";
+    }
+
 onMounted(() => {
-  const instructorId = "Instructor 1"; // hardcoded - replace with session ID
+  const instructorId = "1"; // hardcoded - replace with session ID
   fetchEventsFromToday(instructorId);
+  getStudents();
 });
 
 // Helper function to format time
@@ -158,7 +194,7 @@ const formatDate = (dateTime: string | undefined): string => {
                     <div class="ml-4 space-y-1">
                       <p class="text-sm font-medium leading-none">
                         {{
-                          event.extendedProperties?.private?.student_id || "N/A"
+                          getStudentName(Number(event.extendedProperties?.private?.student_id))
                         }}
                       </p>
                     </div>
@@ -167,7 +203,7 @@ const formatDate = (dateTime: string | undefined): string => {
                     <p class="text-sm font-medium leading-none">
                       {{ formatTime(event.start?.dateTime) }}
                     </p>
-                    <p class="text-sm text-muted-foreground">phone number</p>
+                    <p class="text-sm text-muted-foreground pt-2">{{getStudentNumber(Number(event.extendedProperties?.private?.student_id))}}</p>
                   </div>
                   <Separator class="my-2" />
                 </div>
