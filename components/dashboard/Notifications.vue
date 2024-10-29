@@ -63,7 +63,6 @@ export default defineComponent({
     const students = ref<Student[]>([]);
     const studentProgress = ref<StudentDrivingProgress[]>([]);
     const loading = ref(true);
-    const dialogOpen = ref(false);
     const client = useSupabaseClient();
     const checkedModules = ref([]);
 

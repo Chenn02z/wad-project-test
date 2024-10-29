@@ -1,7 +1,7 @@
 <template>
     <div class="container mx-auto">
         <div class="space-y-0.5 mb-6">
-            <h2 class="text-2xl font-bold tracking-tight">Student Dashboard</h2>
+            <h1 class="text-3xl font-bold tracking-tight">Student Dashboard</h1>
             <p class="text-muted-foreground">Your learning journey at a glance</p>
         </div>
 
@@ -186,9 +186,9 @@ interface Lesson {
 interface Review {
     instructor_id: number;   // The ID of the instructor being reviewed
     student_id: number;      // The ID of the student who wrote the review
-    student_name: string;     // The name of the student
     comment: string;          // The content of the review
     rating: number;           // The rating given by the student (if applicable)
+    date_posted: Date;
 }
 
 const isModalOpen = ref(false);
@@ -298,9 +298,17 @@ const createReview = async (studentId: number, instructorId: number, comment: st
         denyButtonText: `Don't submit`
     }).then(async (result) => {
         if (result.isConfirmed) {
+            const currentTimestamp = new Date().toISOString();  // Get the current timestamp
+
             const { error } = await client
                 .from('instructor_reviews')
-                .insert({ instructor_id: instructorId, student_id: studentId, comment, rating });
+                .insert({
+                    instructor_id: instructorId,
+                    student_id: studentId,
+                    comment,
+                    rating,
+                    date_posted: currentTimestamp
+                });
 
             if (error) {
                 console.error('Error creating review:', error);
@@ -319,6 +327,7 @@ const createReview = async (studentId: number, instructorId: number, comment: st
     });
 };
 
+
 // Function to update an existing review
 const updateReview = async (studentId: number, instructorId: number, comment: string, rating: number) => {
     // Ask user for confirmation
@@ -327,12 +336,13 @@ const updateReview = async (studentId: number, instructorId: number, comment: st
         showDenyButton: true,
         showCancelButton: true,
         confirmButtonText: "Save",
-        denyButtonText: `Don't save`
+        denyButtonText: "Don't save"
     }).then(async (result) => {
         if (result.isConfirmed) {
+            const currentTimestamp = new Date().toISOString();  // Get the current timestamp
             const { error } = await client
                 .from('instructor_reviews')
-                .update({ comment, rating })
+                .update({ comment, rating, date_posted: currentTimestamp })
                 .eq('student_id', studentId)
                 .eq('instructor_id', instructorId);
 
@@ -453,10 +463,13 @@ const formatDate = (dateString: string) => {
 
 <style scoped>
 /* Add any additional styles if needed */
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
     transition: opacity 0.5s;
 }
-.fade-enter-from, .fade-leave-to {
+
+.fade-enter-from,
+.fade-leave-to {
     opacity: 0;
 }
 </style>

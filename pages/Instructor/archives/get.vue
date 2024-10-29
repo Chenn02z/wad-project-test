@@ -60,7 +60,7 @@ export default defineComponent({
     // Fetch events from the API
     const getEvents = async () => {
       try {
-        const response = await $fetch<FetchResponse>('/api/getEvents'); // Adjust the API path if needed
+        const response = await $fetch<FetchResponse>('/api/getEventsAfter'); // Adjust the API path if needed
         if (response.success && response.data) {
           events.value = response.data; // Handle the events returned from the API
         } else {

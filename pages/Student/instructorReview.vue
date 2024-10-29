@@ -1,6 +1,7 @@
 <template>
   <div class="flex flex-col">
     <h1 class="text-3xl font-bold tracking-tight">Reviews</h1>
+    <p class="text-muted-foreground">View the instructor reviews</p>
     <br>
     <div v-for="instructor in instructors" :key="instructor.id">
       <NuxtLink :to="`/Student/reviewTemplate/${instructor.id}`">
