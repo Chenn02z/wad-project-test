@@ -27,7 +27,7 @@ function changeToBTT() {
 // const totalPages = ref(0);
 // const scale = ref(1);
 
-import { ref, onMounted } from 'vue';
+// import { ref, onMounted } from 'vue';
 
 // Rest of the setup in PDFDocument.vue remains the same
 
