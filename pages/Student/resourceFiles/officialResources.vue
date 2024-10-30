@@ -34,7 +34,6 @@ function toggleTopic() {
 
   <!-- PDF Viewer -->
   <div>
-    <h1>PDF Viewer</h1>
     <iframe
       :src="currentTopic === 'FTT' ? '/externalFiles/FTT.pdf' : '/externalFiles/BTT.pdf'"
       class="pdfViewer"
@@ -84,7 +83,7 @@ function toggleTopic() {
   /* PDF Viewer */
   .pdfViewer {
     width: 100%; /* Full width */
-    height: 80vh; /* Responsive height */
+    height: 100vh; /* Responsive height */
     border: none; /* No border */
   }
 
