@@ -1,40 +1,21 @@
 <script setup lang="ts">
-
 definePageMeta({
   layout: "studentview",
 });
 
-import {Button} from '@/components/ui/button';
-var currentTopic = "BTT";
-function changeToFTT() {
-  if (currentTopic == "FTT") {
-  currentTopic = "FTT";
-  }
+import { ref } from 'vue';
+
+// Make currentTopic reactive
+const currentTopic = ref<"BTT" | "FTT">("BTT");
+
+// Define function to toggle the topic
+function toggleTopic() {
+  currentTopic.value = currentTopic.value === "BTT" ? "FTT" : "BTT";
 }
-function changeToBTT() {
-  if (currentTopic == "FTT") {
-    currentTopic = "BTT";
-  }
-}
-
-// import PDFviewer from '@/components/resources/PDFviewer.vue';
-
-// const pdfUrl = '/path/to/your.pdf';
-// const pdfTitle = 'PDF Document';
-
-// const pdf = ref(null);
-// const currentPage = ref(1);
-// const totalPages = ref(0);
-// const scale = ref(1);
-
-// import { ref, onMounted } from 'vue';
-
-// Rest of the setup in PDFDocument.vue remains the same
-
-
 </script>
 
 <template>
+  <!-- Back to Resources Link -->
   <div>
     <a href="/Student/resourcesPage" class="inline-flex">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 26 26" stroke-width="1.5" stroke="currentColor" class="size-6 mr-2 mt-1">
@@ -43,37 +24,73 @@ function changeToBTT() {
       <h1 class="text-lg">Back to Resources</h1>
     </a>
   </div>
-  <div class="buttonDiv">
-    <Button @click="changeToFTT()" class="testButton" style="background-color: rgb(39, 139, 214);">
-      BTT
-    </Button>
-    <Button @click="changeToBTT()" class="testButton" style="background-color: rgb(87, 163, 87);">
-      FTT
-    </Button>
+
+  <!-- Slide Toggle Switch -->
+  <div class="toggleSwitch" @click="toggleTopic">
+    <div :class="{ slideLeft: currentTopic === 'BTT', slideRight: currentTopic === 'FTT' }" class="toggleButton">
+      <span>{{ currentTopic === 'BTT' ? 'BTT' : 'FTT' }}</span>
+    </div>
   </div>
+
+  <!-- PDF Viewer -->
   <div>
     <h1>PDF Viewer</h1>
     <iframe
-      src="externalFiles/FTT.pdf"
-      width="100%"
-      height="600"
-      style="border: none;"
+      :src="currentTopic === 'FTT' ? '/externalFiles/FTT.pdf' : '/externalFiles/BTT.pdf'"
+      class="pdfViewer"
     ></iframe>
   </div>
-
-
 </template>
 
 <style>
-  .testButton {
-    font-size: 25px;
-    margin: 50px 100px;
-    padding: 30px 100px;
+  /* Toggle Switch */
+  .toggleSwitch {
+    width: 100px; /* Width of the switch */
+    height: 50px; /* Height of the switch */
+    background-color: #ddd; /* Background color for inactive state */
+    border-radius: 25px; /* Fully rounded edges */
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin: 20px auto; /* Center the switch horizontally */
   }
 
-  .buttonDiv {
+  .toggleButton {
+    width: 50%; /* Width of each side */
+    height: 100%;
+    background-color: green; /* Active color for the button */
+    border-radius: 25px; /* Rounded corners */
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    position: absolute;
+    transition: 0.3s; /* Smooth sliding transition */
+  }
+
+  .slideLeft {
+    background-color: green; /* BTT color */
+    left: 0; /* Position to the left */
+  }
+
+  .slideRight {
+    background-color: red; /* FTT color */
+    left: 50%; /* Position to the right */
+  }
+
+  /* PDF Viewer */
+  .pdfViewer {
+    width: 100%; /* Full width */
+    height: 80vh; /* Responsive height */
+    border: none; /* No border */
+  }
+
+  /* Center the PDF Viewer header */
+  h1 {
+    text-align: center;
+    margin-bottom: 10px;
   }
 </style>
