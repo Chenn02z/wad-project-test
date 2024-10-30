@@ -56,10 +56,6 @@ interface Review {
   date_posted: Date;
 }
 
-interface Student {
-
-}
-
 const route = useRoute();
 const instructor_id = Number(route.params.id); // Ensure it's a number
 
@@ -166,7 +162,7 @@ onMounted(async () => {
     <Card id="app" class="review" v-for="(review, idx) in reviews" :key="idx">
         <!-- Name and rating in the center -->
         <div class="flex-grow inline-flex items-center mb-2">
-          <div class="text-2xl font-bold">{{review.student_id}}</div>
+          <div class="text-2xl font-bold">{{students[review.student_id] || "Unknown Student"}}</div>
           <div class="flex ml-4">
             <Stars :rating="review.rating" />
           </div>
