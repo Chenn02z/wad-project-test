@@ -56,6 +56,10 @@ interface Review {
   date_posted: Date;
 }
 
+interface Student {
+
+}
+
 const route = useRoute();
 const instructor_id = Number(route.params.id); // Ensure it's a number
 
@@ -97,7 +101,28 @@ onMounted(async () => {
     console.log('Fetched reviews:', reviews.value); // Log the reviews data
   }
 });
+const students = ref<{ [key: number]: string }>({});
 
+onMounted(async () => {
+  // Existing instructor and review fetching code
+
+  // Fetch student data
+  const { data: studentData, error: studentError } = await client
+    .from('studentview')
+    .select('id, name');
+
+  if (studentError) {
+    console.error('Error fetching students:', studentError);
+    return;
+  }
+
+  if (studentData) {
+    // Map student IDs to names for easy lookup
+    studentData.forEach(student => {
+      students.value[student.id] = student.name;
+    });
+  }
+});
 
 
 </script>
