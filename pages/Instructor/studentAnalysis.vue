@@ -132,7 +132,7 @@ function getStudentTestRoutes(studentId: number) {
                 </p>
                 <Drawer>
                   <DrawerTrigger as-child>
-                    <Button variant="secondary" class="mt-5">
+                    <Button variant="secondary" class="mt-5 view-progress" style="cursor: pointer;">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -417,7 +417,7 @@ function getStudentTestRoutes(studentId: number) {
                     </div>
                     <DrawerFooter>
                       <DrawerClose as-child>
-                        <Button variant="outline"> ok! </Button>
+                        <Button variant="outline" style="cursor: pointer;"> ok! </Button>
                       </DrawerClose>
                     </DrawerFooter>
                   </DrawerContent>
@@ -433,6 +433,9 @@ function getStudentTestRoutes(studentId: number) {
 </template>
 
 <style scoped>
+.view-progress:hover {
+  background-color: rgb(213, 213, 213);
+}
 .test {
   height: 6rem;
   width: 6rem;
