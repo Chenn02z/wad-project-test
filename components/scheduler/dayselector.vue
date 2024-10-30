@@ -166,6 +166,7 @@ const submitAvailability = async () => {
     alert('Availability updated successfully!');
     await fetchDisabledSlots(selectedDay.value.fullDate); // Refresh disabled slots after submission
     fetchUpcomingAvailability(); // Refresh upcoming availability after submission
+    selectedSlots.value = []; // Clear the selected slots after submission
   } catch (err) {
     console.error('Unexpected error:', err);
     alert('An unexpected error occurred.');
