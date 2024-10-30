@@ -21,8 +21,7 @@
           class="border p-3 rounded-lg focus:outline-none"
           :class="{
             'bg-purple-200': selectedSlots.includes(slot.start),
-            'bg-gray-300 text-gray-500 cursor-not-allowed': disabledSlots.includes(slot.start),
-            'hover:bg-purple-100': !disabledSlots.includes(slot.start)
+            'bg-gray-300 text-gray-500 cursor-not-allowed': disabledSlots.includes(slot.start)
           }"
           :disabled="disabledSlots.includes(slot.start)"
           @click="toggleSlot(slot)"
@@ -40,7 +39,6 @@
         </button>
       </div>
 
-      <!-- Display upcoming availability -->
       <div class="mt-8 w-full">
         <h3 class="text-2xl font-bold">Upcoming Availability</h3>
         <div v-if="groupedAvailability && Object.keys(groupedAvailability).length > 0" class="mt-4 space-y-6">
@@ -82,6 +80,8 @@ const generateNext7Days = () => {
 };
 
 const days = ref(generateNext7Days());
+
+// Define 2-hour slots
 const slots = ref([
   { label: '8:00 AM - 10:00 AM', start: '08:00:00' },
   { label: '10:00 AM - 12:00 PM', start: '10:00:00' },
@@ -94,7 +94,7 @@ const slots = ref([
 
 const selectedDay = ref(null); // Track the selected day
 const selectedSlots = ref([]); // Track the start time of selected slots
-const disabledSlots = ref([]); // Track slots that are already booked
+const disabledSlots = ref([]); // Track slots that are already booked as available
 const groupedAvailability = ref({}); // Track upcoming availability by date
 
 // Handle selecting a day
@@ -123,7 +123,7 @@ const fetchDisabledSlots = async (date) => {
       return;
     }
 
-    // Populate disabledSlots with start times that are already booked
+    // Populate disabledSlots with start times that are already marked as available
     disabledSlots.value = data.map(item => item.time);
   } catch (err) {
     console.error('Unexpected error fetching disabled slots:', err);
@@ -172,7 +172,7 @@ const submitAvailability = async () => {
   }
 };
 
-// Fetch upcoming availability with detailed date/time parsing and merging logic
+// Fetch upcoming availability with detailed date/time parsing
 const fetchUpcomingAvailability = async () => {
   try {
     const today = dayjs().format('YYYY-MM-DD');
@@ -194,6 +194,7 @@ const fetchUpcomingAvailability = async () => {
       const parsedDate = dayjs(item.date).format('dddd, MMMM D');
       const startTime = dayjs(`${item.date} ${item.time}`, 'YYYY-MM-DD HH:mm:ss');
       const endTime = startTime.add(2, 'hour');
+      
       const startLabel = startTime.format('h:mm A');
       const endLabel = endTime.format('h:mm A');
 
@@ -244,7 +245,6 @@ const fetchUpcomingAvailability = async () => {
     });
 
     groupedAvailability.value = grouped;
-    console.log("Grouped and Merged Availability:", groupedAvailability.value); // Final debug log for grouped availability
   } catch (err) {
     console.error('Unexpected error fetching upcoming availability:', err);
   }
@@ -266,6 +266,8 @@ button.bg-purple-200 {
 }
 
 button.bg-gray-300 {
-  background-color: #e2e8f0; /* Greyed out for already selected slots */
+  background-color: #e2e8f0; /* Greyed out for already submitted slots */
+  cursor: not-allowed;
+  color: #6b7280;
 }
 </style>
