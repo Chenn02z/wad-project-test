@@ -65,7 +65,7 @@
 
           <NuxtLink to="/Instructor/archives/add" class="nav-link"> add </NuxtLink>
           <NuxtLink to="/Instructor/archives/get" class="nav-link"> get </NuxtLink>
-          <NuxtLink to="/Instructor/studentAnalysisYC" class="nav-link"> test </NuxtLink>
+          <NuxtLink to="/Instructor/testpage" class="nav-link"> test </NuxtLink>
         </div>
 
         <!-- Profile link flushed to the bottom -->
