@@ -31,12 +31,36 @@
       </div>
 
       <div v-if="selectedDay" class="mt-4">
-        <button 
-          class="bg-blue-500 text-white px-4 py-2 rounded-lg"
-          @click="submitAvailability"
-        >
-          Submit Availability
-        </button>
+        <!-- Shadcn Dialog Component -->
+        <Dialog>
+          <DialogTrigger asChild>
+            <button 
+              class="bg-blue-500 text-white px-4 py-2 rounded-lg"
+            >
+              Submit Availability
+            </button>
+          </DialogTrigger>
+          <DialogContent class="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Confirm Booking</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to book the selected slots for 
+                {{ selectedDay.label }} ({{ selectedDay.fullDate }})?
+                <div class="mt-2">
+                  Selected Slots: 
+                  <ul>
+                    <li v-for="(slot, index) in selectedSlots" :key="index">{{ slotMap[slot] }}</li>
+                  </ul>
+                </div>
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+            <DialogClose asChild>
+              <Button type='button' @click="confirmAvailability()">Confirm</Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div class="mt-8 w-full">
@@ -60,9 +84,19 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import dayjs from 'dayjs';
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 // Configure Supabase client
-const client = useSupabaseClient()
+const client = useSupabaseClient();
 
 // Define the next 7 days from tomorrow
 const generateNext7Days = () => {
@@ -92,10 +126,19 @@ const slots = ref([
   { label: '8:00 PM - 10:00 PM', start: '20:00:00' },
 ]);
 
+const slotMap = slots.value.reduce((map, slot) => {
+  map[slot.start] = slot.label;
+  return map;
+}, {});
+
 const selectedDay = ref(null); // Track the selected day
 const selectedSlots = ref([]); // Track the start time of selected slots
 const disabledSlots = ref([]); // Track slots that are already booked as available
 const groupedAvailability = ref({}); // Track upcoming availability by date
+
+
+
+
 
 // Handle selecting a day
 const selectDay = async (day) => {
@@ -141,8 +184,8 @@ const toggleSlot = (slot) => {
   }
 };
 
-// Handle submitting availability
-const submitAvailability = async () => {
+// Handle confirming availability submission
+const confirmAvailability = async () => {
   if (!selectedDay.value || selectedSlots.value.length === 0) return;
 
   const availabilityData = selectedSlots.value.map((start) => ({
@@ -163,13 +206,13 @@ const submitAvailability = async () => {
       return;
     }
 
-    alert('Availability updated successfully!');
+    
     await fetchDisabledSlots(selectedDay.value.fullDate); // Refresh disabled slots after submission
     fetchUpcomingAvailability(); // Refresh upcoming availability after submission
     selectedSlots.value = []; // Clear the selected slots after submission
   } catch (err) {
     console.error('Unexpected error:', err);
-    alert('An unexpected error occurred.');
+    
   }
 };
 
