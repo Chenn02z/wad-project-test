@@ -144,14 +144,13 @@ const fetchEventsFromToday = async (instructorId: string) => {
 
 </script>
 
-
 <template>
-  <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+  <div class="grid gap-4 grid-cols-1 md:grid-cols-1 lg:grid-cols-3">
     <Card>
       <CardHeader
         class="flex flex-row items-center justify-between space-y-0 pb-2"
       >
-        <CardTitle class="text-sm font-medium"> Total Revenue </CardTitle>
+        <CardTitle class="text-sm font-medium">Total Revenue</CardTitle>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -169,14 +168,17 @@ const fetchEventsFromToday = async (instructorId: string) => {
       </CardHeader>
       <CardContent>
         <div class="text-2xl font-bold">${{ totalEarning }}</div>
-        <p class="text-xs text-muted-foreground">+{{ percentageChange.toFixed(1) }}% from last month</p>
+        <p class="text-xs text-muted-foreground">
+          +{{ percentageChange.toFixed(1) }}% from last month
+        </p>
       </CardContent>
     </Card>
+    
     <Card>
       <CardHeader
         class="flex flex-row items-center justify-between space-y-0 pb-2"
       >
-        <CardTitle class="text-sm font-medium"> Students (All Time) </CardTitle>
+        <CardTitle class="text-sm font-medium">Students (All Time)</CardTitle>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -193,18 +195,21 @@ const fetchEventsFromToday = async (instructorId: string) => {
       </CardHeader>
       <CardContent>
         <div class="text-2xl font-bold">{{ uniqueStudentsCount }}</div>
-        <p class="text-xs text-muted-foreground">See 
+        <p class="text-xs text-muted-foreground">
+          See
           <NuxtLink to="/Instructor/studentAnalysis">
-            Student Analysis 
+            Student Analysis
           </NuxtLink>
-          for more information</p>
+          for more information
+        </p>
       </CardContent>
     </Card>
+    
     <Card>
       <CardHeader
         class="flex flex-row items-center justify-between space-y-0 pb-2"
       >
-        <CardTitle class="text-sm font-medium"> Current Bookings </CardTitle>
+        <CardTitle class="text-sm font-medium">Current Bookings</CardTitle>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -219,7 +224,7 @@ const fetchEventsFromToday = async (instructorId: string) => {
         </svg>
       </CardHeader>
       <CardContent>
-        <div class="text-2xl font-bold">{{eventCount}}</div>
+        <div class="text-2xl font-bold">{{ eventCount }}</div>
         <p class="text-xs text-muted-foreground">See Calendar for more!</p>
       </CardContent>
     </Card>

@@ -169,8 +169,9 @@ function getProfilePhotoUrl(studentId: string) {
   </div>
 
   <div class="grid lg:grid-cols-5 gap-2">
-    <ScrollArea class="lg:col-span-5">
-      <div class="flex p-4 space-x-4 w-max">
+    <ScrollArea class="lg:col-span-5 overflow-auto">
+      <!-- Apply gap-4 directly to the flex container and set it to wrap -->
+      <div class="flex flex-wrap gap-4 p-4 justify-start">
         <div
           v-for="student in studentsWithLessons"
           :key="student.id"
@@ -235,88 +236,99 @@ function getProfilePhotoUrl(studentId: string) {
                       <div
                         class="col-span-2 grid items-start gap-6 lg:col-span-1"
                       >
-                      <Container>
-  <Card class="h-72 overflow-hidden">
-    <CardHeader class="pb-3 h-16">
-      <CardTitle>Personal Details</CardTitle>
-    </CardHeader>
+                        <Container>
+                          <Card class="h-72 overflow-hidden">
+                            <CardHeader class="pb-3 h-16">
+                              <CardTitle>Personal Details</CardTitle>
+                            </CardHeader>
 
-    <CardContent>
-      <div class="flex justify-center">
-        <img
-                  class="rounded-full h-20 w-20 mb-4"
-                  :src="getProfilePhotoUrl(student.id.toString())"
-                  alt="Student Photo"
-                />
-      </div>
+                            <CardContent>
+                              <div class="flex justify-center">
+                                <img
+                                  class="rounded-full h-20 w-20 mb-4"
+                                  :src="
+                                    getProfilePhotoUrl(student.id.toString())
+                                  "
+                                  alt="Student Photo"
+                                />
+                              </div>
 
-      <div class="grid grid-cols-2 gap-2"> <!-- Increased gap to 4 -->
-        <div class="col-span-1 flex flex-col items-center justify-center">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Card class="h-16 w-24 flex flex-col items-center justify-center m-1"> <!-- Added margin 1 -->
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="h-6 w-6 mx-auto"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"
-                    />
-                  </svg>
-                  <CardContent class="text-center p-0">
-                    {{ student.contact }}
-                  </CardContent>
-                </Card>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Contact</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
+                              <div class="grid grid-cols-2 gap-2">
+                                <!-- Increased gap to 4 -->
+                                <div
+                                  class="col-span-1 flex flex-col items-center justify-center"
+                                >
+                                  <TooltipProvider>
+                                    <Tooltip>
+                                      <TooltipTrigger>
+                                        <Card
+                                          class="h-16 w-24 flex flex-col items-center justify-center m-1"
+                                        >
+                                          <!-- Added margin 1 -->
+                                          <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            class="h-6 w-6 mx-auto"
+                                          >
+                                            <path
+                                              stroke-linecap="round"
+                                              stroke-linejoin="round"
+                                              d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"
+                                            />
+                                          </svg>
+                                          <CardContent class="text-center p-0">
+                                            {{ student.contact }}
+                                          </CardContent>
+                                        </Card>
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        <p>Contact</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                </div>
 
-        <div class="col-span-1 flex flex-col items-center justify-center">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Card class="h-16 w-24 flex flex-col items-center justify-center m-1">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="size-6"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"
-                    />
-                  </svg>
-                  <CardContent class="text-center p-0">
-                    10
-                  </CardContent>
-                </Card>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Lessons Completed</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      </div>
-    </CardContent>
-  </Card>
-</Container>
-
+                                <div
+                                  class="col-span-1 flex flex-col items-center justify-center"
+                                >
+                                  <TooltipProvider>
+                                    <Tooltip>
+                                      <TooltipTrigger>
+                                        <Card
+                                          class="h-16 w-24 flex flex-col items-center justify-center m-1"
+                                        >
+                                          <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            class="size-6"
+                                          >
+                                            <path
+                                              stroke-linecap="round"
+                                              stroke-linejoin="round"
+                                              d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"
+                                            />
+                                          </svg>
+                                          <CardContent class="text-center p-0">
+                                            10
+                                          </CardContent>
+                                        </Card>
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        <p>Lessons Completed</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </Container>
                       </div>
                       <div class="grid items-start gap-6 lg:col-span-2">
                         <div>
@@ -472,14 +484,5 @@ function getProfilePhotoUrl(studentId: string) {
   justify-content: center;
   align-items: center;
 }
-/* .student-card {
-  cursor: pointer;
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-  overflow: hidden;
-}
-.student-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-} */
+
 </style>
