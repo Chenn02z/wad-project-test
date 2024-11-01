@@ -155,8 +155,11 @@ function getNearestUpcomingLessonDate(studentId: number): Date | null {
   return upcomingLessons?.[0]?.date || null; // Return the date of the nearest upcoming lesson or null if none found
 }
 
-const hardcodedProfilePhotoUrl =
-  "https://tzklhzyswqmorhokvgmw.supabase.co/storage/v1/object/public/new_profile_photos/101.jpg";
+function getProfilePhotoUrl(studentId: string) {
+  const supabaseUrl = "https://tzklhzyswqmorhokvgmw.supabase.co";
+  const bucketPath = "new_profile_photos"; // Ensure this matches your bucket and folder structure
+  return `${supabaseUrl}/storage/v1/object/public/${bucketPath}/${studentId}.jpg`;
+}
 </script>
 
 <template>
@@ -177,8 +180,8 @@ const hardcodedProfilePhotoUrl =
             <Card class="h-80 w-60 flex flex-col items-center justify-center">
               <CardContent class="text-center flex flex-col items-center">
                 <img
-                  class="rounded-full h-28 mb-4"
-                  :src="hardcodedProfilePhotoUrl"
+                  class="rounded-full h-28 w-28 mb-4"
+                  :src="getProfilePhotoUrl(student.id.toString())"
                   alt="Student Photo"
                 />
                 <h2 class="text-xl font-semibold">{{ student.name }}</h2>
@@ -241,8 +244,8 @@ const hardcodedProfilePhotoUrl =
     <CardContent>
       <div class="flex justify-center">
         <img
-                  class="rounded-full h-20 mb-4"
-                  :src="hardcodedProfilePhotoUrl"
+                  class="rounded-full h-20 w-20 mb-4"
+                  :src="getProfilePhotoUrl(student.id.toString())"
                   alt="Student Photo"
                 />
       </div>
