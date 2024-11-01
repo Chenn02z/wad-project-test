@@ -23,11 +23,10 @@
 
         <TabsContent value="overview" class="space-y-4">
           <Summary />
-          <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
+          <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-1">
             <Card>
               <Overview />
             </Card>
-            <RecentSales />
           </div>
         </TabsContent>
 
@@ -41,7 +40,7 @@
 
         <TabsContent value="notifications" class="space-y-4">
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <Notifications />
+            <Notifications @updateEventCount="updateEventCount"/>
           </div>
         </TabsContent>
       </Tabs>
@@ -71,16 +70,15 @@ import Cal from "@/components/dashboard/Cal.vue";
 
 const eventCount = ref(0);
 
-const updateEventCount = (count: number) => {
+function updateEventCount(count: number) {
   eventCount.value = count;
-};
-
+}
 definePageMeta({
   layout: "instructorview",
 });
 
 import { ref } from "vue";
-import { useFetch } from "#app";
+
 
 interface CalendarEvent {
   id: string;
@@ -98,10 +96,7 @@ interface CalendarEvent {
 }
 
 // State variables
-const events = ref<CalendarEvent[]>([]); // Properly type events as CalendarEvent[]
-const isLoading = ref(false); // Loading state
-const startDate = ref(new Date().toISOString().split("T")[0]); // Default to today's date
-const instructorId = ref("");
+const events = ref<CalendarEvent[]>([]);
 const errorMessage = ref("");
 
 interface FetchResponse {
@@ -126,56 +121,8 @@ const getPastEvents = async () => {
   }
 };
 
-const getEvents = async () => {
-  isLoading.value = true;
-
-  try {
-    // Format timeMin as ISO string from startDate
-    const timeMin = new Date(startDate.value).toISOString();
-
-    const { data } = await useFetch<{
-      success: boolean;
-      data?: CalendarEvent[];
-    }>("/api/getEvent", {
-      params: {
-        timeMin,
-        instructorId: instructorId.value || undefined, // Optional parameter
-      },
-    });
-
-    if (data.value?.success && data.value?.data) {
-      events.value = data.value.data;
-    } else {
-      events.value = []; // Clear events if no data is found
-    }
-  } catch (error) {
-    // Handle errors if necessary (for now, we just clear events)
-    events.value = [];
-  } finally {
-    isLoading.value = false;
-  }
-};
-
-// Helper functions for date and time formatting
-const formatDate = (dateTime: string | undefined): string => {
-  if (!dateTime) return "N/A";
-  const date = new Date(dateTime);
-  return date.toLocaleDateString();
-};
-
-const formatTime = (dateTime: string | undefined): string => {
-  if (!dateTime) return "All day";
-  const date = new Date(dateTime);
-  let hours = date.getHours();
-  const minutes = date.getMinutes();
-  const ampm = hours >= 12 ? "PM" : "AM";
-  hours = hours % 12;
-  hours = hours ? hours : 12;
-  const minutesStr = minutes < 10 ? "0" + minutes : minutes;
-  return `${hours}:${minutesStr} ${ampm}`;
-};
 
 onMounted(async () => {
-  await getPastEvents(); // Fetch past events and update event count
+  await getPastEvents();
 });
 </script>

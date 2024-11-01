@@ -1,6 +1,149 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+// Supabase client
+const client = useSupabaseClient();
+
+// Define types for earnings data
+interface Earning {
+  month: number; // Now uses numbers 1-12 for months
+  instructorId: number;
+  year: number;
+  amount: number;
+}
+
+interface Lessons {
+  instructor_name: string;
+  student_id: number;
+  date: Date;
+  time: string; 
+  location: string;
+  instructor_id: number;
+}
+
+// Define the instructor ID and current/previous month & year
+const instructorId = 1; // Replace with session id or other identifier
+const previousMonth  = new Date().getMonth()
+const currentMonth = previousMonth + 1; // JavaScript months are 0-based, so add 1
+const currentYear = new Date().getFullYear();
+
+const { data: lessons } = await useAsyncData<Lessons[]>(
+  "lessons",
+  async () => {
+    const { data } = await client.from("lessons").select();
+    return data ?? [];
+  }
+);
+
+// Fetch earnings data
+const { data: instructor_earnings } = await useAsyncData<Earning[]>(
+  "instructor_earnings",
+  async () => {
+    const { data } = await client.from("instructor_earnings").select();
+    return data ?? [];
+  }
+);
+
+function getUniqueStudents(instructorId: number) {
+  const uniqueStudentIds = new Set(
+    lessons.value?.filter(lesson => lesson.instructor_id === instructorId).map(lesson => lesson.student_id)
+  );
+  return uniqueStudentIds.size;
+}
+
+// Function to get total lessons
+function getTotalLessons(instructorId: number) {
+  return lessons.value?.filter(lesson => lesson.instructor_id === instructorId).length ?? 0;
+}
+
+// Function to get earnings for a specific instructor and month/year
+function getInstructorEarning(instructorId: number, month?: number, year?: number) {
+  return instructor_earnings.value?.filter(
+    (earning) =>
+      earning.instructorId === instructorId &&
+      (!month || earning.month === month) &&
+      (!year || earning.year === year)
+  ) ?? [];
+}
+
+// Total earning up to the current month
+const totalEarning = computed(() => {
+  return getInstructorEarning(instructorId)
+    ?.filter((earning) => earning.month <= currentMonth) // Filter for months before November
+    .reduce((sum, earning) => sum + earning.amount, 0) ?? 0;
+});
+
+const totalEarningBefore = computed(() => {
+  return getInstructorEarning(instructorId)
+    ?.filter((earning) => earning.month <= previousMonth) // Filter for months before November
+    .reduce((sum, earning) => sum + earning.amount, 0) ?? 0;
+});
+
+
+
+// Percentage change from the previous month to the current month
+const percentageChange = computed(() => {
+
+  return ((totalEarning.value - totalEarningBefore.value) / totalEarningBefore.value) * 100;
+})
+
+const uniqueStudentsCount = computed(() => getUniqueStudents(instructorId));
+const totalLessonsCount = computed(() => getTotalLessons(instructorId));
+
+interface CalendarEvent {
+  id: string;
+  summary: string;
+  start: {
+    dateTime?: string;
+    date?: string;
+  };
+  extendedProperties?: {
+    private?: {
+      instructor_id?: string;
+      student_id?: string;
+    };
+  };
+}
+
+const eventsFromToday = ref<CalendarEvent[]>([]);
+const errorMessage = ref("");
+const eventCount = computed(() => eventsFromToday.value.length); 
+
+const fetchEventsFromToday = async (instructorId: string) => {
+  errorMessage.value = ""; // Clear previous error message
+  try {
+    // Fetch the data from the API with timeMin set to the current date/time (today onward)
+    const { data, error } = await useFetch<{
+      success: boolean;
+      data?: CalendarEvent[];
+    }>("/api/getEventsAfter", {
+      params: { timeMin: new Date().toISOString(), instructorId }, // timeMin is now from today onwards
+    });
+
+    // Log the response data for debugging purposes
+    console.log("API Response:", data.value);
+
+    if (error.value) {
+      throw new Error(error.value.message || "Failed to fetch events");
+    }
+
+    // Check if the API returned success and events
+    if (data.value?.success && data.value.data) {
+      eventsFromToday.value = data.value.data;
+    } else {
+      eventsFromToday.value = [];
+      errorMessage.value = "No events found or API request failed.";
+    }
+  } catch (err) {
+    console.error("Error fetching events:", err);
+    errorMessage.value = err instanceof Error ? err.message : String(err);
+    eventsFromToday.value = [];
+  }
+};
+
 </script>
+
 
 <template>
   <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -25,8 +168,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
         </svg>
       </CardHeader>
       <CardContent>
-        <div class="text-2xl font-bold">$1234.23</div>
-        <p class="text-xs text-muted-foreground">+20.1% from last month</p>
+        <div class="text-2xl font-bold">${{ totalEarning }}</div>
+        <p class="text-xs text-muted-foreground">+{{ percentageChange.toFixed(1) }}% from last month</p>
       </CardContent>
     </Card>
     <Card>
@@ -49,8 +192,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
         </svg>
       </CardHeader>
       <CardContent>
-        <div class="text-2xl font-bold">45</div>
-        <p class="text-xs text-muted-foreground">+19% from last month</p>
+        <div class="text-2xl font-bold">{{ uniqueStudentsCount }}</div>
+        <p class="text-xs text-muted-foreground">See 
+          <NuxtLink to="/Instructor/studentAnalysis">
+            Student Analysis 
+          </NuxtLink>
+          for more information</p>
       </CardContent>
     </Card>
     <Card>
@@ -72,8 +219,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
         </svg>
       </CardHeader>
       <CardContent>
-        <div class="text-2xl font-bold">35</div>
-        <p class="text-xs text-muted-foreground">+10 since last hour</p>
+        <div class="text-2xl font-bold">{{eventCount}}</div>
+        <p class="text-xs text-muted-foreground">See Calendar for more!</p>
       </CardContent>
     </Card>
   </div>

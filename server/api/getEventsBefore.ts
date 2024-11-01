@@ -5,8 +5,9 @@ import { resolve } from 'path';
 export default defineEventHandler(async (event) => {
   try {
     const query = getQuery(event); // Read dynamic query parameters from the request
-    const { timeMin, instructorId } = query;
+    const { timeMin } = query;
 
+    const instructorId = "1"; // Replace this with the actual hardcoded ID
     // Ensure timeMin is a string or set it to the current date
     const validTimeMax = typeof timeMin === 'string' ? timeMin : new Date().toISOString();
 

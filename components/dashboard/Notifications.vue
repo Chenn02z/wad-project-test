@@ -1,7 +1,6 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from "vue";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Dialog,
@@ -56,8 +55,16 @@ interface StudentDrivingProgress {
   modulesn: string;
 }
 
+interface StudentTestRouteProgress {
+  id: number;
+  sn: number;
+  testroute: string;
+  done: boolean;
+}
+
 export default defineComponent({
-  setup() {
+  emits: ["updateEventCount"],
+  setup(_, { emit }) {
     const events = ref<CalendarEvent[]>([]);
     const errorMessage = ref("");
     const students = ref<Student[]>([]);
@@ -65,6 +72,8 @@ export default defineComponent({
     const loading = ref(true);
     const client = useSupabaseClient();
     const checkedModules = ref([]);
+    const studentTestRoute = ref<StudentTestRouteProgress[]>([]);
+    const checkedTestRoutes = ref<string[]>([]);
 
     const getEvents = async () => {
       try {
@@ -94,6 +103,26 @@ export default defineComponent({
       return student ? student.name : "Unknown Student";
     }
 
+    const getTestRoutes = async () => {
+      try {
+        const { data, error } = await client
+          .from("student_test_routes")
+          .select();
+        if (error) throw error;
+        if (data) studentTestRoute.value = data;
+      } catch (error) {
+        errorMessage.value = "Failed to retrieve student test routes.";
+      }
+    };
+
+    function getTestRoutesByStudent(studentId: number) {
+      return studentTestRoute.value.filter(
+        (testroutes) => testroutes.id === studentId && testroutes.done === false
+      );
+    }
+
+
+
     const getProgress = async () => {
       try {
         const { data, error } = await client
@@ -112,7 +141,7 @@ export default defineComponent({
       );
     }
 
-    const updateDatabase = async (studentId: number) => {
+    const updateDatabase = async (studentId: number, eventId: string) => {
       console.log("Update database function called");
       console.log("Checked modules:", checkedModules.value); // Logs the selected modules
 
@@ -132,19 +161,55 @@ export default defineComponent({
             if (error) throw error;
           }
         }
+
+        for (const routeId of checkedTestRoutes.value) {
+          const { error } = await client
+            .from("student_test_routes")
+            .update({ done: true })
+            .eq("sn", routeId)
+            .eq("id", studentId);
+          if (error) throw error;
+        }
         console.log("Database updated successfully with checked modules");
 
         checkedModules.value = [];
+        checkedTestRoutes.value = [];
         await nextTick();
-        await getProgress();
+        await deleteCalendarEvent(eventId);
+
+        // Remove the event from the local `events` array
+        events.value = events.value.filter((event) => event.id !== eventId);
+        await Promise.all([getProgress(), getTestRoutes()]);
       } catch (error) {
         console.error("Failed to update database:", error);
         errorMessage.value = "Failed to save progress.";
       }
     };
+
+    const deleteCalendarEvent = async (eventId: string) => {
+  try {
+    const response = await $fetch('/api/deleteEvent', {
+      method: 'DELETE',
+      body: { eventId },
+    });
+    if (!response.success) {
+      throw new Error(response.message || 'Failed to delete event');
+    }
+    console.log("Event deleted successfully from Google Calendar");
+
+    events.value = events.value.filter(event => event.id !== eventId);
+        
+        // Emit the updated count of events
+        emit("updateEventCount", events.value.length);
+  } catch (error) {
+    console.error("Failed to delete event from Google Calendar:", error);
+    throw error;
+  }
+};
+
     onMounted(async () => {
       loading.value = true;
-      await Promise.all([getEvents(), getStudents(), getProgress()]);
+      await Promise.all([getEvents(), getStudents(), getProgress(), getTestRoutes()]);
       loading.value = false;
     });
 
@@ -153,9 +218,12 @@ export default defineComponent({
       errorMessage,
       getStudentName,
       getProgressByStudent,
+      getTestRoutesByStudent,
       loading,
       checkedModules,
+      checkedTestRoutes,
       updateDatabase,
+      deleteCalendarEvent,
     };
   },
 });
@@ -190,11 +258,7 @@ export default defineComponent({
           </Avatar>
           <div class="ml-4 space-y-1">
             <p class="text-sm font-medium leading-none">
-              {{
-                getStudentName(
-                  Number(event.extendedProperties?.private?.student_id)
-                )
-              }}
+              {{ getStudentName(Number(event.extendedProperties?.private?.student_id)) }}
             </p>
             <p class="text-sm text-muted-foreground">
               {{
@@ -213,26 +277,59 @@ export default defineComponent({
                 <Button variant="outline">Review</Button>
               </DialogTrigger>
               <DialogContent class="sm:max-w-[425px]">
-                <p>Uncompleted Modules</p>
-                <form @submit.prevent="updateDatabase(Number(event.extendedProperties?.private?.student_id))">
-                  <div
-                    v-for="progress in getProgressByStudent(
-                      Number(event.extendedProperties?.private?.student_id)
-                    )"
-                    :key="progress.modulesn"
-                  >
-                    <input
-                      type="checkbox"
-                      :id="progress.modulesn"
-                      :value="progress.modulesn"
-                      v-model="checkedModules"
-                    />
-                    <label :for="progress.modulesn">{{
-                      progress.module
-                    }}</label>
+                <h1 class="text-xl font-bold tracking-tight text-slate-700">Review Student Progress</h1>
+                
+                <div class="mt-4">
+                  <h2 class="text-lg font-semibold text-blue-600">Uncompleted Modules</h2>
+                  <p v-if="!getProgressByStudent(Number(event.extendedProperties?.private?.student_id)).length" class="text-sm text-slate-500">No modules to complete.</p>
+                  <div v-else>
+                    <div
+                      v-for="progress in getProgressByStudent(Number(event.extendedProperties?.private?.student_id))"
+                      :key="progress.modulesn"
+                      class="flex items-center mb-2"
+                    >
+                      <input
+                        type="checkbox"
+                        :id="progress.modulesn"
+                        :value="progress.modulesn"
+                        v-model="checkedModules"
+                        class="w-4 h-4 text-blue-500 bg-slate-100 rounded-md cursor-pointer transition-all duration-150"
+                      />
+                      <label :for="progress.modulesn" class="ml-2 text-slate-700 text-sm">{{ progress.module }}</label>
+                    </div>
                   </div>
-                  <button type="submit">submit</button>
-                </form>
+                </div>
+
+                <div class="mt-4">
+                  <h2 class="text-lg font-semibold text-blue-600">Uncompleted Test Routes</h2>
+                  <p v-if="!getTestRoutesByStudent(Number(event.extendedProperties?.private?.student_id)).length" class="text-sm text-slate-500">No test routes to complete.</p>
+                  <div v-else>
+                    <div
+                      v-for="route in getTestRoutesByStudent(Number(event.extendedProperties?.private?.student_id))"
+                      :key="route.sn"
+                      class="flex items-center mb-2"
+                    >
+                      <input
+                        type="checkbox"
+                        :id="'route-' + route.sn"
+                        :value="route.sn"
+                        v-model="checkedTestRoutes"
+                        class="w-4 h-4 text-blue-500 bg-slate-100 rounded-md cursor-pointer transition-all duration-150"
+                      />
+                      <label :for="'route-' + route.sn" class="ml-2 text-slate-700 text-sm">{{ route.testroute }}</label>
+                    </div>
+                  </div>
+                </div>
+
+                <DialogClose>
+                  <button
+                    type="submit"
+                    class="w-full mt-4 px-4 py-2 bg-slate-600 text-white rounded hover:from-slate-700 hover:to-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    @click="updateDatabase(Number(event.extendedProperties?.private?.student_id), event.id)"
+                  >
+                    Submit
+                  </button>
+                </DialogClose>
               </DialogContent>
             </Dialog>
           </div>

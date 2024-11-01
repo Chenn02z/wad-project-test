@@ -5,7 +5,10 @@ import { resolve } from 'path';
 export default defineEventHandler(async (event) => {
   try {
     const query = getQuery(event); // Read dynamic query parameters from the request
-    const { timeMin, instructorId } = query;
+    const { timeMin } = query;
+
+    // Hardcode the instructorId for now
+    const instructorId = "1"; // Replace this with the actual hardcoded ID
 
     // Ensure timeMin is a string or set it to the current date
     const validTimeMin = typeof timeMin === 'string' ? timeMin : new Date().toISOString();
@@ -13,7 +16,6 @@ export default defineEventHandler(async (event) => {
     // Load the service account credentials
     const credentialsPath = resolve('server/config/key.json');
     const credentials = JSON.parse(await fs.readFile(credentialsPath, 'utf-8'));
-
 
     // Authenticate the service account
     const auth = new google.auth.GoogleAuth({
@@ -27,16 +29,14 @@ export default defineEventHandler(async (event) => {
     // Fetch events from the calendar
     const response = await calendar.events.list({
       calendarId: 'aba2812cffb859323a30180e8484b6767ef51177d72fd3111a8f0f21840df05e@group.calendar.google.com',
-      timeMin: validTimeMin, // Ensure timeMin is valid
+      timeMin: validTimeMin,
       singleEvents: true,
       orderBy: 'startTime',
     });
 
-    // Filter events based on instructor ID in extended properties (if provided)
+    // Filter events based on the hardcoded instructor ID in extended properties
     const events = (response.data.items || []).filter((event) => {
-      return instructorId
-        ? event.extendedProperties?.private?.instructor_id === instructorId
-        : true;
+      return event.extendedProperties?.private?.instructor_id === instructorId;
     });
 
     return {

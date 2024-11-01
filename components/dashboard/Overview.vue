@@ -1,25 +1,11 @@
 <script setup lang="ts">
 import { BarChart } from "@/components/ui/chart-bar";
 
-// const data = [
-//   { name: "Jan", total: Math.floor(Math.random() * 5000) + 1000 },
-//   { name: "Feb", total: Math.floor(Math.random() * 5000) + 1000 },
-//   { name: "Mar", total: Math.floor(Math.random() * 5000) + 1000 },
-//   { name: "Apr", total: Math.floor(Math.random() * 5000) + 1000 },
-//   { name: "May", total: Math.floor(Math.random() * 5000) + 1000 },
-//   { name: "Jun", total: Math.floor(Math.random() * 5000) + 1000 },
-//   { name: "Jul", total: Math.floor(Math.random() * 5000) + 1000 },
-//   { name: "Aug", total: Math.floor(Math.random() * 5000) + 1000 },
-//   { name: "Sep", total: Math.floor(Math.random() * 5000) + 1000 },
-//   { name: "Oct", total: Math.floor(Math.random() * 5000) + 1000 },
-//   { name: "Nov", total: Math.floor(Math.random() * 5000) + 1000 },
-//   { name: "Dec", total: Math.floor(Math.random() * 5000) + 1000 },
-// ];
 
 const client = useSupabaseClient();
 
 interface Earning {
-  month: string;
+  month: number;
   instructorId: number;
   year: number;
   amount: number;
@@ -33,6 +19,8 @@ const { data: instructor_earnings } = await useAsyncData<Earning[]>(
   }
 );
 
+const instructorId = 1; // replace with session id
+
 function getInstructorEarning(instructorId: number){
   return (
     instructor_earnings.value?.filter(
@@ -41,14 +29,15 @@ function getInstructorEarning(instructorId: number){
   );
 }
 
-const instructorId = 101; // replace with session id
-
 const formattedEarnings = computed(() => {
+  const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+
   return (
     instructor_earnings.value
       ?.filter((earning) => earning.instructorId === instructorId)
+      .sort((a, b) => a.month - b.month) // Sort by month number
       .map((earning) => ({
-        name: earning.month,
+        name: monthNames[earning.month - 1], // Convert month number to name
         total: earning.amount, 
       })) ?? []
   );

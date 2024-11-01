@@ -92,6 +92,12 @@ const groupEventsByDate = () => {
   }, {} as Record<string, CalendarEvent[]>);
 };
 
+
+const handleEventDeleted = async () => {
+  // Refetch events after deletion
+  await fetchEventsFromToday("101"); // Replace "1" with the actual instructorId as needed
+};
+
 const getStudents = async () => {
       try {
         const { data, error } = await client.from("studentview").select();
