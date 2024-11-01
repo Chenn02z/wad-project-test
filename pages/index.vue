@@ -2,8 +2,8 @@
   <div class="min-h-screen bg-gradient-to-b from-blue-50 to-white">
     <header class="fixed top-0 left-0 right-0 bg-white bg-opacity-90 shadow-md z-50 transition-all duration-300" :class="{ 'py-2': scrollY > 50, 'py-4': scrollY <= 50 }">
       <nav class="container mx-auto px-6 flex justify-between items-center">
-        <h1 class="text-2xl font-bold text-blue-600 transition-all duration-300" :class="{ 'text-xl': scrollY > 50 }">Learn2Drive</h1>
-        <button @click="showAuthModal = true" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-all duration-300">
+        <h1 class="text-2xl font-bold text-slate-600 transition-all duration-300" :class="{ 'text-xl': scrollY > 50 }">Learn2Drive</h1>
+        <button @click="showAuthModal = true" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-slate-700 transition-all duration-300">
           Sign Up / Login
         </button>
       </nav>
@@ -15,7 +15,7 @@
         <div class="container mx-auto px-6 text-center">
           <h2 class="text-5xl font-bold mb-4 text-blue-800 animate-fade-in-up">Master Driving with Learn2Drive</h2>
           <p class="text-xl mb-8 text-gray-600 animate-fade-in-up animation-delay-300">Your journey to becoming a confident driver starts here</p>
-          <button @click="showAuthModal = true" class="px-6 py-3 bg-blue-600 text-white rounded-full text-lg font-semibold hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 animate-fade-in-up animation-delay-600">
+          <button @click="showAuthModal = true" class="px-6 py-3 bg-blue-600 text-white rounded-full text-lg font-semibold hover:bg-slate-700 transition-all duration-300 transform hover:scale-105 animate-fade-in-up animation-delay-600">
             Get Started
             <span class="ml-2">→</span>
           </button>
@@ -27,7 +27,7 @@
           }"
         >
           <div class="w-32 h-16 bg-blue-500 rounded-t-full relative">
-            <div class="absolute top-2 left-2 right-2 h-6 bg-blue-400 rounded-t-full"></div>
+            <div class="absolute top-2 left-2 right-2 h-6 bg-slate-400 rounded-t-full"></div>
             <div class="absolute -bottom-6 left-4 w-6 h-6 bg-gray-800 rounded-full"></div>
             <div class="absolute -bottom-6 right-4 w-6 h-6 bg-gray-800 rounded-full"></div>
           </div>
@@ -40,11 +40,11 @@
           <h2 class="text-4xl font-bold mb-12 text-center text-blue-800">Why Choose Learn2Drive?</h2>
           <div class="grid md:grid-cols-3 gap-8">
             <div v-for="(feature, index) in features" :key="index" 
-              class="bg-blue-50 rounded-lg p-6 shadow-md transform transition-all duration-500 hover:scale-105"
+              class="bg-slate-50 rounded-lg p-6 shadow-md transform transition-all duration-500 hover:scale-105"
               :class="{'animate-fade-in-left': index === 0, 'animate-fade-in-up': index === 1, 'animate-fade-in-right': index === 2}"
             >
               <div class="text-4xl mb-4" v-html="feature.icon"></div>
-              <h3 class="text-xl font-semibold mb-2 text-blue-700">{{ feature.title }}</h3>
+              <h3 class="text-xl font-semibold mb-2 text-slate-700">{{ feature.title }}</h3>
               <p class="text-gray-600">{{ feature.description }}</p>
             </div>
           </div>
@@ -52,7 +52,7 @@
       </section>
 
       <!-- How It Works Section -->
-      <section id="how-it-works" class="py-20 bg-blue-50">
+      <section id="how-it-works" class="py-20 bg-slate-50">
         <div class="container mx-auto px-6">
           <h2 class="text-4xl font-bold mb-12 text-center text-blue-800">How It Works</h2>
           <div class="grid md:grid-cols-3 gap-8">
@@ -63,7 +63,7 @@
               <div class="absolute -top-4 -left-4 w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
                 {{ index + 1 }}
               </div>
-              <h3 class="text-xl font-semibold mb-2 text-blue-700 mt-4">{{ step.title }}</h3>
+              <h3 class="text-xl font-semibold mb-2 text-slate-700 mt-4">{{ step.title }}</h3>
               <p class="text-gray-600">{{ step.description }}</p>
             </div>
           </div>
@@ -71,7 +71,7 @@
       </section>
     </main>
 
-    <footer class="bg-blue-800 text-white py-8">
+    <footer class="bg-slate-800 text-white py-8">
       <div class="container mx-auto px-6 text-center">
         <p>&copy; {{ new Date().getFullYear() }} Learn2Drive. All rights reserved.</p>
       </div>
@@ -82,7 +82,7 @@
       <div v-if="showAuthModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg p-8 max-w-md w-full">
           <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-blue-800">{{ isLogin ? 'Login' : 'Sign Up' }}</h2>
+            <h2 class="text-2xl font-bold text-slate-800">{{ isLogin ? 'Login' : 'Sign Up' }}</h2>
             <button @click="showAuthModal = false" class="text-gray-500 hover:text-gray-700">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -92,22 +92,22 @@
           <form @submit.prevent="handleSubmit" class="space-y-4">
             <div v-if="!isLogin" class="space-y-2">
               <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
-              <input id="name" type="text" placeholder="Enter your full name" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+              <input id="name" type="text" placeholder="Enter your full name" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500">
             </div>
             <div class="space-y-2">
               <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-              <input id="email" type="email" placeholder="Enter your email" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+              <input id="email" type="email" placeholder="Enter your email" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500">
             </div>
             <div class="space-y-2">
               <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-              <input id="password" type="password" placeholder="Enter your password" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+              <input id="password" type="password" placeholder="Enter your password" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500">
             </div>
-            <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-all duration-300">
+            <button type="submit" class="w-full px-4 py-2 bg-slate-600 text-white rounded hover:bg-slate-700 transition-all duration-300">
               {{ isLogin ? 'Login' : 'Sign Up' }}
             </button>
           </form>
           <div class="mt-4 text-center">
-            <button @click="isLogin = !isLogin" class="text-blue-600 hover:underline">
+            <button @click="isLogin = !isLogin" class="text-slate-600 hover:underline">
               {{ isLogin ? 'Need an account? Sign up' : 'Already have an account? Login' }}
             </button>
           </div>
@@ -145,7 +145,7 @@ const features = [
 const howItWorks = [
   {
     title: "Sign Up",
-    description: "Create your account and tell us about your driving experience and goals."
+    description: "Create your account"
   },
   {
     title: "Book Lessons",

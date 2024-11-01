@@ -1,54 +1,53 @@
 <template>
-    <div class="container mx-auto">
+    <div class="container mx-auto p-4">
         <div class="space-y-0.5 mb-6">
-            <h1 class="text-3xl font-bold tracking-tight">Student Dashboard</h1>
-            <p class="text-muted-foreground">Your learning journey at a glance</p>
+            <h1 class="text-3xl font-bold tracking-tight text-slate-700">Student Dashboard</h1>
+            <p class="text-gray-600">Your learning journey at a glance</p>
         </div>
 
         <div class="flex-col md:flex">
             <div class="flex-1 space-y-4 pt-6">
                 <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
                     <!-- Total Lessons Completed Card -->
-                    <Card>
+                    <Card class="bg-slate-50 rounded-lg shadow-md p-4 border border-slate-200">
                         <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle class="text-sm font-medium">Total Lessons Completed</CardTitle>
+                            <CardTitle class="text-sm font-medium text-slate-600">Total Lessons Completed</CardTitle>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                class="h-4 w-4 text-muted-foreground">
+                                class="h-4 w-4 text-slate-500">
                                 <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                             </svg>
                         </CardHeader>
                         <CardContent>
-                            <div class="text-2xl font-bold">{{ completedLessons.length }}</div>
-                            <p class="text-xs text-muted-foreground">+{{ lessonsThisWeek.length }} from last week</p>
+                            <div class="text-2xl font-bold text-slate-700">{{ completedLessons.length }}</div>
+                            <p class="text-xs text-gray-500">+{{ lessonsThisWeek.length }} from last week</p>
                         </CardContent>
                     </Card>
 
                     <!-- Next Lesson Card -->
-                    <Card>
+                    <Card class="bg-slate-50 rounded-lg shadow-md p-4 border border-slate-200">
                         <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle class="text-sm font-medium">Next Lesson</CardTitle>
+                            <CardTitle class="text-sm font-medium text-slate-600">Next Lesson</CardTitle>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                class="h-4 w-4 text-muted-foreground">
+                                class="h-4 w-4 text-slate-500">
                                 <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
                             </svg>
                         </CardHeader>
                         <CardContent>
-                            <div class="text-2xl font-bold">
-                                {{ nextLesson && nextLesson.date ? formatDate(nextLesson.date) : 'No upcoming lessons'
-                                }}
+                            <div class="text-2xl font-bold text-slate-700">
+                                {{ nextLesson && nextLesson.date ? formatDate(nextLesson.date) : 'No upcoming lessons' }}
                             </div>
-                            <p class="text-xs text-muted-foreground">{{ nextLesson ? nextLesson.time : '' }}</p>
+                            <p class="text-xs text-gray-500">{{ nextLesson ? nextLesson.time : '' }}</p>
                         </CardContent>
                     </Card>
                 </div>
 
                 <!-- Lessons for Next Week Section -->
-                <Card>
+                <Card class="bg-slate-50 rounded-lg shadow-md p-4 border border-slate-200">
                     <CardHeader>
-                        <CardTitle>Lessons for Next Week</CardTitle>
-                        <CardDescription>Your scheduled lessons for the upcoming week</CardDescription>
+                        <CardTitle class="text-slate-600">Lessons for Next Week</CardTitle>
+                        <CardDescription class="text-gray-500">Your scheduled lessons for the upcoming week</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div class="space-y-8">
@@ -57,48 +56,44 @@
                                     <AvatarImage
                                         :src="`https://avatar.vercel.sh/${lesson.instructor_name.replace(' ', '-')}.png`"
                                         alt="Avatar" />
-                                    <AvatarFallback>{{ lesson.instructor_name.split(' ').map(n => n[0]).join('') }}
-                                    </AvatarFallback>
+                                    <AvatarFallback>{{ lesson.instructor_name.split(' ').map(n => n[0]).join('') }}</AvatarFallback>
                                 </Avatar>
                                 <div class="ml-4 space-y-1">
-                                    <p class="text-sm font-medium leading-none">{{ lesson.instructor_name }}</p>
-                                    <p class="text-sm text-muted-foreground">{{ formatDate(lesson.date) }} at {{
-                                        lesson.time }}</p>
+                                    <p class="text-sm font-medium leading-none text-gray-800">{{ lesson.instructor_name }}</p>
+                                    <p class="text-sm text-gray-500">{{ formatDate(lesson.date) }} at {{ lesson.time }}</p>
                                 </div>
-                                <div class="ml-auto font-medium">{{ lesson.location }}</div>
+                                <div class="ml-auto font-medium text-slate-600">{{ lesson.location }}</div>
                             </div>
                         </div>
                     </CardContent>
                 </Card>
 
                 <!-- Notifications for Past Instructors to Review -->
-                <Card>
+                <Card class="bg-slate-50 rounded-lg shadow-md p-4 border border-slate-200">
                     <CardHeader>
-                        <CardTitle>Review</CardTitle>
-                        <CardDescription>Past Instructors to Review</CardDescription>
+                        <CardTitle class="text-slate-600">Review</CardTitle>
+                        <CardDescription class="text-gray-500">Past Instructors to Review</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div class="space-y-8" v-if="uniqueInstructors && uniqueInstructors.length">
-                            <div v-for="lesson in uniqueInstructors" :key="lesson.instructor_id"
-                                class="flex items-center">
+                            <div v-for="lesson in uniqueInstructors" :key="lesson.instructor_id" class="flex items-center">
                                 <Avatar :class="'h-9 w-9'">
                                     <AvatarImage
                                         :src="`https://avatar.vercel.sh/${lesson.instructor_name.replace(' ', '-')}.png`"
                                         alt="Avatar" />
-                                    <AvatarFallback>{{ lesson.instructor_name.split(' ').map(n => n[0]).join('') }}
-                                    </AvatarFallback>
+                                    <AvatarFallback>{{ lesson.instructor_name.split(' ').map(n => n[0]).join('') }}</AvatarFallback>
                                 </Avatar>
                                 <div class="ml-4 space-y-1">
-                                    <p class="text-sm font-medium leading-none">{{ lesson.instructor_name }}</p>
+                                    <p class="text-sm font-medium leading-none text-gray-800">{{ lesson.instructor_name }}</p>
                                 </div>
-                                <button class="ml-auto bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                                <button class="ml-auto bg-slate-500 text-white px-4 py-2 rounded hover:bg-slate-600 transition duration-200"
                                     @click="goToReviewForm(lesson.instructor_id)">
                                     Review
                                 </button>
                             </div>
                         </div>
                         <div v-else>
-                            <p class="text-muted-foreground">No past instructors to review.</p>
+                            <p class="text-gray-500">No past instructors to review.</p>
                         </div>
                     </CardContent>
                 </Card>
@@ -107,7 +102,7 @@
                 <Transition name="fade" appear>
                     <div v-if="isModalOpen" class="fixed inset-0 flex items-center justify-center z-50">
                         <div class="bg-white rounded-lg p-6 shadow-2xl w-11/12 max-w-md">
-                            <h3 class="text-lg font-bold mb-4">
+                            <h3 class="text-lg font-bold mb-4 text-slate-700">
                                 {{ existingReview ? 'Edit' : 'Review' }} Instructor: {{ selectedInstructor }}
                             </h3>
 
@@ -118,12 +113,12 @@
                             <form @submit.prevent="submitReview">
                                 <!-- Improved Star Rating System -->
                                 <div class="flex items-center justify-center mb-4">
-                                    <svg v-for="star in 5" :key="star" :class="[
-                                        'w-8 h-8 cursor-pointer transition-all duration-200',
+                                    <svg v-for="star in 5" :key="star" :class="[ 
+                                        'w-8 h-8 cursor-pointer transition-all duration-200', 
                                         star <= (hoverRating || reviewRating) ? 'text-yellow-400 scale-110' : 'text-gray-300'
                                     ]" @click="setRating(star)" @mouseenter="setHoverRating(star)"
-                                        @mouseleave="setHoverRating(0)" xmlns="http://www.w3.org/2000/svg"
-                                        fill="currentColor" viewBox="0 0 24 24" stroke="currentColor"
+                                        @mouseleave="setHoverRating(0)" xmlns="http://www.w3.org/2000/svg" 
+                                        fill="currentColor" viewBox="0 0 24 24" stroke="currentColor" 
                                         stroke-width="1.5">
                                         <path
                                             d="M12 17.25l-6.172 3.243 1.179-6.873L2.5 9.327l6.9-1 3.1-6.273 3.1 6.273 6.9 1-5.507 4.293 1.179 6.873z" />
@@ -132,7 +127,7 @@
 
                                 <!-- Review Textarea -->
                                 <textarea v-model="reviewText" placeholder="Write your review here..." rows="4"
-                                    class="w-full border p-2 rounded resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                                    class="w-full border border-slate-300 p-2 rounded resize-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500"></textarea>
 
                                 <!-- Buttons for Cancel and Submit -->
                                 <div class="flex justify-end mt-4">
@@ -142,7 +137,7 @@
                                         Cancel
                                     </button>
                                     <button type="submit"
-                                        class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded transition-colors duration-200">
+                                        class="px-4 py-2 bg-slate-500 hover:bg-slate-600 text-white rounded transition-colors duration-200">
                                         {{ existingReview ? 'Update' : 'Submit' }}
                                     </button>
                                 </div>
@@ -150,14 +145,11 @@
                         </div>
                     </div>
                 </Transition>
-
-
-
-
             </div>
         </div>
     </div>
 </template>
+
 
 
 <script setup lang="ts">

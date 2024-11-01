@@ -1,11 +1,11 @@
 <template>
     <div class="container mx-auto p-6 min-h-screen">
         <div class="space-y-2 mb-10">
-            <h1 class="text-3xl font-bold tracking-tight">Booking</h1>
-            <p class="text-lg text-gray-500">Select the instructor, location, date, and timeslot</p>
+            <h1 class="text-3xl font-bold tracking-tight text-slate-700">Booking</h1>
+            <p class="text-lg text-gray-600">Select the instructor, location, date, and timeslot</p>
         </div>
 
-        <div class="p-8 max-w-2xl mx-auto bg-white rounded-lg shadow-lg">
+        <div class="p-8 max-w-2xl mx-auto bg-slate-50 rounded-lg shadow-2xl">
             <div v-if="isLoading" class="text-center py-8">
                 <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
                 <p class="mt-4 text-gray-600">Loading instructor data...</p>
@@ -13,35 +13,35 @@
             <div v-else-if="error" class="text-center py-8">
                 <p class="text-red-500">{{ error }}</p>
                 <button @click="fetchInstructors"
-                    class="mt-4 px-6 py-3 bg-blue-500 text-white rounded hover:bg-blue-600">
+                    class="mt-4 px-6 py-3 bg-slate-500 text-white rounded hover:bg-slate-600">
                     Retry
                 </button>
             </div>
             <form v-else @submit.prevent="confirmBooking" class="space-y-6">
                 <div class="space-y-2">
-                    <label for="location" class="block text-lg font-medium text-gray-700">Select Location</label>
+                    <label for="location" class="block text-xl font-medium text-slate-700">Select Location</label>
                     <select v-model="selectedLocation" id="location"
-                        class="mt-1 block w-full pl-4 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md">
+                        class="mt-1 block w-full pl-4 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-slate-500 focus:border-slate-500 rounded-md">
                         <option value="">Choose a location</option>
-                        <option v-for="location in locations" :key="location.id" :value="location.location">{{
-                            location.location }}</option>
+                        <option v-for="location in locations">{{
+                            location['location'] }}</option>
                     </select>
                 </div>
 
                 <div v-if="selectedLocation" class="space-y-2">
-                    <label for="instructor" class="block text-lg font-medium text-gray-700">Select Instructor</label>
+                    <label for="instructor" class="block text-lg font-medium text-slate-700">Select Instructor</label>
                     <select v-model="selectedInstructor" id="instructor"
-                        class="mt-1 block w-full pl-4 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md">
+                        class="mt-1 block w-full pl-4 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-slate-500 focus:border-slate-500 rounded-md">
                         <option value="">Choose an instructor</option>
-                        <option v-for="instructor in filteredInstructors" :key="instructor.id" :value="instructor">{{
-                            instructor.name }}</option>
+                        <option v-for="instructor in filteredInstructors" :key="instructor['id']" :value="instructor">{{
+                            instructor['name'] }}</option>
                     </select>
                 </div>
 
                 <div v-if="selectedInstructor" class="space-y-2">
-                    <label for="date" class="block text-lg font-medium text-gray-700">Select Date</label>
+                    <label for="date" class="block text-xl font-medium text-slate-700">Select Date</label>
                     <select v-model="selectedDate" id="date"
-                        class="mt-1 block w-full pl-4 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md"
+                        class="mt-1 block w-full pl-4 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-slate-500 focus:border-slate-500 rounded-md"
                         @change="fetchAvailableSlots">
                         <option value="">Choose a date</option>
                         <option v-for="date in availableDates" :key="date" :value="date">{{ date }}</option>
@@ -49,13 +49,13 @@
                 </div>
 
                 <div v-if="selectedDate" class="space-y-2">
-                    <label class="block text-lg font-medium text-gray-700">Select Time Slot</label>
+                    <label class="block text-xl font-medium text-slate-700">Select Time Slot</label>
                     <div class="grid grid-cols-3 gap-3">
-                        <button v-for="slot in availableSlots" :key="slot.time" type="button"
-                            :disabled="!slot.available"
-                            :class="['p-3 text-base font-medium rounded-md', slot.available ? 'bg-purple-200 text-purple-700 hover:bg-purple-300' : 'bg-gray-200 text-gray-400 cursor-not-allowed', selectedSlot === slot ? 'ring-2 ring-purple-500' : '']"
+                        <button v-for="slot in availableSlots" :key="slot['time']" type="button"
+                            :disabled="!slot['available']"
+                            :class="['p-3 text-base font-medium rounded-md', slot['available'] ? 'bg-purple-200 text-purple-700 hover:bg-purple-300' : 'bg-gray-200 text-gray-400 cursor-not-allowed', selectedSlot === slot ? 'ring-2 ring-purple-500' : '']"
                             @click="selectSlot(slot)">
-                            {{ slot.time }}
+                            {{ slot['time'] }}
                         </button>
                     </div>
 
@@ -66,7 +66,7 @@
                 </div>
 
                 <button type="submit"
-                    class="w-full px-6 py-3 text-base font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    class="w-full px-6 py-3 text-base font-medium text-white bg-slate-500 rounded-md hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500"
                     :disabled="!selectedInstructor || !selectedDate || !selectedSlot">
                     Confirm Booking
                 </button>
