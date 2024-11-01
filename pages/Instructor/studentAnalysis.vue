@@ -12,7 +12,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
+} from "@/components/ui/card";
 
 import {
   Tooltip,
@@ -37,11 +37,17 @@ const client = useSupabaseClient();
 interface Student {
   id: number;
   name: string;
-  location: string;
-  time: string;
-  date: string;
   contact: string;
-  upcomingLessonTopic: string;
+  profile_photo: string;
+}
+
+interface Lesson {
+  instructor_name: string;
+  student_id: number;
+  date: Date;
+  time: string;
+  location: string;
+  instructor_id: number;
 }
 
 interface StudentDrivingProgress {
@@ -65,6 +71,36 @@ const { data: studentview } = await useAsyncData<Student[]>(
     return data ?? [];
   }
 );
+
+const instructorId = 1;
+
+const { data: lessons } = await useAsyncData<Lesson[]>("lessons", async () => {
+  const { data } = await client.from("lessons").select();
+  return data ?? [];
+});
+
+const futureLessons = computed(() => {
+  const now = new Date();
+  return (
+    lessons.value?.filter(
+      (lesson) =>
+        lesson.instructor_id === instructorId && new Date(lesson.date) > now
+    ) ?? []
+  );
+});
+
+const studentIdsWithLessons = computed(() => {
+  return new Set(futureLessons.value.map((lesson) => lesson.student_id));
+});
+
+// Filter student data to include only those with future lessons with the instructor
+const studentsWithLessons = computed(() => {
+  return (
+    studentview.value?.filter((student) =>
+      studentIdsWithLessons.value.has(student.id)
+    ) ?? []
+  );
+});
 
 const { data: student_driving_progress } = await useAsyncData<
   StudentDrivingProgress[]
@@ -98,10 +134,29 @@ function getUncompletedProgressByStudent(studentId: number) {
 }
 
 function getStudentTestRoutes(studentId: number) {
-  return student_test_routes.value?.filter(
-    (testroutes) => testroutes.id === studentId
+  return (
+    student_test_routes.value
+      ?.filter((testroute) => testroute.id === studentId)
+      .sort((a, b) => a.sn - b.sn) || []
   );
 }
+
+function getNearestUpcomingLessonDate(studentId: number): Date | null {
+  const now = new Date();
+
+  const upcomingLessons = lessons.value
+    ?.filter(
+      (lesson) =>
+        lesson.student_id === studentId &&
+        new Date(lesson.date).getTime() > now.getTime() // Check if the lesson is in the future
+    )
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()); // Sort by date ascending
+
+  return upcomingLessons?.[0]?.date || null; // Return the date of the nearest upcoming lesson or null if none found
+}
+
+const hardcodedProfilePhotoUrl =
+  "https://tzklhzyswqmorhokvgmw.supabase.co/storage/v1/object/public/new_profile_photos/101.jpg";
 </script>
 
 <template>
@@ -114,7 +169,7 @@ function getStudentTestRoutes(studentId: number) {
     <ScrollArea class="lg:col-span-5">
       <div class="flex p-4 space-x-4 w-max">
         <div
-          v-for="student in studentview"
+          v-for="student in studentsWithLessons"
           :key="student.id"
           class="student-card"
         >
@@ -122,17 +177,25 @@ function getStudentTestRoutes(studentId: number) {
             <Card class="h-80 w-60 flex flex-col items-center justify-center">
               <CardContent class="text-center flex flex-col items-center">
                 <img
-                  class="rounded-full h-20 mb-4"
-                  src="https://via.placeholder.com/150"
+                  class="rounded-full h-28 mb-4"
+                  :src="hardcodedProfilePhotoUrl"
                   alt="Student Photo"
                 />
                 <h2 class="text-xl font-semibold">{{ student.name }}</h2>
                 <p class="mt-2 text-sm text-muted-foreground">
-                  Next Lesson: {{ student.date }}
+                  Next Lesson:
+                  {{
+                    getNearestUpcomingLessonDate(student.id) ||
+                    "No upcoming lessons"
+                  }}
                 </p>
                 <Drawer>
                   <DrawerTrigger as-child>
-                    <Button variant="secondary" class="mt-5 view-progress" style="cursor: pointer;">
+                    <Button
+                      variant="secondary"
+                      class="mt-5 view-progress"
+                      style="cursor: pointer"
+                    >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -170,7 +233,7 @@ function getStudentTestRoutes(studentId: number) {
                         class="col-span-2 grid items-start gap-6 lg:col-span-1"
                       >
                         <Container>
-                          <Card class="h-64 overflow-hidden">
+                          <Card class="h-72 overflow-hidden">
                             <CardHeader class="pb-3 h-16">
                               <CardTitle>Personal Details</CardTitle>
                             </CardHeader>
@@ -298,7 +361,7 @@ function getStudentTestRoutes(studentId: number) {
                       <div class="grid items-start gap-6 lg:col-span-2">
                         <div>
                           <Container>
-                            <Card class="h-64 overflow-hidden">
+                            <Card class="h-72">
                               <CardHeader class="pb-3 h-16">
                                 <CardTitle>Driving Modules</CardTitle>
                               </CardHeader>
@@ -341,26 +404,22 @@ function getStudentTestRoutes(studentId: number) {
                         class="col-span-2 grid items-start gap-6 lg:col-span-2"
                       >
                         <Container>
-                          <Card class="h-64 overflow-hidden">
+                          <Card class="h-72">
                             <CardHeader class="pb-3 h-16">
                               <CardTitle>Test Route Completion</CardTitle>
                             </CardHeader>
                             <CardContent>
-                              <div class="grid grid-cols-6 gap-4">
-                                <div class="col-1 row-span-2"></div>
+                              <!-- Define a grid with 4 columns -->
+                              <div class="grid grid-cols-4 gap-4">
                                 <!-- Loop through test routes -->
                                 <div
-                                  class="col-1"
-                                  v-for="(
-                                    testroutes
-                                  ) in getStudentTestRoutes(student.id)"
-                                  :key="testroutes.sn"
+                                  v-for="testroute in getStudentTestRoutes(
+                                    student.id
+                                  )"
+                                  :key="testroute.sn"
                                 >
                                   <!-- Completed Route -->
-                                  <Card
-                                    class="test"
-                                    v-if="testroutes.done === true"
-                                  >
+                                  <Card class="test" v-if="testroute.done">
                                     <CardContent
                                       class="flex flex-col justify-center items-center h-full mt-2"
                                     >
@@ -375,11 +434,11 @@ function getStudentTestRoutes(studentId: number) {
                                         <path
                                           stroke-linecap="round"
                                           stroke-linejoin="round"
-                                          d="M6 18L18 6M6 6l12 12"
+                                          d="M4.5 12.75l6 6 9-13.5"
                                         />
                                       </svg>
                                       <p class="text-xs">
-                                        {{ testroutes.testroute }}
+                                        {{ testroute.testroute }}
                                       </p>
                                     </CardContent>
                                   </Card>
@@ -400,11 +459,11 @@ function getStudentTestRoutes(studentId: number) {
                                         <path
                                           stroke-linecap="round"
                                           stroke-linejoin="round"
-                                          d="m4.5 12.75 6 6 9-13.5"
+                                          d="M6 18L18 6M6 6l12 12"
                                         />
                                       </svg>
                                       <p class="text-xs">
-                                        {{ testroutes.testroute }}
+                                        {{ testroute.testroute }}
                                       </p>
                                     </CardContent>
                                   </Card>
@@ -417,7 +476,9 @@ function getStudentTestRoutes(studentId: number) {
                     </div>
                     <DrawerFooter>
                       <DrawerClose as-child>
-                        <Button variant="outline" style="cursor: pointer;"> ok! </Button>
+                        <Button variant="outline" style="cursor: pointer">
+                          ok!
+                        </Button>
                       </DrawerClose>
                     </DrawerFooter>
                   </DrawerContent>
