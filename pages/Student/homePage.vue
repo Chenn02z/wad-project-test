@@ -74,7 +74,7 @@
                 <!-- Notifications for Past Instructors to Review -->
                 <Card>
                     <CardHeader>
-                        <CardTitle>Notifications</CardTitle>
+                        <CardTitle>Review</CardTitle>
                         <CardDescription>Past Instructors to Review</CardDescription>
                     </CardHeader>
                     <CardContent>
