@@ -27,7 +27,7 @@
     <!-- Sidebar Navigation using ShadCN Button component for nav links -->
     <nav
       :class="menuOpen ? 'translate-x-0' : '-translate-x-full'"
-      class="side-navbar fixed top-0 left-0 h-full w-60 z-40 md:translate-x-0 transition-transform duration-300 ease-in-out border border-solid text-white bg-black"
+      class="side-navbar fixed top-0 left-0 h-full w-60 z-40 md:translate-x-0 transition-transform duration-300 ease-in-out border border-solid text-white bg-slate-900"
     >
       <div class="flex flex-col h-full py-8 px-6">
         <!-- Project Title -->
