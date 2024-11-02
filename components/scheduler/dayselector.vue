@@ -158,6 +158,7 @@ const fetchDisabledSlots = async (date) => {
     const { data, error } = await client
       .from('availability')
       .select('time')
+      .eq("instructor_id", instructorId)
       .eq('date', date)
       .eq('available', true);
 
@@ -184,12 +185,13 @@ const toggleSlot = (slot) => {
   }
 };
 
+const instructorId = 3;
 // Handle confirming availability submission
 const confirmAvailability = async () => {
   if (!selectedDay.value || selectedSlots.value.length === 0) return;
 
   const availabilityData = selectedSlots.value.map((start) => ({
-    instructor_id: 1, // Replace with the actual instructor ID
+    instructor_id: instructorId, // Replace with the actual instructor ID
     date: selectedDay.value.fullDate,
     time: start,
     available: true,
@@ -223,6 +225,7 @@ const fetchUpcomingAvailability = async () => {
     const { data, error } = await client
       .from('availability')
       .select('date, time')
+      .eq("instructor_id",instructorId)
       .gte('date', today)
       .order('date', { ascending: true })
       .order('time', { ascending: true });

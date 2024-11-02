@@ -27,10 +27,10 @@
       >
         <div class="container mx-auto px-6 text-center">
           <h2 class="text-5xl font-bold mb-4 text-blue-800 animate-fade-in-up">
-            Driving with Learn2Drive
+            Master Driving with Learn2Drive
           </h2>
           <p class="text-xl mb-8 text-gray-600 animate-fade-in-up">
-            Your One-Stop Platform for Instructors and Students
+            Your journey to becoming a confident driver starts here
           </p>
           <button
             @click="showAuthModal = true"
@@ -59,159 +59,73 @@
           </div>
         </div>
       </section>
-      <!-- User Section -->
-      <section
-        class="min-h-screen flex items-center justify-center py-20 bg-gray-50"
-      >
-        <div class="container mx-auto px-6 grid md:grid-cols-2 gap-12">
-          <!-- Students Card -->
-          <h2
-            class="text-4xl font-bold mb-12 text-center text-blue-800 md:col-span-2"
-          >
-            Our Users
-          </h2>
-          <div
-            class="bg-white rounded-xl shadow-lg p-6 relative overflow-hidden"
-          >
-            <div class="absolute top-6 right-6">
-              <button class="text-gray-400 hover:text-gray-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-8 h-8"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M17.25 6.75L6.75 17.25M6.75 6.75l10.5 10.5"
-                  />
-                </svg>
-              </button>
-            </div>
-            <h3 class="text-3xl font-semibold text-slate-700 mb-4">Students</h3>
-            <p class="text-gray-600 mb-6">
-              A platform for learners to manage their driving lessons, track
-              progress, and connect with instructors.
-            </p>
-            <div
-              class="rounded-lg overflow-hidden shadow-lg border bg-white p-4"
-            >
-              <div class="flex space-x-4">
-                <img
-                  src="../public/externalFiles/images/Student Dashboard.jpg"
-                  alt="Students Snapshot 1"
-                  class="w-1/2 h-40 object-contain object-center"
-                />
-                <img
-                  src="../public/externalFiles/images/Instructor Dashboard.jpg"
-                  alt="Students Snapshot 2"
-                  class="w-1/2 h-40 object-contain object-center"
-                />
-              </div>
-              <div class="pt-4">
-                <h4 class="font-semibold text-gray-700">Lesson Schedule</h4>
-                <p class="text-sm text-gray-500">
-                  Easily view and manage your upcoming driving lessons with a
-                  streamlined calendar interface.
-                </p>
-              </div>
-            </div>
-            <button
-              class="absolute top-6 left-6 bg-white text-blue-600 rounded-full p-3 shadow-lg"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-6 h-6"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M13.5 4.5L19.5 10.5m-6 0L7.5 16.5m6-6h6M7.5 10.5h6"
-                />
-              </svg>
-            </button>
-          </div>
 
-          <!-- Instructors Card -->
-          <div
-            class="bg-white rounded-xl shadow-lg p-6 relative overflow-hidden"
-          >
-            <div class="absolute top-6 right-6">
-              <button class="text-gray-400 hover:text-gray-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-8 h-8"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M17.25 6.75L6.75 17.25M6.75 6.75l10.5 10.5"
-                  />
-                </svg>
-              </button>
-            </div>
-            <h3 class="text-3xl font-semibold text-slate-700 mb-4">
-              Instructors
-            </h3>
-            <p class="text-gray-600 mb-6">
-              A tool for driving instructors to manage schedules, track student
-              progress, and optimize lesson plans.
-            </p>
+      <!-- Features Section -->
+      <section
+        id="features"
+        class="min-h-screen flex items-center py-20 bg-white"
+      >
+        <div class="container mx-auto px-6">
+          <h2 class="text-4xl font-bold mb-12 text-center text-blue-800">
+            Why Choose Learn2Drive?
+          </h2>
+          <div class="grid md:grid-cols-3 gap-8">
             <div
-              class="rounded-lg overflow-hidden shadow-lg border bg-white p-4"
+              v-for="(feature, index) in features"
+              :key="index"
+              :ref="(el) => (featureRefs[index] = el)"
+              :class="[
+                'bg-slate-50 rounded-lg p-6 shadow-md transition-all duration-700 transform opacity-0 translate-y-4',
+                {
+                  'opacity-100 translate-y-0': featuresInView[index],
+                },
+              ]"
             >
-              <div class="flex space-x-4">
-                <img
-                  src="../public/externalFiles/images/Student Dashboard.jpg"
-                  alt="Students Snapshot 1"
-                  class="w-1/2 h-40 object-contain object-center"
-                />
-                <img
-                  src="../public/externalFiles/images/Instructor Dashboard.jpg"
-                  alt="Students Snapshot 2"
-                  class="w-1/2 h-40 object-contain object-center"
-                />
-              </div>
-              <div class="pt-4">
-                <h4 class="font-semibold text-gray-700">Lesson Schedule</h4>
-                <p class="text-sm text-gray-500">
-                  Easily view and manage your upcoming driving lessons with a
-                  streamlined calendar interface.
-                </p>
-              </div>
+              <div v-html="feature.icon" class="text-4xl mb-4"></div>
+              <h3 class="text-xl font-semibold mb-2 text-slate-700">
+                {{ feature.title }}
+              </h3>
+              <p class="text-gray-600">{{ feature.description }}</p>
             </div>
-            <button
-              class="absolute top-6 left-6 bg-white text-orange-600 rounded-full p-3 shadow-lg"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-6 h-6"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M13.5 4.5L19.5 10.5m-6 0L7.5 16.5m6-6h6M7.5 10.5h6"
-                />
-              </svg>
-            </button>
           </div>
         </div>
       </section>
+
+      <!-- How It Works Section -->
+      <section
+  id="how-it-works"
+  class="min-h-screen flex items-center py-20 bg-slate-50"
+>
+  <div class="container mx-auto px-6">
+    <h2 class="text-4xl font-bold mb-12 text-center text-blue-800">
+      How It Works
+    </h2>
+    <div class="grid md:grid-cols-3 gap-8">
+      <div
+        v-for="(step, index) in howItWorks"
+        :key="index"
+        :ref="(el) => (stepRefs[index] = el)"
+        :class="[
+          'bg-white rounded-lg p-6 shadow-md relative transition-all duration-700 transform opacity-0 translate-y-4',
+          {
+            'opacity-100 translate-y-0': stepsInView[index],
+          },
+        ]"
+      >
+        <div
+          class="absolute -top-4 -left-4 w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold"
+        >
+          {{ index + 1 }}
+        </div>
+        <h3 class="text-xl font-semibold mb-2 text-slate-700 mt-4">
+          {{ step.title }}
+        </h3>
+        <p class="text-gray-600">{{ step.description }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
     </main>
 
     <footer class="bg-slate-800 text-white py-8">
@@ -324,16 +238,22 @@ const isLogin = ref(true);
 
 const features = [
   {
-    title: "Student",
+    title: "Seamless Booking",
     description:
       "Choose your preferred instructor and book lessons with flexibility that fits your schedule.",
     icon: '<svg class="w-12 h-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>',
   },
   {
-    title: "Instructor",
+    title: "Track Your Progress",
     description:
       "Monitor your driving journey with detailed progress reports and skill assessments.",
     icon: '<svg class="w-12 h-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>',
+  },
+  {
+    title: "Learning Resources",
+    description:
+      "Access a wealth of study materials and practice tests to help you pass your driving exam with ease.",
+    icon: '<svg class="w-12 h-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>',
   },
 ];
 
