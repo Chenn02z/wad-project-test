@@ -75,10 +75,9 @@
               :key="index"
               :ref="(el) => (featureRefs[index] = el)"
               :class="[
-                'bg-slate-50 rounded-lg p-6 shadow-md transition-all duration-500 transform opacity-0 translate-y-8',
+                'bg-slate-50 rounded-lg p-6 shadow-md transition-all duration-700 transform opacity-0 translate-y-4',
                 {
-                  'opacity-100 translate-y-0 animate-fade-in-up':
-                    featuresInView[index],
+                  'opacity-100 translate-y-0': featuresInView[index],
                 },
               ]"
             >
@@ -94,39 +93,39 @@
 
       <!-- How It Works Section -->
       <section
-        id="how-it-works"
-        class="min-h-screen flex items-center py-20 bg-slate-50"
+  id="how-it-works"
+  class="min-h-screen flex items-center py-20 bg-slate-50"
+>
+  <div class="container mx-auto px-6">
+    <h2 class="text-4xl font-bold mb-12 text-center text-blue-800">
+      How It Works
+    </h2>
+    <div class="grid md:grid-cols-3 gap-8">
+      <div
+        v-for="(step, index) in howItWorks"
+        :key="index"
+        :ref="(el) => (stepRefs[index] = el)"
+        :class="[
+          'bg-white rounded-lg p-6 shadow-md relative transition-all duration-700 transform opacity-0 translate-y-4',
+          {
+            'opacity-100 translate-y-0': stepsInView[index],
+          },
+        ]"
       >
-        <div class="container mx-auto px-6">
-          <h2 class="text-4xl font-bold mb-12 text-center text-blue-800">
-            How It Works
-          </h2>
-          <div class="grid md:grid-cols-3 gap-8">
-            <div
-              v-for="(step, index) in howItWorks"
-              :key="index"
-              :ref="(el) => (stepRefs[index] = el)"
-              :class="[
-                'bg-white rounded-lg p-6 shadow-md relative transition-all duration-500 transform opacity-0 translate-y-8',
-                {
-                  'opacity-100 translate-y-0 animate-fade-in-open-up':
-                    stepsInView[index],
-                },
-              ]"
-            >
-              <div
-                class="absolute -top-4 -left-4 w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold"
-              >
-                {{ index + 1 }}
-              </div>
-              <h3 class="text-xl font-semibold mb-2 text-slate-700 mt-4">
-                {{ step.title }}
-              </h3>
-              <p class="text-gray-600">{{ step.description }}</p>
-            </div>
-          </div>
+        <div
+          class="absolute -top-4 -left-4 w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold"
+        >
+          {{ index + 1 }}
         </div>
-      </section>
+        <h3 class="text-xl font-semibold mb-2 text-slate-700 mt-4">
+          {{ step.title }}
+        </h3>
+        <p class="text-gray-600">{{ step.description }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
     </main>
 
     <footer class="bg-slate-800 text-white py-8">
