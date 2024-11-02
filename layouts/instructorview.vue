@@ -1,5 +1,5 @@
 <template>
-  <div class="side-navbar-container flex">
+  <div class="side-navbar-container flex flex-col min-h-screen">
     <!-- Hamburger menu button for mobile view using ShadCN Button -->
     <Button
       variant="ghost"
@@ -86,6 +86,15 @@
     >
       <slot />
     </div>
+    
+    <!-- Footer -->
+    <footer class="text-slate-900">
+      <div class="container text-center">
+        <p>
+          &copy; {{ new Date().getFullYear() }} Learn2Drive. All rights reserved.
+        </p>
+      </div>
+    </footer>
   </div>
 </template>
 
@@ -100,4 +109,6 @@ const toggleMenu = () => {
 };
 </script>
 
-<style></style>
+<style>
+
+</style>
