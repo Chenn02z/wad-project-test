@@ -86,7 +86,7 @@
                                 <div class="ml-4 space-y-1">
                                     <p class="text-sm font-medium leading-none text-gray-800">{{ lesson.instructor_name }}</p>
                                 </div>
-                                <button class="ml-auto bg-slate-500 text-white px-4 py-2 rounded hover:bg-slate-600 transition duration-200"
+                                <button class="ml-auto bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200"
                                     @click="goToReviewForm(lesson.instructor_id)">
                                     Review
                                 </button>
@@ -102,7 +102,7 @@
                 <Transition name="fade" appear>
                     <div v-if="isModalOpen" class="fixed inset-0 flex items-center justify-center z-50">
                         <div class="bg-white rounded-lg p-6 shadow-2xl w-11/12 max-w-md">
-                            <h3 class="text-lg font-bold mb-4 text-slate-700">
+                            <h3 class="text-lg font-bold mb-4 text-blue-700">
                                 {{ existingReview ? 'Edit' : 'Review' }} Instructor: {{ selectedInstructor }}
                             </h3>
 
@@ -127,7 +127,7 @@
 
                                 <!-- Review Textarea -->
                                 <textarea v-model="reviewText" placeholder="Write your review here..." rows="4"
-                                    class="w-full border border-slate-300 p-2 rounded resize-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500"></textarea>
+                                    class="w-full border border-blue-300 p-2 rounded resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
 
                                 <!-- Buttons for Cancel and Submit -->
                                 <div class="flex justify-end mt-4">
@@ -137,7 +137,7 @@
                                         Cancel
                                     </button>
                                     <button type="submit"
-                                        class="px-4 py-2 bg-slate-500 hover:bg-slate-600 text-white rounded transition-colors duration-200">
+                                        class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded transition-colors duration-200">
                                         {{ existingReview ? 'Update' : 'Submit' }}
                                     </button>
                                 </div>
