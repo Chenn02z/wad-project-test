@@ -34,28 +34,28 @@
           </p>
           <button
             @click="showAuthModal = true"
-            class="px-6 py-3 bg-blue-600 text-white rounded-full text-lg font-semibold hover:bg-slate-700 transition-all duration-300 transform hover:scale-105 animate-fade-in-up"
+            class="px-6 py-3 bg-blue-600 text-white rounded-full text-lg font-semibold hover:bg-slate-700 transition-all transform hover:scale-105 animate-fade-in-up"
           >
             Get Started
             <span class="ml-2">→</span>
           </button>
-        </div>
-        <div
-          class="absolute bottom-0 left-[25vw] transform"
-          :style="{
-            transform: `translateX(${((scrollY % 1000) / 1000) * 50}vw)`,
-          }"
-        >
-          <div class="w-32 h-16 bg-blue-500 bottom-2 rounded-t-full relative">
-            <div
-              class="absolute top-2 left-2 right-2 h-6 bg-slate-400 rounded-t-full"
-            ></div>
-            <div
-              class="absolute -bottom-6 left-4 w-6 h-6 bg-gray-800 rounded-full"
-            ></div>
-            <div
-              class="absolute -bottom-6 right-4 w-6 h-6 bg-gray-800 rounded-full"
-            ></div>
+          <div
+            class="absolute bottom-0 left-[25vw] transform animate-fade-in-up"
+            :style="{
+              transform: `translateX(${((scrollY % 1000) / 1000) * 50}vw)`,
+            }"
+          >
+            <div class="w-32 h-16 bg-blue-500 bottom-2 rounded-t-full relative">
+              <div
+                class="absolute top-2 left-2 right-2 h-6 bg-slate-400 rounded-t-full"
+              ></div>
+              <div
+                class="absolute -bottom-6 left-4 w-6 h-6 bg-gray-800 rounded-full"
+              ></div>
+              <div
+                class="absolute -bottom-6 right-4 w-6 h-6 bg-gray-800 rounded-full"
+              ></div>
+            </div>
           </div>
         </div>
       </section>
@@ -74,10 +74,13 @@
               v-for="(feature, index) in features"
               :key="index"
               :ref="(el) => (featureRefs[index] = el)"
-              :class="{
-                'bg-slate-50 rounded-lg p-6 shadow-md transform transition-all duration-500': true,
-                'animate-fade-in-up': featuresInView[index],
-              }"
+              :class="[
+                'bg-slate-50 rounded-lg p-6 shadow-md transition-all duration-500 transform opacity-0 translate-y-8',
+                {
+                  'opacity-100 translate-y-0 animate-fade-in-up':
+                    featuresInView[index],
+                },
+              ]"
             >
               <div v-html="feature.icon" class="text-4xl mb-4"></div>
               <h3 class="text-xl font-semibold mb-2 text-slate-700">
@@ -103,10 +106,13 @@
               v-for="(step, index) in howItWorks"
               :key="index"
               :ref="(el) => (stepRefs[index] = el)"
-              :class="{
-                'bg-white rounded-lg p-6 shadow-md relative transition-all duration-500': true,
-                'animate-fade-in-up': stepsInView[index],
-              }"
+              :class="[
+                'bg-white rounded-lg p-6 shadow-md relative transition-all duration-500 transform opacity-0 translate-y-8',
+                {
+                  'opacity-100 translate-y-0 animate-fade-in-open-up':
+                    stepsInView[index],
+                },
+              ]"
             >
               <div
                 class="absolute -top-4 -left-4 w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold"
@@ -277,7 +283,7 @@ const stepsInView = ref(Array(howItWorks.length).fill(false));
 
 // Create intersection observer to observe elements
 const createObserver = (refs, inViewArray) => {
-  const options = { threshold: 0.2 };
+  const options = { threshold: 0.01 };
   return new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       const index = refs.indexOf(entry.target);
@@ -316,6 +322,20 @@ onUnmounted(() => {
 </script>
 
 <style>
+@keyframes fadeInOpenUp {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px); /* Start slightly smaller and below */
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0); /* End at full size and in position */
+  }
+}
+
+.animate-fade-in-open-up {
+  animation: fadeInOpenUp 1.5s ease-out;
+}
 @keyframes fadeInUp {
   from {
     opacity: 0;
