@@ -97,6 +97,7 @@ import {
 
 // Configure Supabase client
 const client = useSupabaseClient();
+const instructorId = 1; // FOR SESSION
 
 // Define the next 7 days from tomorrow
 const generateNext7Days = () => {
@@ -185,7 +186,7 @@ const toggleSlot = (slot) => {
   }
 };
 
-const instructorId = 1;
+
 // Handle confirming availability submission
 const confirmAvailability = async () => {
   if (!selectedDay.value || selectedSlots.value.length === 0) return;
