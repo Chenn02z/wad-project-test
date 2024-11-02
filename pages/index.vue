@@ -20,32 +20,30 @@
       </nav>
     </header>
 
-    <main class="pt-1">
+    <main>
       <!-- Hero Section -->
       <section
-        class="min-h-screen flex items-center justify-center relative overflow-hidden"
+        class="min-h-screen flex items-center justify-center relative overflow-hidden animation-delay-300"
       >
         <div class="container mx-auto px-6 text-center">
           <h2 class="text-5xl font-bold mb-4 text-blue-800 animate-fade-in-up">
             Master Driving with Learn2Drive
           </h2>
-          <p
-            class="text-xl mb-8 text-gray-600 animate-fade-in-up animation-delay-300"
-          >
+          <p class="text-xl mb-8 text-gray-600 animate-fade-in-up">
             Your journey to becoming a confident driver starts here
           </p>
           <button
             @click="showAuthModal = true"
-            class="px-6 py-3 bg-blue-600 text-white rounded-full text-lg font-semibold hover:bg-slate-700 transition-all duration-300 transform hover:scale-105 animate-fade-in-up animation-delay-600"
+            class="px-6 py-3 bg-blue-600 text-white rounded-full text-lg font-semibold hover:bg-slate-700 transition-all duration-300 transform hover:scale-105 animate-fade-in-up"
           >
             Get Started
             <span class="ml-2">→</span>
           </button>
         </div>
         <div
-          class="absolute bottom-0 left-1/4 transform -translate-x-1/2"
+          class="absolute bottom-0 left-[25vw] transform"
           :style="{
-            transform: `translateX(${scrollY * 0.9}px)`,
+            transform: `translateX(${((scrollY % 1000) / 1000) * 50}vw)`,
           }"
         >
           <div class="w-32 h-16 bg-blue-500 bottom-2 rounded-t-full relative">
@@ -63,7 +61,10 @@
       </section>
 
       <!-- Features Section -->
-      <section id="features" class="py-20 bg-white">
+      <section
+        id="features"
+        class="min-h-screen flex items-center py-20 bg-white"
+      >
         <div class="container mx-auto px-6">
           <h2 class="text-4xl font-bold mb-12 text-center text-blue-800">
             Why Choose Learn2Drive?
@@ -72,14 +73,13 @@
             <div
               v-for="(feature, index) in features"
               :key="index"
-              class="bg-slate-50 rounded-lg p-6 shadow-md transform transition-all duration-500 hover:scale-105"
+              :ref="(el) => (featureRefs[index] = el)"
               :class="{
-                'animate-fade-in-left': index === 0,
-                'animate-fade-in-up': index === 1,
-                'animate-fade-in-right': index === 2,
+                'bg-slate-50 rounded-lg p-6 shadow-md transform transition-all duration-500': true,
+                'animate-fade-in-up': featuresInView[index],
               }"
             >
-              <div class="text-4xl mb-4" v-html="feature.icon"></div>
+              <div v-html="feature.icon" class="text-4xl mb-4"></div>
               <h3 class="text-xl font-semibold mb-2 text-slate-700">
                 {{ feature.title }}
               </h3>
@@ -90,7 +90,10 @@
       </section>
 
       <!-- How It Works Section -->
-      <section id="how-it-works" class="py-20 bg-slate-50">
+      <section
+        id="how-it-works"
+        class="min-h-screen flex items-center py-20 bg-slate-50"
+      >
         <div class="container mx-auto px-6">
           <h2 class="text-4xl font-bold mb-12 text-center text-blue-800">
             How It Works
@@ -99,11 +102,10 @@
             <div
               v-for="(step, index) in howItWorks"
               :key="index"
-              class="bg-white rounded-lg p-6 shadow-md relative"
+              :ref="(el) => (stepRefs[index] = el)"
               :class="{
-                'animate-fade-in-left': index === 0,
-                'animate-fade-in-up': index === 1,
-                'animate-fade-in-right': index === 2,
+                'bg-white rounded-lg p-6 shadow-md relative transition-all duration-500': true,
+                'animate-fade-in-up': stepsInView[index],
               }"
             >
               <div
@@ -266,6 +268,33 @@ const howItWorks = [
       "Take lessons, track your progress, and use our resources to improve your skills.",
   },
 ];
+
+const featureRefs = Array(features.length).fill(null);
+const stepRefs = Array(howItWorks.length).fill(null);
+
+const featuresInView = ref(Array(features.length).fill(false));
+const stepsInView = ref(Array(howItWorks.length).fill(false));
+
+// Create intersection observer to observe elements
+const createObserver = (refs, inViewArray) => {
+  const options = { threshold: 0.2 };
+  return new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      const index = refs.indexOf(entry.target);
+      if (entry.isIntersecting) {
+        inViewArray.value[index] = true;
+      }
+    });
+  }, options);
+};
+
+onMounted(() => {
+  const featureObserver = createObserver(featureRefs, featuresInView);
+  const stepObserver = createObserver(stepRefs, stepsInView);
+
+  featureRefs.forEach((el) => el && featureObserver.observe(el));
+  stepRefs.forEach((el) => el && stepObserver.observe(el));
+});
 
 const handleScroll = () => {
   scrollY.value = window.scrollY;
