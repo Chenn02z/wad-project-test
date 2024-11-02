@@ -185,7 +185,7 @@ const toggleSlot = (slot) => {
   }
 };
 
-const instructorId = 3;
+const instructorId = 1;
 // Handle confirming availability submission
 const confirmAvailability = async () => {
   if (!selectedDay.value || selectedSlots.value.length === 0) return;
@@ -226,6 +226,7 @@ const fetchUpcomingAvailability = async () => {
       .from('availability')
       .select('date, time')
       .eq("instructor_id",instructorId)
+      .eq("available",true)
       .gte('date', today)
       .order('date', { ascending: true })
       .order('time', { ascending: true });
