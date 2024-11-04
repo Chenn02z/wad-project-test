@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/button";
   
     <div class="grid grid-cols-2 gap-4">
       <a href="/Student/resourceFiles/officialResources">
-      <Card class="relative h-64 p-2 hover:drop-shadow-xl">
+      <Card class="relative h-64 p-2 hover:drop-shadow-xl hover:text-blue-600">
         <CardHeader>
           <CardTitle>BTT/FTT Resources</CardTitle>
           <CardDescription>Access the latest syllabus and curriculum notes to prepare for your Basic and Final Theory Test.</CardDescription>
@@ -39,7 +39,7 @@ import { Button } from "@/components/ui/button";
       </a>
 
       <a href="/Student/resourceFiles/questionsPage">
-      <Card class="relative h-64 p-2 hover:drop-shadow-xl">
+      <Card class="relative h-64 p-2 hover:drop-shadow-xl hover:text-blue-600">
         <CardHeader>
           <CardTitle>BTT/FTT Questions</CardTitle>
           <CardDescription>Want to check how prepared you are for your next theory test? Check out our repository of over 200 questions of past BTT/FTT questions or take a timed mock quiz.</CardDescription>
@@ -56,7 +56,7 @@ import { Button } from "@/components/ui/button";
     <br>
     <div class="grid grid-cols-3 gap-4">
       <a href="/Student/resourceFiles/topicalRevision">
-      <Card class="relative h-64 p-2 hover:drop-shadow-xl">
+      <Card class="relative h-64 p-2 hover:drop-shadow-xl hover:text-blue-600">
         <CardHeader>
           <CardTitle>Topical Revision</CardTitle>
           <CardDescription>Revise by topic using effective strategies like Pomodoro and Interleaving.</CardDescription>
@@ -71,7 +71,7 @@ import { Button } from "@/components/ui/button";
       </a>
 
       <a href="/Student/resourceFiles/flashcard">
-        <Card class="relative h-64 p-2 hover:drop-shadow-xl">
+        <Card class="relative h-64 p-2 hover:drop-shadow-xl hover:text-blue-600">
           <CardHeader>
             <CardTitle>Road Sign Flashcards</CardTitle>
             <CardDescription>Revise and test your knowledge on road signs.</CardDescription>
@@ -86,7 +86,7 @@ import { Button } from "@/components/ui/button";
       </a>
 
       <a href="/Student/resourceFiles/revisionReview">
-        <Card class="relative h-64 p-2 hover:drop-shadow-xl">
+        <Card class="relative h-64 p-2 hover:drop-shadow-xl hover:text-blue-600">
           <CardHeader>
             <CardTitle>Review Corner</CardTitle>
             <CardDescription>A personalised section for the questions and topics you most frequently get wrong.</CardDescription>
@@ -102,3 +102,7 @@ import { Button } from "@/components/ui/button";
     </div>
   </div>
   </template>
+ 
+<style>
+
+</style>
