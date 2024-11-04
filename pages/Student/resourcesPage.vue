@@ -54,21 +54,7 @@ import { Button } from "@/components/ui/button";
 
     </div>
     <br>
-    <div class="grid grid-cols-3 gap-4">
-      <a href="/Student/resourceFiles/topicalRevision">
-      <Card class="relative h-64 p-2 hover:drop-shadow-xl hover:text-blue-600">
-        <CardHeader>
-          <CardTitle>Topical Revision</CardTitle>
-          <CardDescription>Revise by topic using effective strategies like Pomodoro and Interleaving.</CardDescription>
-        </CardHeader>
-        
-          <div class="absolute bottom-5 right-5">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-            </svg>
-          </div>
-        </Card>
-      </a>
+    <div class="grid grid-cols-2 gap-4">
 
       <a href="/Student/resourceFiles/flashcard">
         <Card class="relative h-64 p-2 hover:drop-shadow-xl hover:text-blue-600">
