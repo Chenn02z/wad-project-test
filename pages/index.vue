@@ -64,33 +64,16 @@
         class="min-h-screen flex items-center justify-center py-20 bg-gray-50"
       >
         <div class="container mx-auto px-6 grid md:grid-cols-2 gap-12">
-          <!-- Students Card -->
           <h2
             class="text-4xl font-bold mb-12 text-center text-blue-800 md:col-span-2"
           >
             Our Users
           </h2>
-          <div
-            class="bg-white rounded-xl shadow-lg p-6 relative overflow-hidden"
+          <!-- Students Card -->
+          <div @click="showAuthModal = true"
+            class="bg-white rounded-xl shadow-lg p-6 relative overflow-hidden hover:-translate-y-2 transition-transform duration-300 ease-in-out"
           >
-            <div class="absolute top-6 right-6">
-              <button class="text-gray-400 hover:text-gray-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-8 h-8"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M17.25 6.75L6.75 17.25M6.75 6.75l10.5 10.5"
-                  />
-                </svg>
-              </button>
-            </div>
+            <div class="absolute top-6 right-6"></div>
             <h3 class="text-3xl font-semibold text-slate-700 mb-4">Students</h3>
             <p class="text-gray-600 mb-6">
               A platform for learners to manage their driving lessons, track
@@ -119,8 +102,8 @@
                 </p>
               </div>
             </div>
-            <button
-              class="absolute top-6 left-6 bg-white text-blue-600 rounded-full p-3 shadow-lg"
+            <button @click="showAuthModal = true"
+              class="absolute top-6 right-6 bg-white text-blue-600 rounded-full p-3 shadow-lg"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -140,27 +123,9 @@
           </div>
 
           <!-- Instructors Card -->
-          <div
-            class="bg-white rounded-xl shadow-lg p-6 relative overflow-hidden"
+          <div @click="showAuthModal = true"
+            class="bg-white rounded-xl shadow-lg p-6 relative overflow-hidden hover:-translate-y-2 transition-transform duration-300 ease-in-out"
           >
-            <div class="absolute top-6 right-6">
-              <button class="text-gray-400 hover:text-gray-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-8 h-8"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M17.25 6.75L6.75 17.25M6.75 6.75l10.5 10.5"
-                  />
-                </svg>
-              </button>
-            </div>
             <h3 class="text-3xl font-semibold text-slate-700 mb-4">
               Instructors
             </h3>
@@ -192,7 +157,7 @@
               </div>
             </div>
             <button
-              class="absolute top-6 left-6 bg-white text-orange-600 rounded-full p-3 shadow-lg"
+              class="absolute top-6 right-6 bg-white text-orange-600 rounded-full p-3 shadow-lg"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -210,6 +175,74 @@
               </svg>
             </button>
           </div>
+        </div>
+      </section>
+      <section
+        class="min-h-screen grid grid-cols-1 md:grid-cols-2 items-center justify-center relative overflow-hidden px-10 bg-gradient-to-b from-blue-50 to-white"
+      >
+        <!-- Carousel Section on the Left -->
+        <div class="flex justify-center w-full px-4 py-8">
+          <Carousel class="relative w-full max-w-l" :plugins="[plugin]">
+            <CarouselContent>
+              <CarouselItem
+                v-for="(card, index) in cards"
+                :key="index"
+                class="pl-1 md:basis-1/2 lg:basis-2/5"
+              >
+                <div class="p-4">
+                  <Card
+                    :class="[card.bgColor, 'w-80 h-96 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 ease-in-out']"
+                  >
+                    <CardContent
+                      class="flex flex-col items-center justify-center p-6"
+                    >
+                    <div v-html="card.icon"></div>
+                      <h2 class="text-xl font-bold mt-4 text-center">
+                        {{ card.title }}
+                      </h2>
+
+                      <p
+                        v-if="card.highlight"
+                        class="text-5xl font-extrabold mt-2"
+                      >
+                        {{ card.highlight }}
+                      </p>
+
+                      <p class="text-sm mt-2 text-center">
+                        {{ card.description }}
+                      </p>
+
+                      <!-- Conditional Divider -->
+                      <div v-if="card.showDivider" class="w-full my-4">
+                        <hr class="border-t border-gray-300" />
+                        <p
+                          v-if="card.dividerText"
+                          class="text-xs mt-2 text-center text-gray-500"
+                        >
+                          {{ card.dividerText }}
+                        </p>
+                      </div>
+
+                      <div class="mt-4"></div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </CarouselItem>
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+        </div>
+
+        <!-- Text Section on the Right -->
+        <div class="container mx-auto px-6 text-right">
+          <h2 class="text-5xl font-bold mb-4 text-blue-800 animate-fade-in-up">
+            Providing better experiences,
+            <br />connecting both <br />learners and instructors
+          </h2>
+          <p class="text-xl mb-8 text-gray-600 animate-fade-in-up">
+            Communities run better with Learn2Drive.
+          </p>
         </div>
       </section>
     </main>
@@ -317,10 +350,108 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
+const plugin = Autoplay({
+  delay: 5000,
+  stopOnMouseEnter: true,
+  stopOnInteraction: false,
+});
 
 const scrollY = ref(0);
 const showAuthModal = ref(false);
 const isLogin = ref(true);
+
+let currentIndex = 0;
+
+function updateCarousel() {
+  const carousel = document.querySelector(".carousel");
+  const itemWidth = carousel.querySelector(".carousel-item").offsetWidth;
+  carousel.style.transform = `translateX(-${currentIndex * itemWidth}px)`;
+}
+
+function previousSlide() {
+  const items = document.querySelectorAll(".carousel-item");
+  currentIndex = currentIndex === 0 ? items.length - 1 : currentIndex - 1;
+  updateCarousel();
+}
+
+function nextSlide() {
+  const items = document.querySelectorAll(".carousel-item");
+  currentIndex = currentIndex === items.length - 1 ? 0 : currentIndex + 1;
+  updateCarousel();
+}
+
+const cards = [
+  {
+    title: "95% satisfaction rate among learners",
+    description:
+      "Our instructors are rated highly by students across all regions.",
+    bgColor: "bg-blue-100",
+    icon: `
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-gray-700">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
+            </svg>
+          `,
+    showDivider: false,
+    dividerText: "",
+  },
+  {
+    title: "1,200+ lessons booked this month",
+    description:
+      "More learners are joining every day, connecting with top-rated instructors.",
+    bgColor: "bg-slate-300",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-gray-700">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
+</svg>
+`,
+    showDivider: true,
+    dividerText: "A monthly record of lessons booked.",
+  },
+  {
+    title: 'John D. - "Great experience!"',
+    description:
+      "John says his instructor was patient and helped him pass on his first try.",
+    bgColor: "bg-blue-100",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-gray-700">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+</svg>
+`,
+    showDivider: false,
+    dividerText: "",
+  },
+  {
+    title: "80% pass rate on the first attempt",
+    description:
+      "Our instructors focus on essential skills, preparing learners for success.",
+    bgColor: "bg-slate-300",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-gray-700">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+</svg>
+`,
+    showDivider: true,
+    dividerText: "Our success rate is higher than the average.",
+  },
+  {
+    title: "150+ instructors available near you",
+    description:
+      "Find the perfect match from our experienced driving instructors.",
+    bgColor: "bg-blue-100",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-gray-700">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
+</svg>
+`,
+    showDivider: false,
+    dividerText: "",
+  },
+];
 
 const features = [
   {
