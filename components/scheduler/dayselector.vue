@@ -4,13 +4,18 @@
       <div class="flex justify-center space-x-4">
         <div v-for="(day, index) in days" :key="index" class="text-center">
           <div 
-            class="bg-gray-100 p-6 rounded-lg cursor-pointer" 
-            :class="{ 'selected': selectedDay === day }"
-            @click="selectDay(day)"
-          >
-            <div class="text-gray-500">{{ day.label }}</div>
-            <div class="text-lg font-bold">{{ day.date }}</div>
-          </div>
+  class="p-6 rounded-lg cursor-pointer" 
+  :class="{
+    'selected': selectedDay === day,
+    'no-slots-selected': day.noSlots,
+    'availability-set': groupedAvailability[day.fullDate]
+  }"
+  @click="selectDay(day)"
+>
+  <div :class="day.noSlots ? 'text-white' : 'text-gray-500'">{{ day.label }}</div>
+  <div class="text-lg font-bold" :class="day.noSlots ? 'text-white' : ''">{{ day.date }}</div>
+</div>
+
         </div>
       </div>
 
@@ -100,19 +105,27 @@ const client = useSupabaseClient();
 const instructorId = 1; // FOR SESSION
 
 // Define the next 7 days from tomorrow
-const generateNext7Days = () => {
+const generateNext7Days = async () => {
   const daysArray = [];
   for (let i = 1; i <= 7; i++) {
-    const date = dayjs().add(i, 'day');
+    const date = dayjs().add(i, 'day').format('YYYY-MM-DD');
+    const { data } = await client
+      .from('availability')
+      .select('time')
+      .eq("instructor_id", instructorId)
+      .eq('date', date)
+      .eq('available', true);
+
     daysArray.push({
-      label: date.format('ddd'), // e.g., "Mon"
-      date: date.format('DD'),   // e.g., "11"
-      fullDate: date.format('YYYY-MM-DD'), // Full date for later use
-      isAvailable: false
+      label: dayjs(date).format('ddd'), // e.g., "Mon"
+      date: dayjs(date).format('DD'),   // e.g., "11"
+      fullDate: date,
+      noSlots: !data || data.length === 0, // Mark day as red if no slots are available
     });
   }
   return daysArray;
 };
+
 
 const days = ref(generateNext7Days());
 
@@ -192,7 +205,7 @@ const confirmAvailability = async () => {
   if (!selectedDay.value || selectedSlots.value.length === 0) return;
 
   const availabilityData = selectedSlots.value.map((start) => ({
-    instructor_id: instructorId, // Replace with the actual instructor ID
+    instructor_id: instructorId,
     date: selectedDay.value.fullDate,
     time: start,
     available: true,
@@ -209,15 +222,18 @@ const confirmAvailability = async () => {
       return;
     }
 
-    
     await fetchDisabledSlots(selectedDay.value.fullDate); // Refresh disabled slots after submission
-    fetchUpcomingAvailability(); // Refresh upcoming availability after submission
+    await fetchUpcomingAvailability(); // Refresh upcoming availability after submission
     selectedSlots.value = []; // Clear the selected slots after submission
+
+    // New line to reset red styling by marking noSlots as false
+    selectedDay.value.noSlots = false;
+
   } catch (err) {
     console.error('Unexpected error:', err);
-    
   }
 };
+
 
 // Fetch upcoming availability with detailed date/time parsing
 const fetchUpcomingAvailability = async () => {
@@ -300,9 +316,11 @@ const fetchUpcomingAvailability = async () => {
 };
 
 // Fetch upcoming availability on component mount
-onMounted(() => {
-  fetchUpcomingAvailability();
+onMounted(async () => {
+  days.value = await generateNext7Days();
+  await fetchUpcomingAvailability(); // Load upcoming availability on mount
 });
+
 </script>
 
 <style scoped>
@@ -319,4 +337,10 @@ button.bg-gray-300 {
   cursor: not-allowed;
   color: #6b7280;
 }
+
+.no-slots-selected {
+  background-color: #dc2626; /* Fully red background for days with no slots */
+  color: #ffffff;
+}
+
 </style>
