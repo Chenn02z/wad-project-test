@@ -3,11 +3,14 @@ definePageMeta({
   layout: "studentview",
 });
 
-const client = useSupabaseClient();
-import { useRoute } from 'vue-router';
-import { ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { ref, onMounted, onBeforeUnmount,computed } from 'vue';
 import { Button } from '@/components/ui/button';
+import axios from 'axios';
+
+const client = useSupabaseClient();
 const route = useRoute();
+const router = useRouter();
 
 // Define reactive variables for your data
 const currentTopic = ref<'BTT' | 'FTT'>(route.query.topic as 'BTT' | 'FTT');
@@ -18,11 +21,89 @@ const selectedQuestions = ref<number | null>(
     : null
 );
 
+const shuffledQuestions = computed(() => {
+  // Shuffle the questions array
+  const shuffled = [...questions.value];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+});
+
 const questions = ref<any[]>([]);
 const answers = ref<any[]>([]);
 const selectedAnswers = ref<number[]>([]); // Track selected answers for each question
 const feedbackMessages = ref<string[]>([]); // Track feedback for each question
 const answerCorrect = ref<boolean[]>([]); // Track if each answer is correct
+  
+
+interface CorrectAnswer {
+  qid: number; // Use the appropriate type for your qid
+  aid: number; // Use the appropriate type for your aid
+}
+
+// Declare your reactive arrays with explicit types
+const selectedAnswersForTest = ref<number[]>(new Array(shuffledQuestions.value.length).fill(null)); // To store user's selected answers
+const correctAnswers = ref<CorrectAnswer[]>([]);
+const evaluateAnswers = () => {
+  const results = selectedAnswersForTest.value.map((selectedAid, index) => {
+    const question = shuffledQuestions.value[index]; // Assuming questions are still in shuffled order
+    const correctAnswer = correctAnswers.value.find(answer => answer.qid === question.qid);
+    
+    return {
+      qid: question.qid,
+      selectedAid,
+      isCorrect: correctAnswer && correctAnswer.aid === selectedAid,
+    };
+  });
+
+  // Now you can navigate to the review page with the results
+  navigateToReviewPage(results);
+};
+
+const navigateToReviewPage = (results) => {
+  // Use your preferred method to navigate to the review page
+  // For example, using router.push:
+  router.push({ path: '/Student/resourceFiles/revisionReview', query: { results: JSON.stringify(results) }});
+};
+
+    const timeRemaining = ref(900);
+    const interval = ref<number | null>(null);
+    const formattedTime = computed(() => {
+      const minutes = Math.floor(timeRemaining.value / 60);
+      const seconds = timeRemaining.value % 60;
+      return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    });
+
+    const startTimer = () => {
+      interval.value = window.setInterval(() => {
+        if (timeRemaining.value > 0) {
+          timeRemaining.value--;
+        } else {
+          endTest();
+        }
+      }, 1000);
+    };
+
+    const endTest = () => {
+      if (interval.value) {
+        clearInterval(interval.value as number); // Ensure to cast interval.value to number
+      }
+      alert('Time’s up! Your test is automatically submitted.');
+      // Trigger test submission or review here
+    };
+    onMounted(() => {
+      startTimer();
+    });
+
+    onBeforeUnmount(() => {
+      if (interval.value) {
+        clearInterval(interval.value as number); // Ensure to cast interval.value to number
+      }
+    });
+
+    
 
 if (currentTopic.value === "BTT") {
   const BTTquestions = ref<BTT_questions[]>([]);
@@ -53,7 +134,7 @@ if (currentTopic.value === "BTT") {
 
     if (BTTquestionsData) {
       BTTquestions.value = BTTquestionsData;
-      questions.value = BTTquestions.value.slice(0, selectedQuestions.value); // Limit to selected questions
+      questions.value = BTTquestions.value; // Limit to selected questions
       feedbackMessages.value = new Array(questions.value.length).fill(''); // Initialize feedback messages
       answerCorrect.value = new Array(questions.value.length).fill(null); // Initialize correctness tracking
     }
@@ -72,6 +153,17 @@ if (currentTopic.value === "BTT") {
       answers.value = BTTanswers.value; // Store all answers
     }
   });
+  // Fetch correct answers from Supabase
+    onMounted(async () => {
+      const { data, error } = await client
+        .from('BTT_questions') 
+        .select('qid, aid')
+        .eq('is_correct', true); // Fetch only correct answers
+      
+      if (data) {
+        correctAnswers.value = data.map(item => ({ qid: item.qid, aid: item.aid }));
+      }
+    });
 
 } else if (currentTopic.value === "FTT") {
   const FTTquestions = ref<FTT_questions[]>([]);
@@ -102,7 +194,7 @@ if (currentTopic.value === "BTT") {
 
     if (FTTquestionsData) {
       FTTquestions.value = FTTquestionsData;
-      questions.value = FTTquestions.value.slice(0, selectedQuestions.value); // Limit to selected questions
+      questions.value = FTTquestions.value; // Limit to selected questions
       feedbackMessages.value = new Array(questions.value.length).fill(''); // Initialize feedback messages
       answerCorrect.value = new Array(questions.value.length).fill(null); // Initialize correctness tracking
     }
@@ -119,6 +211,17 @@ if (currentTopic.value === "BTT") {
     if (FTTanswersData) {
       FTTanswers.value = FTTanswersData;
       answers.value = FTTanswers.value; // Store all answers
+    }
+  });
+  // Fetch correct answers from Supabase
+  onMounted(async () => {
+    const { data, error } = await client
+      .from('FTT_questions')
+      .select('qid, aid')
+      .eq('is_correct', true); // Fetch only correct answers
+    
+    if (data) {
+      correctAnswers.value = data.map(item => ({ qid: item.qid, aid: item.aid }));
     }
   });
 }
@@ -143,6 +246,7 @@ function checkAnswer(index: number, qid: number, selectedAid: number) {
 </script>
 
 <template>
+  <!-- Back button -->
   <div>
     <a href="/Student/resourceFiles/questionsPage" class="inline-flex">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 26 26" stroke-width="1.5" stroke="currentColor" class="size-6 mr-2 mt-1">
@@ -151,41 +255,74 @@ function checkAnswer(index: number, qid: number, selectedAid: number) {
       <h1 class="text-lg">Back to Question Page</h1>
     </a>
   </div>
+
+  <!-- Practise layout -->
   <div v-if="currentType === 'practise'">
-  <div v-for="(question, index) in questions" :key="question.qid" class="qnDiv">
-    <h1 class="questionTitle">{{ question.question }}</h1>
-    <div v-for="answer in answers.filter(a => a.qid === question.qid)" :key="answer.aid">
-      <Card
-        :style="{ 
-          backgroundColor: 
-            (selectedAnswers[index] === answer.aid && answerCorrect[index] === true) ? '#72c472' : 
-            (selectedAnswers[index] === answer.aid && answerCorrect[index] === false) ? '#d25757' : 
-            (selectedAnswers[index] === answer.aid) ? '#4682B4' : '#71b7e3' 
-        }"
-        class="mb-2 cursor-pointer text-black"
-        @click="() => { selectedAnswers[index] = answer.aid; feedbackMessages[index] = ''; answerCorrect[index] = null; }"
-      >
-        <input type="radio" :value="answer.aid" v-model="selectedAnswers[index]" class="hidden" />
-        <div class="p-4 text-white">
-          {{ answer.option_text }}
-        </div>
-      </Card>
+    <div v-for="(question, index) in shuffledQuestions.slice(0, selectedQuestions)" :key="question.qid" class="qnDiv">
+      <h1 class="questionTitle">{{ question.question }}</h1>
+      <img v-if="question.image !== null" :src="question.image" class="m-4">
+      
+      <div v-for="answer in answers.filter(a => a.qid === question.qid)" :key="answer.aid">
+        <Card
+          :style="{ 
+            backgroundColor: 
+              (selectedAnswers[index] === answer.aid && answerCorrect[index] === true) ? '#72c472' : 
+              (selectedAnswers[index] === answer.aid && answerCorrect[index] === false) ? '#d25757' : 
+              (selectedAnswers[index] === answer.aid) ? '#4682B4' : '#71b7e3' 
+          }"
+          class="mb-2 cursor-pointer text-black"
+          @click="() => { selectedAnswers[index] = answer.aid; feedbackMessages[index] = ''; answerCorrect[index] = null; }"
+        >
+          <input type="radio" :value="answer.aid" v-model="selectedAnswers[index]" class="hidden" />
+          <div class="p-4 text-white">
+            {{ answer.option_text }}
+          </div>
+        </Card>
+      </div>
+      <div class="button-container" style="margin-top: 20px;">
+        <Button class="checkAnswer" @click="checkAnswer(index, question.qid, selectedAnswers[index])">Check answer</Button>
+      </div>
+      <p class="mb-5 font-xxl font-bold">{{ feedbackMessages[index] }}</p>
+      <hr>
     </div>
-    <div class="button-container" style="margin-top: 20px;">
-      <Button class="checkAnswer" @click="checkAnswer(index, question.qid, selectedAnswers[index])">Check answer</Button>
+    
+    <div class="text-center font-bold" style="font-size: 40px;">
+      Congrats! You have reached the end.
+      <div>
+          <NuxtLink to="/Student/resourceFiles/questionsPage">
+              <Button class="checkAnswer">Go Back</Button>
+          </NuxtLink>
+      </div>
     </div>
-    <p class="mb-5 font-xxl font-bold">{{ feedbackMessages[index] }}</p>
-    <hr>
   </div>
-  <div class="text-center font-bold" style="font-size: 40px;">
-    Congrats! You have reached the end.
-    <div>
-        <NuxtLink to="/Student/resourceFiles/questionsPage">
-            <Button class="checkAnswer">Go Back</Button>
-        </NuxtLink>
-    </div>
-</div>
-</div>
+
+  <!-- Test layout -->
+  <div v-if="currentType === 'test'">
+      <div class="timer text-center font-bold text-xl">
+        Time Remaining: {{ formattedTime }}
+      </div>
+
+      <!-- Questions Section -->
+      <div v-for="(question, index) in shuffledQuestions" :key="question.qid" class="qnDiv" style="margin-bottom: 30px;">
+        <h1 class="questionTitle">{{ question.question }}</h1>
+        <img v-if="question.image !== null" :src="question.image" class="m-4">
+
+        <div v-for="answer in answers.filter(a => a.qid === question.qid)" :key="answer.aid">
+          <Card :style="{ backgroundColor: (selectedAnswersForTest[index] === answer.aid) ? '#4682B4' : '#71b7e3' }" class="mb-2 cursor-pointer text-black" @click="() => { selectedAnswersForTest[index] = answer.aid; feedbackMessages[index] = ''; answerCorrect[index] = null; }">
+            <input type="radio" :value="answer.aid" v-model="selectedAnswers[index]" class="hidden" />
+            <div class="p-4 text-white">
+              {{ answer.option_text }}
+            </div>
+          </Card>
+        </div>
+        <hr style="margin-top:30px;">
+      </div>
+
+      <!-- End of Test Button -->
+      <div class="text-center">
+          <Button class="checkAnswer" @click="evaluateAnswers">Submit</Button>
+      </div>
+  </div>
 </template>
 
 <style>
@@ -193,10 +330,6 @@ function checkAnswer(index: number, qid: number, selectedAid: number) {
   margin: 20px;
 }
 
-.optionCard {
-  color: #7bcde9;
-
-}
 .questionTitle {
   font-size: 25px;
   font-weight: bolder;
