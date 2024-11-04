@@ -16,7 +16,7 @@
             />
           </div>
           <div class="flex-grow">
-  <h1 class="text-2xl font-bold mb-4">{{ instructor.name }}</h1>
+  <h1 class="text-2xl font-bold mb-4" style="text-align: left;">{{ instructor.name }}</h1>
   <div class="inline-flex items-center">
     <h2 class="text-xl">
       {{ instructor.rating !== null ? instructor.rating.toFixed(1) : 'No reviews yet' }}
