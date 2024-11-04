@@ -47,20 +47,28 @@ interface CorrectAnswer {
 const selectedAnswersForTest = ref<number[]>(new Array(shuffledQuestions.value.length).fill(null)); // To store user's selected answers
 const correctAnswers = ref<CorrectAnswer[]>([]);
 const evaluateAnswers = () => {
-  const results = selectedAnswersForTest.value.map((selectedAid, index) => {
+    const results = selectedAnswersForTest.value.map((selectedAid, index) => {
     const question = shuffledQuestions.value[index]; // Assuming questions are still in shuffled order
     const correctAnswer = correctAnswers.value.find(answer => answer.qid === question.qid);
     
     return {
       qid: question.qid,
-      selectedAid,
-      isCorrect: correctAnswer && correctAnswer.aid === selectedAid,
-    };
-  });
+      aid: selectedAid, // Include the selected answer (aid)
+      isCorrect: correctAnswer && correctAnswer.aid === selectedAid // Determine if the selected answer is correct
+        };
+      });
 
-  // Now you can navigate to the review page with the results
-  navigateToReviewPage(results);
+  // Return both the results and the currentTopic
+    const evaluationResults = {
+      results,
+      currentTopic: currentTopic.value // Include currentTopic separately
+    };
+    navigateToReviewPage(evaluationResults);
 };
+
+// Usage
+
+
 
 const navigateToReviewPage = (results) => {
   // Use your preferred method to navigate to the review page

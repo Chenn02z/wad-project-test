@@ -135,7 +135,7 @@ onMounted(async () => {
     <div class="inline-flex">
       <h1 v-if="instructor" class="text-3xl font-bold tracking-tight">{{ instructor.name }}'s Reviews</h1>
       <p v-else class="text-gray-500">Loading instructor reviews...</p>
-    <div class="ml-auto flex-end">
+    <div class="ml-auto flex-end" style="cursor:pointer;">
       <DropdownMenu>
         <DropdownMenuTrigger as-child>
           <Button variant="outline">
@@ -146,7 +146,7 @@ onMounted(async () => {
           <DropdownMenuCheckboxItem v-model:checked="showNewest">
             Newest
           </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem v-model:checked="showHighest" disabled>
+          <DropdownMenuCheckboxItem v-model:checked="showHighest">
             Highest
           </DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem v-model:checked="showLowest">
