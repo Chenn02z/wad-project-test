@@ -9,7 +9,7 @@
             <div class="flex-1 space-y-4 pt-6">
                 <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
                     <!-- Total Lessons Completed Card -->
-                    <Card class="bg-slate-50 rounded-lg shadow-md p-4 border border-slate-200">
+                    <Card class="bg-slate-100 rounded-lg shadow-md p-4 border border-slate-200">
                         <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle class="text-sm font-medium text-slate-600">Total Lessons Completed</CardTitle>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -25,7 +25,7 @@
                     </Card>
 
                     <!-- Next Lesson Card -->
-                    <Card class="bg-slate-50 rounded-lg shadow-md p-4 border border-slate-200">
+                    <Card class="bg-slate-100 rounded-lg shadow-md p-4 border border-slate-200">
                         <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle class="text-sm font-medium text-slate-600">Next Lesson</CardTitle>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -44,7 +44,7 @@
                 </div>
 
                 <!-- Lessons for Next Week Section -->
-                <Card class="bg-slate-50 rounded-lg shadow-md p-4 border border-slate-200">
+                <Card class="bg-slate-100 rounded-lg shadow-md p-4 border border-slate-200">
                     <CardHeader>
                         <CardTitle class="text-slate-600">Lessons for Next Week</CardTitle>
                         <CardDescription class="text-gray-500">Your scheduled lessons for the upcoming week</CardDescription>
@@ -69,7 +69,7 @@
                 </Card>
 
                 <!-- Notifications for Past Instructors to Review -->
-                <Card class="bg-slate-50 rounded-lg shadow-md p-4 border border-slate-200">
+                <Card class="bg-slate-100 rounded-lg shadow-md p-4 border border-slate-200">
                     <CardHeader>
                         <CardTitle class="text-slate-600">Review</CardTitle>
                         <CardDescription class="text-gray-500">Past Instructors to Review</CardDescription>

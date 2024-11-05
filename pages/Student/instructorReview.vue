@@ -30,7 +30,7 @@
     </div>
     <div v-for="instructor in sortedInstructors" :key="instructor.id">
       <NuxtLink :to="`/Student/reviewTemplate/${instructor.id}`">
-        <Card class="card bg-slate-300">
+        <Card class="card bg-slate-100">
           <div class="flex-shrink-0 mr-16">
             <img v-if="instructor.image !== null"
               height="100px" 
@@ -144,8 +144,7 @@
 
   .card:hover {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    background-color: #334155;
-    color: white;
+    color: rgb(79, 83, 92);
   }
 </style>
 <script setup lang="ts">
