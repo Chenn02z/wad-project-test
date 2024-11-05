@@ -3,7 +3,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "prebuild": "ts-node generate-google-api-credentials.ts",
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
