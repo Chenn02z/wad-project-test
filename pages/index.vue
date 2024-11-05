@@ -397,6 +397,7 @@
   </div>
 </template>
 <script setup>
+import { useAuthStore } from '~/stores/UseAuth'
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import { Card, CardContent } from "@/components/ui/card";
 import { useRouter } from 'vue-router';
@@ -643,6 +644,7 @@ const handleSubmit = async () => {
         throw signUpError;
       }
       console.log("Sign up successful, user data:", data);
+      authStore.setUserId(nextId)
       if (data && data.length > 0) {
         authStore.setUserId(data[0].id);
         if (userType.value === 'student') {
