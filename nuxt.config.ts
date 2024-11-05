@@ -1,7 +1,7 @@
 import Icons from 'unplugin-icons/vite';
 
 export default defineNuxtConfig({
-  modules: ['@nuxtjs/tailwindcss', 'shadcn-nuxt', '@nuxtjs/supabase'],
+  modules: ['@nuxtjs/tailwindcss', 'shadcn-nuxt', '@nuxtjs/supabase','@pinia/nuxt'],
 
   // Runtime Configurations for Environment Variables
   runtimeConfig: {
