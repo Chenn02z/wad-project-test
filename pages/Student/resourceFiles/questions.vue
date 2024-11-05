@@ -339,7 +339,7 @@ function checkAnswer(index: number, qid: number, selectedAid: number) {
 }
 
 .questionTitle {
-  font-size: 25px;
+  font-size: 20px;
   font-weight: bolder;
   text-align: left;
   margin-bottom: 10px;
