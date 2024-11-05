@@ -5,7 +5,7 @@
             <p class="text-lg text-gray-600">Select the instructor, location, date, and timeslot</p>
         </div>
 
-        <div class="p-8 max-w-2xl mx-auto bg-slate-50 rounded-lg shadow-2xl">
+        <div class="p-8 max-w-2xl mx-auto bg-slate-100 rounded-lg shadow-2xl">
             <div v-if="isLoading" class="text-center py-8">
                 <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
                 <p class="mt-4 text-gray-600">Loading instructor data...</p>
@@ -85,6 +85,15 @@ import { ref, computed, onMounted } from 'vue'
 
 // Initialize Supabase client
 const client = useSupabaseClient()
+
+import { useAuthStore } from '~/stores/UseAuth'
+
+const authStore = useAuthStore()
+
+// To get the current user ID
+const userId = authStore.userId;
+console.log(authStore.userId)
+
 
 
 // Reactive references for data
@@ -198,7 +207,7 @@ async function confirmBooking() {
             date: selectedDate.value,
             time: selectedSlot.value.time,
             location: selectedLocation.value,
-            student_id: 101 // Replace with dynamic student ID as needed
+            student_id: userId // Replace with dynamic student ID as needed
         };
 
         const timeZone = 'Asia/Singapore';
@@ -207,7 +216,7 @@ async function confirmBooking() {
         const eventData = {
             startDateTime: formattedDate,
             instructorId: selectedInstructor.value.id,
-            studentId: 101,
+            studentId: userId,
             location:selectedLocation.value,
         }
 

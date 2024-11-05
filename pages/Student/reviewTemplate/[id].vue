@@ -120,6 +120,25 @@ onMounted(async () => {
   }
 });
 
+const sortCriteria = ref('newest');
+
+const sortedReviews = computed(() => {
+  return [...reviews.value].sort((a, b) => {
+    if (sortCriteria.value === 'highest') {
+      // Sort by rating (high to low), then by date (newest first) for same ratings
+      return b.rating - a.rating || new Date(b.date_posted).getTime() - new Date(a.date_posted).getTime();
+    }
+    if (sortCriteria.value === 'lowest') {
+      // Sort by rating (low to high), then by date (newest first) for same ratings
+      return a.rating - b.rating || new Date(b.date_posted).getTime() - new Date(a.date_posted).getTime();
+    }
+    if (sortCriteria.value === 'newest') {
+      // Sort by date (newest first), then by rating (high to low) for same dates
+      return new Date(b.date_posted).getTime() - new Date(a.date_posted).getTime() || b.rating - a.rating;
+    }
+    return 0;
+  });
+});
 
 </script>
 
@@ -135,7 +154,7 @@ onMounted(async () => {
     <div class="inline-flex">
       <h1 v-if="instructor" class="text-3xl font-bold tracking-tight">{{ instructor.name }}'s Reviews</h1>
       <p v-else class="text-gray-500">Loading instructor reviews...</p>
-    <div class="ml-auto flex-end">
+    <div class="ml-auto flex-end" style="cursor:pointer;">
       <DropdownMenu>
         <DropdownMenuTrigger as-child>
           <Button variant="outline">
@@ -143,15 +162,17 @@ onMounted(async () => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent class="w-56">
-          <DropdownMenuCheckboxItem v-model:checked="showNewest">
-            Newest
-          </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem v-model:checked="showHighest" disabled>
-            Highest
-          </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem v-model:checked="showLowest">
-            Lowest
-          </DropdownMenuCheckboxItem>
+          <DropdownMenuRadioGroup v-model="sortCriteria">
+              <DropdownMenuRadioItem value="highest">
+                Highest
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="lowest">
+                Lowest
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="newest">
+                Newest
+              </DropdownMenuRadioItem>
+            </DropdownMenuRadioGroup>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
@@ -159,10 +180,10 @@ onMounted(async () => {
 
     <br>
   <div class="grid grid-cols-1 gap-5 lg:grid-cols-3" style="height:300px" v-if="reviews.length > 0">
-    <Card id="app" class="review" v-for="(review, idx) in reviews" :key="idx">
+    <Card id="app" class="review bg-slate-100" v-for="(review, idx) in sortedReviews" :key="idx">
         <!-- Name and rating in the center -->
         <div class="flex-grow inline-flex items-center mb-2">
-          <div class="text-2xl font-bold">{{students[review.student_id] || "Unknown Student"}}</div>
+          <div class="font-bold" style="font-size: 23px">{{students[review.student_id] || "Unknown Student"}}</div>
           <div class="flex ml-4">
             <Stars :rating="review.rating" />
           </div>

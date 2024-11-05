@@ -19,7 +19,6 @@
         </button>
       </nav>
     </header>
-
     <main>
       <!-- Hero Section -->
       <section
@@ -73,7 +72,24 @@
           <div @click="showAuthModal = true"
             class="bg-white rounded-xl shadow-lg p-6 relative overflow-hidden hover:-translate-y-2 transition-transform duration-300 ease-in-out"
           >
-            <div class="absolute top-6 right-6"></div>
+            <div class="absolute top-6 right-6">
+              <button class="text-gray-400 hover:text-gray-600">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-8 h-8"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M17.25 6.75L6.75 17.25M6.75 6.75l10.5 10.5"
+                  />
+                </svg>
+              </button>
+            </div>
             <h3 class="text-3xl font-semibold text-slate-700 mb-4">Students</h3>
             <p class="text-gray-600 mb-6">
               A platform for learners to manage their driving lessons, track
@@ -84,13 +100,13 @@
             >
               <div class="flex space-x-4">
                 <img
-                  src="../public/externalFiles/images/Student Dashboard.jpg"
-                  alt="Students Snapshot 1"
+                src="../public/externalFiles/images/Student Dashboard.jpg"
+                alt="Students Snapshot 1"
                   class="w-1/2 h-40 object-contain object-center"
                 />
                 <img
-                  src="../public/externalFiles/images/Instructor Dashboard.jpg"
-                  alt="Students Snapshot 2"
+                src="../public/externalFiles/images/Instructor Dashboard.jpg"
+                alt="Students Snapshot 2"
                   class="w-1/2 h-40 object-contain object-center"
                 />
               </div>
@@ -121,11 +137,28 @@
               </svg>
             </button>
           </div>
-
           <!-- Instructors Card -->
           <div @click="showAuthModal = true"
             class="bg-white rounded-xl shadow-lg p-6 relative overflow-hidden hover:-translate-y-2 transition-transform duration-300 ease-in-out"
           >
+            <div class="absolute top-6 right-6">
+              <button class="text-gray-400 hover:text-gray-600">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-8 h-8"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M17.25 6.75L6.75 17.25M6.75 6.75l10.5 10.5"
+                  />
+                </svg>
+              </button>
+            </div>
             <h3 class="text-3xl font-semibold text-slate-700 mb-4">
               Instructors
             </h3>
@@ -157,7 +190,7 @@
               </div>
             </div>
             <button
-              class="absolute top-6 right-6 bg-white text-orange-600 rounded-full p-3 shadow-lg"
+            class="absolute top-6 right-6 bg-white text-orange-600 rounded-full p-3 shadow-lg"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -246,111 +279,129 @@
         </div>
       </section>
     </main>
-
     <footer class="bg-slate-800 text-white py-8">
       <div class="container mx-auto px-6 text-center">
-        <p>
-          &copy; {{ new Date().getFullYear() }} Learn2Drive. All rights
-          reserved.
-        </p>
+        <p>&copy; {{ currentYear }} Learn2Drive. All rights reserved.</p>
       </div>
     </footer>
-
     <!-- Auth Modal -->
-    <teleport to="body">
-      <div
-        v-if="showAuthModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      >
-        <div class="bg-white rounded-lg p-8 max-w-md w-full">
-          <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-slate-800">
-              {{ isLogin ? "Login" : "Sign Up" }}
-            </h2>
-            <button
-              @click="showAuthModal = false"
-              class="text-gray-500 hover:text-gray-700"
-            >
-              <svg
-                class="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
+    <ClientOnly>
+      <Teleport to="body">
+        <div
+          v-if="showAuthModal"
+          class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        >
+          <div class="bg-white rounded-lg p-8 max-w-md w-full">
+            <div class="flex justify-between items-center mb-6">
+              <h2 class="text-2xl font-bold text-slate-800">
+                {{ isLogin ? "Login" : "Sign Up" }}
+              </h2>
+              <button
+                @click="showAuthModal = false"
+                class="text-gray-500 hover:text-gray-700"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"
-                ></path>
-              </svg>
-            </button>
-          </div>
-          <form @submit.prevent="handleSubmit" class="space-y-4">
-            <div v-if="!isLogin" class="space-y-2">
-              <label for="name" class="block text-sm font-medium text-gray-700"
-                >Full Name</label
-              >
-              <input
-                id="name"
-                type="text"
-                placeholder="Enter your full name"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500"
-              />
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  ></path>
+                </svg>
+              </button>
             </div>
-            <div class="space-y-2">
-              <label for="email" class="block text-sm font-medium text-gray-700"
-                >Email</label
+            <form @submit.prevent="handleSubmit" class="space-y-4">
+              <div v-if="!isLogin" class="space-y-2">
+                <label for="name" class="block text-sm font-medium text-gray-700"
+                  >Full Name</label
+                >
+                <input
+                  id="name"
+                  v-model="name"
+                  type="text"
+                  placeholder="Enter your full name"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500"
+                />
+              </div>
+              <div class="space-y-2">
+                <label for="email" class="block text-sm font-medium text-gray-700"
+                  >Email</label
+                >
+                <input
+                  id="email"
+                  v-model="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500"
+                />
+              </div>
+              <div class="space-y-2">
+                <label
+                  for="password"
+                  class="block text-sm font-medium text-gray-700"
+                  >Password</label
+                >
+                <input
+                  id="password"
+                  v-model="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500"
+                />
+              </div>
+              <div v-if="!isLogin" class="space-y-2">
+                <label for="userType" class="block text-sm font-medium text-gray-700"
+                  >User Type</label
+                >
+                <select
+                  id="userType"
+                  v-model="userType"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500"
+                >
+                  <option value="student">Student</option>
+                  <option value="instructor">Instructor</option>
+                </select>
+              </div>
+              <button
+                type="submit"
+                class="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-all duration-300"
               >
-              <input
-                id="email"
-                type="email"
-                placeholder="Enter your email"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500"
-              />
-            </div>
-            <div class="space-y-2">
-              <label
-                for="password"
-                class="block text-sm font-medium text-gray-700"
-                >Password</label
+                {{ isLogin ? "Login" : "Sign Up" }}
+              </button>
+              <div v-if="error" class="text-red-500 text-sm mt-2">
+                {{ error }}
+              </div>
+            </form>
+            <div class="mt-4 text-center">
+              <button
+                @click="isLogin = !isLogin"
+                class="text-slate-600 hover:underline"
               >
-              <input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500"
-              />
+                {{
+                  isLogin
+                    ? "Need an account? Sign up"
+                    : "Already have an account? Login"
+                }}
+              </button>
             </div>
-            <button
-              type="submit"
-              class="w-full px-4 py-2 bg-slate-600 text-white rounded hover:bg-slate-700 transition-all duration-300"
-            >
-              {{ isLogin ? "Login" : "Sign Up" }}
-            </button>
-          </form>
-          <div class="mt-4 text-center">
-            <button
-              @click="isLogin = !isLogin"
-              class="text-slate-600 hover:underline"
-            >
-              {{
-                isLogin
-                  ? "Need an account? Sign up"
-                  : "Already have an account? Login"
-              }}
-            </button>
           </div>
         </div>
-      </div>
-    </teleport>
+      </Teleport>
+    </ClientOnly>
   </div>
 </template>
-
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { useAuthStore } from '~/stores/UseAuth'
+import { ref, onMounted, onUnmounted, computed } from "vue";
 import { Card, CardContent } from "@/components/ui/card";
+import { useRouter } from 'vue-router';
+const supabase = useSupabaseClient();
 import {
   Carousel,
   CarouselContent,
@@ -364,12 +415,14 @@ const plugin = Autoplay({
   stopOnMouseEnter: true,
   stopOnInteraction: false,
 });
-
+const router = useRouter();
 const scrollY = ref(0);
 const showAuthModal = ref(false);
 const isLogin = ref(true);
-
-let currentIndex = 0;
+const name = ref("");
+const email = ref("");
+const password = ref("");
+const userType = ref("student");let currentIndex = 0;
 
 function updateCarousel() {
   const carousel = document.querySelector(".carousel");
@@ -511,26 +564,105 @@ onMounted(() => {
   featureRefs.forEach((el) => el && featureObserver.observe(el));
   stepRefs.forEach((el) => el && stepObserver.observe(el));
 });
-
+const error = ref(null);
+const currentYear = computed(() => new Date().getFullYear());
 const handleScroll = () => {
   scrollY.value = window.scrollY;
 };
-
-const handleSubmit = () => {
-  // Handle form submission
-  console.log("Form submitted", isLogin.value ? "Login" : "Sign Up");
-  showAuthModal.value = false;
-};
-
 onMounted(() => {
   window.addEventListener("scroll", handleScroll);
 });
-
 onUnmounted(() => {
   window.removeEventListener("scroll", handleScroll);
 });
+const getNextId = async (userType) => {
+  const { data, error } = await supabase
+    .from('profiles_duplicate')
+    .select('id')
+    .eq('user_type', userType)
+    .order('id', { ascending: false })
+    .limit(1);
+  if (error) {
+    console.error("Error fetching last ID:", error);
+    throw error;
+  }
+  if (data && data.length > 0) {
+    const lastId = data[0].id;
+    if (userType === 'instructor') {
+      return Math.max(lastId, 0) + 1;
+    } else {
+      return Math.max(lastId, 100) + 1;
+    }
+  } else {
+    return userType === 'instructor' ? 1 : 101;
+  }
+};
+const handleSubmit = async () => {
+  const authStore = useAuthStore();
+  error.value = null;
+  try {
+    if (isLogin.value) {
+      // Login
+      console.log("Attempting to log in with:", { email: email.value });
+      const { data, error: loginError } = await supabase
+        .from('profiles_duplicate')
+        .select('*')
+        .eq('email', email.value)
+        .eq('password', password.value)
+        .single();
+      if (loginError) {
+        console.error("Login error:", loginError);
+        throw new Error("Invalid email or password");
+      }
+      if (!data) {
+        throw new Error("User not found");
+      }
+      console.log("Login successful, user data:", data);
+      authStore.setUserId(data.id);
+      console.log(authStore.userId);
+      if (data.user_type === 'student') {
+        await navigateTo(`/student/homepage`);
+      } else if (data.user_type === 'instructor') {
+        await navigateTo(`/instructor/homepage`);
+      }
+    } else {
+      // Sign Up
+      console.log("Attempting to sign up with:", { email: email.value, name: name.value, userType: userType.value });
+      const nextId = await getNextId(userType.value);
+      const { data, error: signUpError } = await supabase
+        .from('profiles_duplicate')
+        .insert({
+          id: nextId,
+          name: name.value,
+          email: email.value,
+          password: password.value,
+          user_type: userType.value,
+        })
+        .select();
+      if (signUpError) {
+        console.error("Sign up error:", signUpError);
+        throw signUpError;
+      }
+      console.log("Sign up successful, user data:", data);
+      authStore.setUserId(nextId)
+      if (data && data.length > 0) {
+        authStore.setUserId(data[0].id);
+        if (userType.value === 'student') {
+          await navigateTo(`/student/homepage?id=${data[0].id}`);
+        } else if (userType.value === 'instructor') {
+          await navigateTo(`/instructor/homepage?id=${data[0].id}`);
+        }
+      } else {
+        throw new Error("Failed to create user");
+      }
+    }
+    showAuthModal.value = false;
+  } catch (err) {
+    console.error('Error in handleSubmit:', err);
+    error.value = err instanceof Error ? err.message : "An unexpected error occurred";
+  }
+};
 </script>
-
 <style>
 @keyframes fadeInOpenUp {
   from {
@@ -546,6 +678,9 @@ onUnmounted(() => {
 .animate-fade-in-open-up {
   animation: fadeInOpenUp 1.5s ease-out;
 }
+.animate-fade-in-up {
+  animation: fadeInUp 1s ease-out;
+}
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -556,7 +691,6 @@ onUnmounted(() => {
     transform: translateY(0);
   }
 }
-
 @keyframes fadeInLeft {
   from {
     opacity: 0;
@@ -611,5 +745,4 @@ onUnmounted(() => {
 
 .animation-delay-600 {
   animation-delay: 600ms;
-}
-</style>
+}</style>
