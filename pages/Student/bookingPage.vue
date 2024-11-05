@@ -86,6 +86,15 @@ import { ref, computed, onMounted } from 'vue'
 // Initialize Supabase client
 const client = useSupabaseClient()
 
+import { useAuthStore } from '~/stores/UseAuth'
+
+const authStore = useAuthStore()
+
+// To get the current user ID
+const userId = authStore.userId;
+console.log(authStore.userId)
+
+
 
 // Reactive references for data
 const locations = ref([])
@@ -198,7 +207,7 @@ async function confirmBooking() {
             date: selectedDate.value,
             time: selectedSlot.value.time,
             location: selectedLocation.value,
-            student_id: 101 // Replace with dynamic student ID as needed
+            student_id: userId // Replace with dynamic student ID as needed
         };
 
         const timeZone = 'Asia/Singapore';
@@ -207,7 +216,7 @@ async function confirmBooking() {
         const eventData = {
             startDateTime: formattedDate,
             instructorId: selectedInstructor.value.id,
-            studentId: 101,
+            studentId: userId,
             location:selectedLocation.value,
         }
 

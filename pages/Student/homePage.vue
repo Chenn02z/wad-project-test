@@ -153,11 +153,26 @@
 
 
 <script setup lang="ts">
+
+
 definePageMeta({
     layout: 'studentview'
 });
 
 import { ref, computed, onMounted } from 'vue';
+
+import { useAuthStore } from '~/stores/UseAuth'
+
+const authStore = useAuthStore()
+
+
+// To check if the user is authenticated
+console.log(authStore.isAuthenticated)
+
+// To get the current user ID
+const userId = authStore.userId;
+console.log(authStore.userId)
+
 
 
 // Define the Lesson interface to represent the structure of a lesson
@@ -205,7 +220,7 @@ const setHoverRating = (rating) => {
 // Open review modal and fetch existing review
 const goToReviewForm = async (instructorId: number) => {
     selectedInstructorId.value = instructorId; // Store the selected instructor ID
-    existingReview.value = await fetchExistingReview(101, instructorId); // Fetch existing review using student ID and instructor ID
+    existingReview.value = await fetchExistingReview(userId, instructorId); // Fetch existing review using student ID and instructor ID
 
     if (existingReview.value) {
         reviewText.value = existingReview.value.comment; // Pre-fill comment if exists
@@ -228,15 +243,15 @@ const closeModal = () => {
 
 // Submit review logic
 const submitReview = async () => {
-    const reviewExists = await checkReviewExists(101, selectedInstructorId.value); // Use the selected instructor ID
+    const reviewExists = await checkReviewExists(userId, selectedInstructorId.value); // Use the selected instructor ID
 
     if (reviewExists) {
         // Logic to update the existing review
-        await updateReview(101, selectedInstructorId.value, reviewText.value, reviewRating.value);
+        await updateReview(userId, selectedInstructorId.value, reviewText.value, reviewRating.value);
         console.log('Updating review for instructor ID', selectedInstructorId.value, ':', reviewText.value, 'with rating:', reviewRating.value);
     } else {
         // Logic to submit a new review
-        await createReview(101, selectedInstructorId.value, reviewText.value, reviewRating.value);
+        await createReview(userId, selectedInstructorId.value, reviewText.value, reviewRating.value);
         console.log('Submitting review for instructor ID', selectedInstructorId.value, ':', reviewText.value, 'with rating:', reviewRating.value);
     }
 
@@ -366,7 +381,7 @@ onMounted(async () => {
     const { data, error } = await client
         .from('lessons')
         .select()
-        .eq('student_id', 101);  // Fetch lessons where student_id is 101
+        .eq('student_id', userId);  // Fetch lessons where student_id is 101
     if (error) {
         console.error('Error fetching lessons:', error); // Log any errors
     } else {
