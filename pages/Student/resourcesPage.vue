@@ -71,7 +71,7 @@ import { Button } from "@/components/ui/button";
         </Card>
       </a>
 
-      <a href="/Student/resourceFiles/revisionReview">
+      <!-- <a href="/Student/resourceFiles/revisionReview">
         <Card class="relative h-64 p-2 hover:drop-shadow-xl hover:text-blue-600 bg-slate-100">
           <CardHeader>
             <CardTitle>Review Corner</CardTitle>
@@ -84,7 +84,7 @@ import { Button } from "@/components/ui/button";
             </svg>
           </div> 
         </Card>
-      </a> -->
+      </a>  -->
     </div>
   </div>
   </template>
