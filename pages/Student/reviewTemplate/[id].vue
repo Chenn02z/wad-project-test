@@ -190,7 +190,7 @@ const sortedReviews = computed(() => {
         </div>
         <div>
           <div class="text-sm mb-2" style="color:gray">
-          {{ review.date_posted }}
+          {{ new Date(review.date_posted).toLocaleDateString() }}
           </div>
         <!-- <div class="text-sm mb-2" style="font-style: italic" v-for="badge in review.badges">
             {{ badge }}

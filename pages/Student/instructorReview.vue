@@ -48,7 +48,8 @@
             />
           </div>
           <div class="flex-grow">
-  <h1 class="font-bold mb-4" style="text-align: left; font-size: 23px;">{{ instructor.name }}</h1>
+  <h1 class="font-bold mb-2" style="text-align: left; font-size: 23px;">{{ instructor.name }}</h1>
+  <h1 class="italic mb-2 text-slate-600" style="text-align: left; font-size: 15px">{{ instructor.location }}</h1>
   <div class="inline-flex items-center">
     <h2 style="font-size: 19px">
       {{ instructor.rating !== null ? instructor.rating.toFixed(1) : 'No reviews yet' }}
