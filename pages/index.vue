@@ -181,17 +181,17 @@
         class="min-h-screen grid grid-cols-1 md:grid-cols-2 items-center justify-center relative overflow-hidden px-10 bg-gradient-to-b from-blue-50 to-white"
       >
         <!-- Carousel Section on the Left -->
-        <div class="flex justify-center w-full px-4 py-8">
+        <div class="flex justify-center w-full px-4 py-8 order-2 md:order-1">
           <Carousel class="relative w-full max-w-l" :plugins="[plugin]">
             <CarouselContent>
               <CarouselItem
                 v-for="(card, index) in cards"
                 :key="index"
-                class="pl-1 md:basis-1/2 lg:basis-2/5"
+                class="pl-1 md:basis-full lg:basis-2/5"
               >
                 <div class="p-4">
                   <Card
-                    :class="[card.bgColor, 'w-80 h-96 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 ease-in-out']"
+                    :class="[card.bgColor, 'w-fit h-96 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 ease-in-out']"
                   >
                     <CardContent
                       class="flex flex-col items-center justify-center p-6"
@@ -235,8 +235,8 @@
         </div>
 
         <!-- Text Section on the Right -->
-        <div class="container mx-auto px-6 text-right">
-          <h2 class="text-5xl font-bold mb-4 text-blue-800 animate-fade-in-up">
+        <div class="container mx-auto px-6 text-center md:text-right order-1 md:order-2">
+          <h2 class="text-3xl md:text-5xl mb-4 text-blue-800 animate-fade-in-up">
             Providing better experiences,
             <br />connecting both <br />learners and instructors
           </h2>
@@ -416,9 +416,9 @@ const cards = [
     dividerText: "A monthly record of lessons booked.",
   },
   {
-    title: 'John D. - "Great experience!"',
+    title: 'Chester Y. - "Great experience!"',
     description:
-      "John says his instructor was patient and helped him pass on his first try.",
+      "Chester says his instructor was patient and helped him pass on his first try.",
     bgColor: "bg-blue-100",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-gray-700">
   <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
