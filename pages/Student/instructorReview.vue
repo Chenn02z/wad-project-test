@@ -7,10 +7,17 @@
       <NuxtLink :to="`/Student/reviewTemplate/${instructor.id}`">
         <Card class="card">
           <div class="flex-shrink-0 mr-16">
-            <img 
+            <img v-if="instructor.image !== null"
               height="100px" 
               width="100px" 
-              src="https://theurbanwire.sg/wp-content/uploads/2022/05/photo_2022-05-13-16.32.39.jpeg"
+              :src="instructor.image"
+              alt="Instructor Uncle" 
+              class="rounded-full"
+            />
+            <img v-else
+              height="100px" 
+              width="100px" 
+              src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
               alt="Instructor Uncle" 
               class="rounded-full"
             />
@@ -130,6 +137,7 @@ interface Instructor {
   location: string;
   rating: number | null ;
   totalReviews: number;
+  image: string;
 }
 
 
@@ -141,7 +149,7 @@ const instructors = ref<Instructor[]>([]);
 const fetchInstructorsWithReviews = async () => {
   try {
     // Fetch instructors without reviews first
-    const { data: instructorsData, error } = await client.from('instructors').select('id, name, location');
+    const { data: instructorsData, error } = await client.from('instructors').select('id, name, location, image');
     if (error) throw error;
 
     // For each instructor, fetch their reviews and calculate rating/totalReviews
@@ -164,6 +172,7 @@ const fetchInstructorsWithReviews = async () => {
         location: instructor.location,
         rating: averageRating,
         totalReviews: totalReviews,
+        image: instructor.image
       });
     }
   } catch (error) {
