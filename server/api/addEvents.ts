@@ -1,6 +1,6 @@
 import { google } from 'googleapis';
-import { promises as fs } from 'fs';
-import { resolve } from 'path';
+// import { promises as fs } from 'fs';
+// import { resolve } from 'path';
 
 export default defineEventHandler(async (event) => {
   try {
@@ -12,14 +12,17 @@ export default defineEventHandler(async (event) => {
     const endTime = new Date(startTime.getTime() + 60 * 60 * 1000 * 2); // Add 2 hour
 
     // Load the service account credentials
-    const credentialsPath = resolve('server/config/key.json');
-    const credentials = JSON.parse(await fs.readFile(credentialsPath, 'utf-8'));
+    // const credentialsPath = resolve('server/config/key.json');
+    // const credentials = JSON.parse(await fs.readFile(credentialsPath, 'utf-8'));
 
     // const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY || '{}');
 
     // Authenticate the service account
     const auth = new google.auth.GoogleAuth({
-      credentials,
+      credentials: {
+        client_email: process.env.GOOGLE_CLIENT_EMAIL,
+        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'), // Correctly format newline characters
+      },
       scopes: ['https://www.googleapis.com/auth/calendar'],
     });
 
