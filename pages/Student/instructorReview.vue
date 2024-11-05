@@ -1,9 +1,34 @@
 <template>
   <div class="flex flex-col">
-    <h1 class="text-3xl font-bold tracking-tight">Reviews</h1>
-    <p class="text-muted-foreground">View the instructor reviews</p>
+    <div class="inline-flex w-full items-start mb-4">
+    <!-- Flex column for "Reviews" and "View the instructor reviews" stacked vertically -->
+    <div class="flex flex-col">
+      <h1 class="text-3xl font-bold tracking-tight">Reviews</h1>
+      <p class="text-muted-foreground">View the instructor reviews</p>
+    </div>
+    
+    <div class="ml-auto flex-end" style="cursor:pointer;">
+      <DropdownMenu>
+        <DropdownMenuTrigger as-child>
+          <Button variant="outline">
+            Filter
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent class="w-56">
+          <DropdownMenuRadioGroup v-model="sortCriteria">
+              <DropdownMenuRadioItem value="highest">
+                Highest
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="lowest">
+                Lowest
+              </DropdownMenuRadioItem>
+            </DropdownMenuRadioGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
     <br>
-    <div v-for="instructor in instructors" :key="instructor.id">
+    </div>
+    <div v-for="instructor in sortedInstructors" :key="instructor.id">
       <NuxtLink :to="`/Student/reviewTemplate/${instructor.id}`">
         <Card class="card">
           <div class="flex-shrink-0 mr-16">
@@ -127,7 +152,16 @@ definePageMeta({
   layout: 'studentview'
 });
 
-import {Card, CardContent, CardDescription} from '@/components/ui/card';
+import {Card} from '@/components/ui/card';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const client = useSupabaseClient();
 
@@ -145,7 +179,19 @@ import { ref, onMounted } from 'vue';
 
 // Main instructors data with initial data from Supabase
 const instructors = ref<Instructor[]>([]);
-
+const sortCriteria = ref('');
+const sortedInstructors = computed(() => {
+  return [...instructors.value].sort((a, b) => {
+    if (sortCriteria.value === "highest") {
+      return (b.rating ?? 0) - (a.rating ?? 0); // Sort by highest rating
+    } else if (sortCriteria.value === "lowest") {
+      return (a.rating ?? 0) - (b.rating ?? 0); // Sort by lowest rating
+    } else {
+      return b.totalReviews - a.totalReviews; // Sort by total number of reviews
+    }
+    return 0;
+  });
+});
 const fetchInstructorsWithReviews = async () => {
   try {
     // Fetch instructors without reviews first
