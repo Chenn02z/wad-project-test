@@ -30,7 +30,7 @@
     </div>
     <div v-for="instructor in sortedInstructors" :key="instructor.id">
       <NuxtLink :to="`/Student/reviewTemplate/${instructor.id}`">
-        <Card class="card">
+        <Card class="card bg-slate-300">
           <div class="flex-shrink-0 mr-16">
             <img v-if="instructor.image !== null"
               height="100px" 
@@ -48,9 +48,9 @@
             />
           </div>
           <div class="flex-grow">
-  <h1 class="text-2xl font-bold mb-4" style="text-align: left;">{{ instructor.name }}</h1>
+  <h1 class="font-bold mb-4" style="text-align: left; font-size: 23px;">{{ instructor.name }}</h1>
   <div class="inline-flex items-center">
-    <h2 class="text-xl">
+    <h2 style="font-size: 19px">
       {{ instructor.rating !== null ? instructor.rating.toFixed(1) : 'No reviews yet' }}
     </h2>
     <div class="flex ml-2"  v-if="instructor.rating !== null">
@@ -107,7 +107,7 @@
           stroke-width="1.5"
           stroke="currentColor"
           class="w-6 h-6"
-          style="color: lightgray;"
+          style="color: gold;"
         >
           <path
             stroke-linecap="round"
@@ -144,7 +144,8 @@
 
   .card:hover {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    background-color: #bfc2c5;
+    background-color: #334155;
+    color: white;
   }
 </style>
 <script setup lang="ts">
