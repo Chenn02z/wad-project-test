@@ -9,8 +9,6 @@ import { ref, onMounted } from 'vue'; // Ensure you import ref and onMounted
 import { Card } from '@/components/ui/card';
 const client = useSupabaseClient();
 const route = useRoute();
-const showScore = ref(route.query.from === '/Student/resourceFiles/questions'); // Only shows message when redirected from a specific page
-
 
 // Log the entire route query to debug
 console.log('Route Query:', route.query);
@@ -127,6 +125,14 @@ const calculateScore = () => {
 
 
 <template>
+  <div class="inline">
+    <a href="/Student/resourcesPage" class="inline-flex">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 26 26" stroke-width="1.5" stroke="currentColor" class="size-6 mr-2 mt-1">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+      </svg> 
+      <h1 class="text-lg">Back to Resources</h1>
+    </a>
+ 
   <section
         class="min-h-screen flex items-center justify-center relative overflow-hidden animation-delay-300"
       >
@@ -134,30 +140,17 @@ const calculateScore = () => {
           <h2 class="text-5xl font-bold mb-4 text-blue-800 animate-fade-in-up">
             Good job on completing the test!
           </h2>
-          <div class="inline animation-delay-1000">
+          <div class="inline">
             <span v-if="!isScoreLoading" class="text-2xl mb-8 text-gray-600 animate-fade-in-up">
               Your Score is: {{score}}/15
             </span>
           </div>
         
         </div>
-      </section>
-  <section
-    class="min-h-screen flex items-center justify-center relative overflow-hidden animation-delay-300"
-  >
-      <Card>
-        
-      </Card>
-  </section>
-  <div>
-    <a href="/Student/resourcesPage" class="inline-flex">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 26 26" stroke-width="1.5" stroke="currentColor" class="size-6 mr-2 mt-1">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-      </svg> 
-      <h1 class="text-lg">Back to Resources</h1>
-    </a>
-  </div>
-    
+      </section>  
+    </div> 
+
+  <h1 style="font-weight: bold; font-size:35px; margin:30px 0px;" class="text-blue-900">Review Your Results</h1>
   <div class="mt-4">
     <div v-for="(resultPair, idx) in results.results" :key="idx" class="mb-2">
         <strong style="font-size: 20px;">{{idx+1}}.
@@ -166,9 +159,10 @@ const calculateScore = () => {
         <br />
         <div class="inline-flex items-center justify-center">
           <h2 style="margin-right:30px;">Your answer:</h2>
-          <Card :style="{backgroundColor: (getAnswer(resultPair.aid)?.is_correct === true) ? '#72c472' : '#d25757'}">
+          <Card v-if="resultPair.aid !== 0" :style="{backgroundColor: (getAnswer(resultPair.aid)?.is_correct === true) ? '#72c472' : '#d25757'}">
           <div class="text-white" style="padding: 10px 16px">{{ getAnswer(resultPair.aid)?.option_text }}</div>
           </Card>
+          <div v-else>No answer selected.</div>
         </div>
         <div v-if="(getAnswer(resultPair.aid)?.is_correct === true)">
           <strong class="text-blue-500 mt-6">You got it correct!</strong>
