@@ -370,7 +370,7 @@
               </div>
               <button
                 type="submit"
-                class="w-full px-4 py-2 bg-slate-600 text-white rounded hover:bg-slate-700 transition-all duration-300"
+                class="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-all duration-300"
               >
                 {{ isLogin ? "Login" : "Sign Up" }}
               </button>
@@ -621,9 +621,9 @@ const handleSubmit = async () => {
       authStore.setUserId(data.id);
       console.log(authStore.userId);
       if (data.user_type === 'student') {
-        await navigateTo(`/student/homepage?id=${data.id}`);
+        await navigateTo(`/student/homepage`);
       } else if (data.user_type === 'instructor') {
-        await navigateTo(`/instructor/homepage?id=${data.id}`);
+        await navigateTo(`/instructor/homepage`);
       }
     } else {
       // Sign Up
