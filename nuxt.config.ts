@@ -56,4 +56,13 @@ export default defineNuxtConfig({
 
   // Compatibility Settings
   compatibilityDate: '2024-10-10',
+
+  build:{
+    transpile:["@supabase/postgrest-js"]
+  },
+
+  plugins: [
+    '~/plugins/pinia.js'
+  ]
+
 });

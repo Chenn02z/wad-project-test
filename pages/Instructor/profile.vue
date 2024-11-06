@@ -5,8 +5,9 @@ definePageMeta({
 
 import Container from "@/components/profile/Container.vue";
 import EditAccount from "@/components/profile/EditAccount.vue";
-import Notifications from "@/components/profile/Notifications.vue";
-import Security from "@/components/profile/Security.vue";
+import Notifications from "~/components/profile/Instructor/Notifications.vue";
+import Security from "~/components/profile/Instructor/Security.vue";
+import Logout from "~/components/profile/Logout.vue";
 </script>
 
 <template>
@@ -33,6 +34,11 @@ import Security from "@/components/profile/Security.vue";
     <div class="col-span-2 grid items-start gap-6 lg:col-span-1">
       <Container>
         <Notifications />
+      </Container>
+    </div>
+    <div class="col-span-2 grid items-start gap-6 lg:col-span-3">
+      <Container>
+        <Logout />
       </Container>
     </div>
   </div>

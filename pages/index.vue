@@ -424,6 +424,7 @@ const email = ref("");
 const password = ref("");
 const userType = ref("student");let currentIndex = 0;
 
+
 function updateCarousel() {
   const carousel = document.querySelector(".carousel");
   const itemWidth = carousel.querySelector(".carousel-item").offsetWidth;

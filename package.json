@@ -32,6 +32,7 @@
     "googleapis": "^144.0.0",
     "nuxt": "^3.14.0",
     "pinia": "^2.2.6",
+    "pinia-plugin-persistedstate": "^4.1.2",
     "radix-vue": "^1.9.7",
     "shadcn-nuxt": "^0.10.4",
     "sweetalert2": "^11.14.4",
@@ -42,7 +43,7 @@
     "vee-validate": "^4.13.2",
     "vue": "^3.5.12",
     "vue-datepicker-next": "^1.0.3",
-    "vue-router": "latest",
+    "vue-router": "^4.4.5",
     "vue-sonner": "^1.2.3",
     "zod": "^3.23.8"
   },
