@@ -38,7 +38,7 @@ import { Button } from "@/components/ui/button";
         </Card>
       </a>
 
-      <a href="/Student/resourceFiles/questionsPage">
+      <a href="/Student/resourceFiles/flashcard">
       <Card class="relative h-64 p-2 hover:drop-shadow-xl hover:text-blue-600 bg-slate-100">
         <CardHeader>
           <CardTitle>Road Sign Flashcards</CardTitle>
@@ -56,7 +56,7 @@ import { Button } from "@/components/ui/button";
     <br>
     <div class="grid grid-cols-1 gap-4">
 
-      <a href="/Student/resourceFiles/flashcard">
+      <a href="/Student/resourceFiles/questionsPage">
         <Card class="relative h-64 p-2 hover:drop-shadow-xl hover:text-blue-600 bg-slate-100">
           <CardHeader>
             <CardTitle>BTT/FTT Questions</CardTitle>
