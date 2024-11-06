@@ -45,8 +45,8 @@ export default defineNuxtConfig({
     transpile:["@supabase/postgrest-js"]
   },
 
-  plugins: [
-   { src: '~/plugins/pinia.js', mode: 'client' }
-  ]
+  // plugins: [
+  //  { src: '~/plugins/pinia.js', mode: 'client' }
+  // ]
 
 });

@@ -1,5 +1,5 @@
 // stores/useAuth.js
-import { defineStore } from 'pinia'
+// import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
 
@@ -23,13 +23,15 @@ export const useAuthStore = defineStore('auth', () => {
     clearUserId,
     isAuthenticated
   }
-}, {
-persist: {
-  enabled: process.client,
-  strategies: [
-    {
-      storage: process.client ? localStorage:null,
-      paths: ['userid'], // Only persist the userid
-    },
-  ],
-}})
+}
+// , {
+// persist: {
+//   enabled: process.client,
+//   strategies: [
+//     {
+//       storage: process.client ? localStorage:null,
+//       paths: ['userid'], // Only persist the userid
+//     },
+//   ],
+// }}
+)
