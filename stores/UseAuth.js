@@ -1,7 +1,7 @@
 // stores/useAuth.js
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { defineStore } from 'pinia'
+
 
 
 export const useAuthStore = defineStore('auth', () => {
@@ -25,10 +25,10 @@ export const useAuthStore = defineStore('auth', () => {
   }
 }, {
 persist: {
-  enabled: true,
+  enabled: process.client,
   strategies: [
     {
-      storage: localStorage,
+      storage: process.client ? localStorage:null,
       paths: ['userid'], // Only persist the userid
     },
   ],
