@@ -180,17 +180,17 @@ const sortedReviews = computed(() => {
 
     <br>
   <div class="grid grid-cols-1 gap-5 lg:grid-cols-3" style="height:300px" v-if="reviews.length > 0">
-    <Card id="app" class="review" v-for="(review, idx) in sortedReviews" :key="idx">
+    <Card id="app" class="review bg-slate-100" v-for="(review, idx) in sortedReviews" :key="idx">
         <!-- Name and rating in the center -->
         <div class="flex-grow inline-flex items-center mb-2">
-          <div class="text-2xl font-bold">{{students[review.student_id] || "Unknown Student"}}</div>
+          <div class="font-bold" style="font-size: 23px">{{students[review.student_id] || "Unknown Student"}}</div>
           <div class="flex ml-4">
             <Stars :rating="review.rating" />
           </div>
         </div>
         <div>
           <div class="text-sm mb-2" style="color:gray">
-          {{ review.date_posted }}
+          {{ new Date(review.date_posted).toLocaleDateString() }}
           </div>
         <!-- <div class="text-sm mb-2" style="font-style: italic" v-for="badge in review.badges">
             {{ badge }}

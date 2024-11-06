@@ -5,7 +5,7 @@
             <p class="text-lg text-gray-600">Select the instructor, location, date, and timeslot</p>
         </div>
 
-        <div class="p-8 max-w-2xl mx-auto bg-slate-50 rounded-lg shadow-2xl">
+        <div class="p-8 max-w-2xl mx-auto bg-slate-100 rounded-lg shadow-2xl">
             <div v-if="isLoading" class="text-center py-8">
                 <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
                 <p class="mt-4 text-gray-600">Loading instructor data...</p>
